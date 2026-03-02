@@ -147,7 +147,10 @@ export function TeamStatsPage(props: TeamStatsPageProps) {
             if (!subtitle) return label;
 
             const isDuplicateLabel = (statLabelCounts.get(label) ?? 0) > 1;
-            if (isDuplicateLabel) {
+            const isHeadingStyleLabel = ["Statbotics EPA", "TBA COPR"].includes(label);
+            const shouldShowBoth = isDuplicateLabel || isHeadingStyleLabel;
+
+            if (shouldShowBoth) {
                 const normalizedLabel = label.trim().toLowerCase();
                 const normalizedSubtitle = subtitle.trim().toLowerCase();
                 if (normalizedLabel === normalizedSubtitle) {
