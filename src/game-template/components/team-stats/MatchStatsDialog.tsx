@@ -14,7 +14,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/core/components/animate-ui/radix/tabs";
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -467,14 +466,15 @@ export function MatchStatsDialog({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        <AlertDialogCancel className="p-2" disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <Button
+                            type="button"
+                            className="p-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             onClick={() => { void handleDeleteMatch(); }}
                             disabled={isDeleting}
                         >
                             {isDeleting ? "Deleting..." : "Delete Match"}
-                        </AlertDialogAction>
+                        </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
