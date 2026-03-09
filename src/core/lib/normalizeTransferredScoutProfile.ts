@@ -33,7 +33,7 @@ export const normalizeTransferredScoutProfile = (value: unknown): Scout | null =
     return null;
   }
 
-  const createdAt = asNumber(candidate.createdAt, Date.now());
+  const createdAt = asNumber(candidate.createdAt, 0);
   const lastUpdated = asNumber(candidate.lastUpdated, createdAt);
 
   return {

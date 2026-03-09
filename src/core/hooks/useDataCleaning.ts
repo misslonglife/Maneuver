@@ -4,8 +4,7 @@ import { clearAllScoutingData, db, pitDB } from "@/core/db/database";
 import { clearGamificationData as clearGameData } from "@/game-template/gamification";
 import { gamificationDB as gameDB } from "@/game-template/gamification";
 import { clearAllPitScoutingData } from "@/core/lib/pitScoutingUtils";
-import { clearAllTBACache } from "@/core/lib/tbaCache";
-import { clearEventCache, clearEventValidationResults } from "@/core/lib/tbaCache";
+import { clearAllTBACache, clearEventCache, clearEventValidationResults } from "@/core/lib/tbaCache";
 import { clearStoredEventTeams, clearStoredNexusData } from "@/core/lib/tba";
 
 export const useDataCleaning = (

@@ -211,12 +211,17 @@ export const usePickList = (eventKey?: string): UsePickListResult => {
             return;
         }
 
-        const hasEventFilter = availableEventKeys.some(
+        const canonicalEventKey = availableEventKeys.find(
             (key) => key.trim().toLowerCase() === eventFilter.trim().toLowerCase()
         );
 
-        if (!hasEventFilter) {
+        if (!canonicalEventKey) {
             setEventFilter("all");
+            return;
+        }
+
+        if (canonicalEventKey !== eventFilter) {
+            setEventFilter(canonicalEventKey);
         }
     }, [availableEventKeys, eventFilter]);
 

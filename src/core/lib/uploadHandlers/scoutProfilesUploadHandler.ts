@@ -45,6 +45,9 @@ const normalizePrediction = (prediction: unknown): MatchPrediction | null => {
   const matchNumber = asFiniteNumber(value.matchNumber);
   const timestamp = asFiniteNumber(value.timestamp);
   const verified = asBoolean(value.verified);
+  const actualWinnerRaw = typeof value.actualWinner === 'string' ? value.actualWinner.trim().toLowerCase() : null;
+  const isCorrect = asBoolean(value.isCorrect);
+  const pointsAwarded = asFiniteNumber(value.pointsAwarded);
 
   if (!id || !scoutName || !eventKey) {
     return null;
@@ -58,7 +61,7 @@ const normalizePrediction = (prediction: unknown): MatchPrediction | null => {
     return null;
   }
 
-  return {
+  const normalized: MatchPrediction = {
     id,
     scoutName,
     eventKey,
@@ -67,6 +70,20 @@ const normalizePrediction = (prediction: unknown): MatchPrediction | null => {
     timestamp,
     verified,
   };
+
+  if (actualWinnerRaw === 'red' || actualWinnerRaw === 'blue' || actualWinnerRaw === 'tie') {
+    normalized.actualWinner = actualWinnerRaw;
+  }
+
+  if (isCorrect !== null) {
+    normalized.isCorrect = isCorrect;
+  }
+
+  if (pointsAwarded !== null) {
+    normalized.pointsAwarded = pointsAwarded;
+  }
+
+  return normalized;
 };
 
 export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadMode): Promise<void> => {
