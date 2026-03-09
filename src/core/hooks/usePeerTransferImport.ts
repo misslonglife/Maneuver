@@ -71,12 +71,21 @@ export function usePeerTransferImport(options: UsePeerTransferImportOptions) {
         setShowErrorDialog,
     } = options;
 
+    const normalizeTransferredScout = (scout: unknown): Record<string, unknown> => {
+        const value = (scout && typeof scout === 'object') ? scout as Record<string, unknown> : {};
+        return {
+            ...value,
+            detailedCommentsCount: typeof value.detailedCommentsCount === 'number' ? value.detailedCommentsCount : 0,
+        };
+    };
+
     const importScoutProfiles = useCallback(async (scoutData: { scouts?: unknown[]; predictions?: unknown[]; achievements?: unknown[] }) => {
         const { gamificationDB } = await import('@/game-template/gamification/database');
         let importedCount = 0;
 
         if (scoutData.scouts && Array.isArray(scoutData.scouts)) {
-            await gamificationDB.scouts.bulkPut(scoutData.scouts as never[]);
+            const normalizedScouts = scoutData.scouts.map((scout) => normalizeTransferredScout(scout));
+            await gamificationDB.scouts.bulkPut(normalizedScouts as never[]);
             importedCount += scoutData.scouts.length;
             console.log(`✅ Imported ${scoutData.scouts.length} scouts`);
         }

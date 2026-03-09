@@ -27,6 +27,14 @@ import {
   AlertDialogTitle,
 } from '@/core/components/ui/alert-dialog';
 
+const normalizeTransferredScout = (scout: unknown): Record<string, unknown> => {
+  const value = (scout && typeof scout === 'object') ? scout as Record<string, unknown> : {};
+  return {
+    ...value,
+    detailedCommentsCount: typeof value.detailedCommentsCount === 'number' ? value.detailedCommentsCount : 0,
+  };
+};
+
 export function WebRTCPushedDataDialog() {
   const context = useWebRTC();
   const { dataPushed, setDataPushed, pushedData, pushedDataType, sendControlMessage } = context;
@@ -124,7 +132,7 @@ export function WebRTCPushedDataDialog() {
         if (data.scoutProfiles) {
           if (data.scoutProfiles.scouts && Array.isArray(data.scoutProfiles.scouts)) {
             for (const scout of data.scoutProfiles.scouts) {
-              await gameDB.scouts.put(scout);
+              await gameDB.scouts.put(normalizeTransferredScout(scout) as never);
             }
             importedCount += data.scoutProfiles.scouts.length;
             console.log('✅ Imported', data.scoutProfiles.scouts.length, 'scout profiles');
@@ -229,7 +237,7 @@ export function WebRTCPushedDataDialog() {
         const data = pushedData as any;
         if (data.scouts && Array.isArray(data.scouts)) {
           for (const scout of data.scouts) {
-            await gameDB.scouts.put(scout);
+            await gameDB.scouts.put(normalizeTransferredScout(scout) as never);
           }
           importedCount = data.scouts.length;
           console.log('✅ Imported', importedCount, 'scout profiles');

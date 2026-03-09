@@ -2,6 +2,11 @@ import { toast } from "sonner";
 import { gamificationDB as gameDB, type Scout, type MatchPrediction } from "@/game-template/gamification";
 import type { UploadMode } from "./scoutingDataUploadHandler";
 
+const normalizeScout = (scout: Scout): Scout => ({
+  ...scout,
+  detailedCommentsCount: typeof scout.detailedCommentsCount === 'number' ? scout.detailedCommentsCount : 0,
+});
+
 export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadMode): Promise<void> => {
   if (!jsonData || typeof jsonData !== 'object' || !('scouts' in jsonData) || !('predictions' in jsonData)) {
     toast.error("Invalid scout profiles format");
@@ -9,7 +14,7 @@ export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadM
   }
 
   const data = jsonData as { scouts: Scout[]; predictions: MatchPrediction[] };
-  const scoutsToImport = data.scouts || [];
+  const scoutsToImport = (data.scouts || []).map(normalizeScout);
   const predictionsToImport = data.predictions || [];
 
   try {
@@ -52,6 +57,10 @@ export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadM
                 correctPredictions: Math.max(scout.correctPredictions, existing.correctPredictions),
                 currentStreak: scout.lastUpdated > existing.lastUpdated ? scout.currentStreak : existing.currentStreak,
                 longestStreak: Math.max(scout.longestStreak, existing.longestStreak),
+                detailedCommentsCount: Math.max(
+                  typeof scout.detailedCommentsCount === 'number' ? scout.detailedCommentsCount : 0,
+                  typeof existing.detailedCommentsCount === 'number' ? existing.detailedCommentsCount : 0
+                ),
                 lastUpdated: Math.max(scout.lastUpdated, existing.lastUpdated)
               });
               scoutsUpdated++;

@@ -39,6 +39,14 @@ interface DataTypeConfig {
     expectedPacketType: string;
 }
 
+const normalizeTransferredScout = (scout: unknown): Record<string, unknown> => {
+    const value = (scout && typeof scout === 'object') ? scout as Record<string, unknown> : {};
+    return {
+        ...value,
+        detailedCommentsCount: typeof value.detailedCommentsCount === 'number' ? value.detailedCommentsCount : 0,
+    };
+};
+
 const QRDataTransferPage = () => {
     const [mode, setMode] = useState<'select' | 'generate' | 'scan'>('select');
     const [dataType, setDataType] = useState<DataType>('scouting');
@@ -233,7 +241,7 @@ const QRDataTransferPage = () => {
                 let scoutCount = 0;
                 if (profileData.scouts) {
                     for (const scout of profileData.scouts) {
-                        await gamificationDB.scouts.put(scout as never);
+                        await gamificationDB.scouts.put(normalizeTransferredScout(scout) as never);
                         scoutCount++;
                     }
                 }
@@ -310,7 +318,7 @@ const QRDataTransferPage = () => {
                 // Scout profiles don't need conflict detection - just merge
                 if (combinedData.scoutProfiles?.scouts) {
                     for (const scout of combinedData.scoutProfiles.scouts) {
-                        await gamificationDB.scouts.put(scout as never);
+                        await gamificationDB.scouts.put(normalizeTransferredScout(scout) as never);
                     }
                 }
                 if (combinedData.scoutProfiles?.predictions) {

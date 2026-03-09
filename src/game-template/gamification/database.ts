@@ -36,6 +36,19 @@ export class ScoutGamificationDB extends Dexie {
                 scout.stakesFromPredictions = scout.stakes || 0;
             });
         });
+
+        // Version 3: Add detailedCommentsCount field
+        this.version(3).stores({
+            scouts: 'name, stakes, stakesFromPredictions, totalPredictions, correctPredictions, currentStreak, longestStreak, detailedCommentsCount, lastUpdated',
+            predictions: 'id, scoutName, eventKey, matchNumber, predictedWinner, timestamp, verified, [scoutName+eventKey+matchNumber]',
+            scoutAchievements: '[scoutName+achievementId], scoutName, achievementId, unlockedAt'
+        }).upgrade(tx => {
+            return tx.table('scouts').toCollection().modify(scout => {
+                scout.detailedCommentsCount = typeof scout.detailedCommentsCount === 'number'
+                    ? scout.detailedCommentsCount
+                    : 0;
+            });
+        });
     }
 }
 
@@ -71,6 +84,7 @@ export const getOrCreateScout = async (name: string): Promise<Scout> => {
         correctPredictions: 0,
         currentStreak: 0,
         longestStreak: 0,
+        detailedCommentsCount: 0,
         createdAt: Date.now(),
         lastUpdated: Date.now(),
     };
@@ -134,6 +148,21 @@ export const updateScoutStats = async (
         scout.lastUpdated = Date.now();
         await gamificationDB.scouts.put(scout);
     }
+};
+
+/**
+ * Increment scout's substantive comment count
+ */
+export const incrementScoutDetailedComments = async (name: string, incrementBy: number = 1): Promise<void> => {
+    const scout = await gamificationDB.scouts.get(name);
+    if (!scout) {
+        return;
+    }
+
+    const currentCount = typeof scout.detailedCommentsCount === 'number' ? scout.detailedCommentsCount : 0;
+    scout.detailedCommentsCount = currentCount + Math.max(0, incrementBy);
+    scout.lastUpdated = Date.now();
+    await gamificationDB.scouts.put(scout);
 };
 
 /**

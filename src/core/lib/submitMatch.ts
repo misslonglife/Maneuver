@@ -7,6 +7,7 @@
 
 import { db } from '@/core/db/database';
 import { clearScoutingLocalStorage } from '@/core/lib/utils';
+import { recordMatchCommentForAchievements } from '@/core/lib/scoutGamificationUtils';
 import { toast } from 'sonner';
 import type { DataTransformation } from '@/types';
 
@@ -116,6 +117,13 @@ export async function submitMatchData({
             };
 
             await db.scoutingData.put(entry as never);
+
+            try {
+                await recordMatchCommentForAchievements(inputs.scoutName || '', comment);
+            } catch (gamificationError) {
+                console.warn('Failed to process comment achievement tracking:', gamificationError);
+            }
+
             toast.success('No-show match submitted');
             clearScoutingLocalStorage();
             
@@ -158,6 +166,12 @@ export async function submitMatchData({
 
         // Save to database
         await db.scoutingData.put(scoutingEntry as never);
+
+        try {
+            await recordMatchCommentForAchievements(inputs.scoutName || '', comment);
+        } catch (gamificationError) {
+            console.warn('Failed to process comment achievement tracking:', gamificationError);
+        }
 
         // Clear action stacks and robot status
         clearScoutingLocalStorage();

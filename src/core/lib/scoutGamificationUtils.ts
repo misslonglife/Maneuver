@@ -19,6 +19,7 @@ import {
   getAllScouts,
   updateScoutPoints,
   updateScoutStats,
+  incrementScoutDetailedComments,
   updateScoutWithPredictionResult,
   getLeaderboard,
   createMatchPrediction,
@@ -72,6 +73,35 @@ export const updateScoutWithPredictionAndAchievements = async (
   return { newAchievements };
 };
 
+const MIN_DETAILED_COMMENT_LENGTH = 25;
+
+const isSubstantiveComment = (comment: string): boolean => {
+  const normalized = comment.trim().replace(/\s+/g, ' ');
+  if (normalized.length < MIN_DETAILED_COMMENT_LENGTH) {
+    return false;
+  }
+
+  const words = normalized.split(' ').filter(Boolean);
+  return words.length >= 5;
+};
+
+export const recordMatchCommentForAchievements = async (
+  scoutName: string,
+  comment?: string
+): Promise<{ newAchievements: Achievement[] }> => {
+  const trimmedScoutName = scoutName.trim();
+  const normalizedComment = (comment ?? '').trim();
+
+  if (!trimmedScoutName || !isSubstantiveComment(normalizedComment)) {
+    return { newAchievements: [] };
+  }
+
+  await getOrCreateScout(trimmedScoutName);
+  await incrementScoutDetailedComments(trimmedScoutName, 1);
+  const newAchievements = await checkForNewAchievements(trimmedScoutName);
+  return { newAchievements };
+};
+
 // Re-export all gamification functions for convenience
 export {
   getOrCreateScout,
@@ -79,6 +109,7 @@ export {
   getAllScouts,
   updateScoutPoints,
   updateScoutStats,
+  incrementScoutDetailedComments,
   updateScoutWithPredictionResult,
   createMatchPrediction,
   getPredictionForMatch,
