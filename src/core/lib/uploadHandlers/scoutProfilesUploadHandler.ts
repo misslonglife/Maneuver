@@ -3,21 +3,70 @@ import { gamificationDB as gameDB, type Scout, type MatchPrediction } from "@/ga
 import { normalizeTransferredScoutProfile } from "@/core/lib/normalizeTransferredScoutProfile";
 import type { UploadMode } from "./scoutingDataUploadHandler";
 
-const isValidPrediction = (prediction: unknown): prediction is MatchPrediction => {
+const asFiniteNumber = (value: unknown): number | null => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const parsed = Number(value.trim());
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
+};
+
+const asBoolean = (value: unknown): boolean | null => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'true') return true;
+    if (normalized === 'false') return false;
+  }
+
+  return null;
+};
+
+const normalizePrediction = (prediction: unknown): MatchPrediction | null => {
   if (!prediction || typeof prediction !== 'object') {
-    return false;
+    return null;
   }
 
   const value = prediction as Record<string, unknown>;
-  return (
-    typeof value.id === 'string' &&
-    typeof value.scoutName === 'string' &&
-    typeof value.eventKey === 'string' &&
-    typeof value.matchNumber === 'number' &&
-    (value.predictedWinner === 'red' || value.predictedWinner === 'blue') &&
-    typeof value.timestamp === 'number' &&
-    typeof value.verified === 'boolean'
-  );
+  const id = typeof value.id === 'string' ? value.id.trim() : '';
+  const scoutName = typeof value.scoutName === 'string' ? value.scoutName.trim() : '';
+  const eventKey = typeof value.eventKey === 'string' ? value.eventKey.trim() : '';
+  const predictedWinnerRaw = typeof value.predictedWinner === 'string' ? value.predictedWinner.trim().toLowerCase() : '';
+  const matchNumber = asFiniteNumber(value.matchNumber);
+  const timestamp = asFiniteNumber(value.timestamp);
+  const verified = asBoolean(value.verified);
+
+  if (!id || !scoutName || !eventKey) {
+    return null;
+  }
+
+  if (predictedWinnerRaw !== 'red' && predictedWinnerRaw !== 'blue') {
+    return null;
+  }
+
+  if (matchNumber === null || timestamp === null || verified === null) {
+    return null;
+  }
+
+  return {
+    id,
+    scoutName,
+    eventKey,
+    matchNumber,
+    predictedWinner: predictedWinnerRaw,
+    timestamp,
+    verified,
+  };
 };
 
 export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadMode): Promise<void> => {
@@ -36,8 +85,12 @@ export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadM
   const scoutsToImport = data.scouts
     .map((scout) => normalizeTransferredScoutProfile(scout))
     .filter((scout): scout is Scout => !!scout);
+  const skippedScoutCount = data.scouts.length - scoutsToImport.length;
 
-  const predictionsToImport = data.predictions.filter(isValidPrediction);
+  const predictionsToImport = data.predictions
+    .map((prediction) => normalizePrediction(prediction))
+    .filter((prediction): prediction is MatchPrediction => !!prediction);
+  const skippedPredictionCount = data.predictions.length - predictionsToImport.length;
 
   try {
     let scoutsAdded = 0;
@@ -124,6 +177,13 @@ export const handleScoutProfilesUpload = async (jsonData: unknown, mode: UploadM
     const message = mode === 'overwrite'
       ? `Overwritten with ${scoutsAdded} scouts and ${predictionsAdded} predictions`
       : `Profiles: ${scoutsAdded} new scouts, ${scoutsUpdated} updated scouts, ${predictionsAdded} predictions imported`;
+
+    if (skippedScoutCount > 0 || skippedPredictionCount > 0) {
+      toast.success(message, {
+        description: `Skipped ${skippedScoutCount} invalid scouts and ${skippedPredictionCount} invalid predictions.`
+      });
+      return;
+    }
 
     toast.success(message);
   } catch (error) {

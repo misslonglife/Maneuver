@@ -192,9 +192,9 @@ export const useDataCleaning = (
       ]);
 
       await Promise.all([
-        scoutingCount > 0 ? db.scoutingData.where('eventKey').equalsIgnoreCase(normalizedEventKey).delete() : Promise.resolve(),
-        pitCount > 0 ? pitDB.pitScoutingData.where('eventKey').equalsIgnoreCase(normalizedEventKey).delete() : Promise.resolve(),
-        predictionCount > 0 ? gameDB.predictions.where('eventKey').equalsIgnoreCase(normalizedEventKey).delete() : Promise.resolve(),
+        scoutingCount > 0 ? scoutingCollection.delete() : Promise.resolve(),
+        pitCount > 0 ? pitCollection.delete() : Promise.resolve(),
+        predictionCount > 0 ? predictionCollection.delete() : Promise.resolve(),
       ]);
 
       await Promise.all([

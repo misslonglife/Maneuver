@@ -206,6 +206,20 @@ export const usePickList = (eventKey?: string): UsePickListResult => {
         return eventKeys.sort((a, b) => a.localeCompare(b));
     }, [teamStats]);
 
+    useEffect(() => {
+        if (eventFilter === "all") {
+            return;
+        }
+
+        const hasEventFilter = availableEventKeys.some(
+            (key) => key.trim().toLowerCase() === eventFilter.trim().toLowerCase()
+        );
+
+        if (!hasEventFilter) {
+            setEventFilter("all");
+        }
+    }, [availableEventKeys, eventFilter]);
+
     const eventFilteredTeams = useMemo(() => {
         if (eventFilter === "all") {
             return teamStats;

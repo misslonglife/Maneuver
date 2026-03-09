@@ -115,9 +115,7 @@ const ClearDataPage = () => {
   useEffect(() => {
     const station = localStorage.getItem("playerStation") || "Unknown";
     setPlayerStation(station);
-
-    void refreshEventKeys();
-  }, [refreshEventKeys]);
+  }, []);
 
   useEffect(() => {
     void refreshEventKeys();
