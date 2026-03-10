@@ -175,7 +175,7 @@ export const strategyAnalysis: StrategyAnalysis<ScoutingEntryTemplate> = {
             const endgameSuccess = entry.gameData?.endgame?.option1 || false;
 
             return {
-            id: entry.id,
+                id: entry.id,
                 matchNumber: String(entry.matchNumber),
                 teamNumber: entry.teamNumber,
                 scoutName: entry.scoutName,

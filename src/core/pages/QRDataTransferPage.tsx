@@ -24,6 +24,8 @@ import { BatchConflictDialog } from "@/core/components/data-transfer/BatchConfli
 import type { ScoutingEntryBase } from "@/core/types/scouting-entry";
 import type { ConflictInfo } from "@/core/lib/scoutingDataUtils";
 import { normalizeTransferredScoutProfile } from "@/core/lib/normalizeTransferredScoutProfile";
+import { normalizeTransferredMatchPrediction } from "@/core/lib/normalizeTransferredMatchPrediction";
+import { normalizeTransferredScoutAchievement } from "@/core/lib/normalizeTransferredScoutAchievement";
 import { toast } from "sonner";
 
 type DataType = 'scouting' | 'match' | 'scout' | 'combined' | 'pit-scouting';
@@ -241,14 +243,24 @@ const QRDataTransferPage = () => {
                     }
                 }
                 if (profileData.predictions) {
+                    let predictionCount = 0;
                     for (const prediction of profileData.predictions) {
-                        await gamificationDB.predictions.put(prediction as never);
+                        const normalizedPrediction = normalizeTransferredMatchPrediction(prediction);
+                        if (!normalizedPrediction) continue;
+                        await gamificationDB.predictions.put(normalizedPrediction as never);
+                        predictionCount += 1;
                     }
+                    console.log(`Imported ${predictionCount} predictions from QR`);
                 }
                 if (profileData.achievements) {
+                    let achievementCount = 0;
                     for (const achievement of profileData.achievements) {
-                        await gamificationDB.scoutAchievements.put(achievement as never);
+                        const normalizedAchievement = normalizeTransferredScoutAchievement(achievement);
+                        if (!normalizedAchievement) continue;
+                        await gamificationDB.scoutAchievements.put(normalizedAchievement as never);
+                        achievementCount += 1;
                     }
+                    console.log(`Imported ${achievementCount} achievements from QR`);
                 }
                 toast.success(`Successfully imported ${scoutCount} scout profiles`);
             },
@@ -319,9 +331,14 @@ const QRDataTransferPage = () => {
                     }
                 }
                 if (combinedData.scoutProfiles?.predictions) {
+                    let predictionCount = 0;
                     for (const prediction of combinedData.scoutProfiles.predictions) {
-                        await gamificationDB.predictions.put(prediction as never);
+                        const normalizedPrediction = normalizeTransferredMatchPrediction(prediction);
+                        if (!normalizedPrediction) continue;
+                        await gamificationDB.predictions.put(normalizedPrediction as never);
+                        predictionCount += 1;
                     }
+                    console.log(`Imported ${predictionCount} combined predictions from QR`);
                 }
             },
             validateData: (data: unknown): boolean => {

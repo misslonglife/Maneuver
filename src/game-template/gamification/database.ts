@@ -56,8 +56,74 @@ export class ScoutGamificationDB extends Dexie {
             predictions: 'id, scoutName, eventKey, matchNumber, predictedWinner, timestamp, verified, [scoutName+eventKey+matchNumber]',
             scoutAchievements: '[scoutName+achievementId], scoutName, achievementId, unlockedAt'
         }).upgrade(async tx => {
+            const scoutTable = tx.table('scouts');
             const predictionTable = tx.table('predictions');
             const achievementTable = tx.table('scoutAchievements');
+
+            const asNonNegativeNumber = (value: unknown): number => {
+                if (typeof value === 'number' && Number.isFinite(value)) {
+                    return Math.max(0, value);
+                }
+                return 0;
+            };
+
+            const asTimestampOrZero = (value: unknown): number => {
+                if (typeof value === 'number' && Number.isFinite(value)) {
+                    return value;
+                }
+                return 0;
+            };
+
+            // Normalize and merge scout primary keys so historical whitespace variants collapse into one profile.
+            const scouts = (await scoutTable.toArray()) as Scout[];
+            const mergedScoutsByName = new Map<string, Scout>();
+
+            for (const scout of scouts) {
+                const normalizedScoutName = typeof scout.name === 'string' ? scout.name.trim() : '';
+                if (!normalizedScoutName) {
+                    continue;
+                }
+
+                const normalizedScout: Scout = {
+                    ...scout,
+                    name: normalizedScoutName,
+                    stakes: asNonNegativeNumber(scout.stakes),
+                    stakesFromPredictions: asNonNegativeNumber(scout.stakesFromPredictions),
+                    totalPredictions: asNonNegativeNumber(scout.totalPredictions),
+                    correctPredictions: asNonNegativeNumber(scout.correctPredictions),
+                    currentStreak: asNonNegativeNumber(scout.currentStreak),
+                    longestStreak: asNonNegativeNumber(scout.longestStreak),
+                    detailedCommentsCount: asNonNegativeNumber(scout.detailedCommentsCount),
+                    createdAt: asTimestampOrZero(scout.createdAt),
+                    lastUpdated: asTimestampOrZero(scout.lastUpdated),
+                };
+
+                const existing = mergedScoutsByName.get(normalizedScoutName);
+                if (!existing) {
+                    mergedScoutsByName.set(normalizedScoutName, normalizedScout);
+                    continue;
+                }
+
+                mergedScoutsByName.set(normalizedScoutName, {
+                    ...existing,
+                    name: normalizedScoutName,
+                    stakes: existing.stakes + normalizedScout.stakes,
+                    stakesFromPredictions: existing.stakesFromPredictions + normalizedScout.stakesFromPredictions,
+                    totalPredictions: existing.totalPredictions + normalizedScout.totalPredictions,
+                    correctPredictions: existing.correctPredictions + normalizedScout.correctPredictions,
+                    currentStreak: Math.max(existing.currentStreak, normalizedScout.currentStreak),
+                    longestStreak: Math.max(existing.longestStreak, normalizedScout.longestStreak),
+                    detailedCommentsCount: existing.detailedCommentsCount + normalizedScout.detailedCommentsCount,
+                    createdAt: Math.min(existing.createdAt, normalizedScout.createdAt),
+                    lastUpdated: Math.max(existing.lastUpdated, normalizedScout.lastUpdated),
+                });
+            }
+
+            await scoutTable.clear();
+            if (mergedScoutsByName.size > 0) {
+                await scoutTable.bulkPut(Array.from(mergedScoutsByName.values()) as never[]);
+            }
+
             const getAchievementPrimaryKey = (achievement: ScoutAchievement): [string, string] => [
                 achievement.scoutName,
                 achievement.achievementId,
