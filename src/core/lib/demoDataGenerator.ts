@@ -13,7 +13,8 @@
 
 import { db, saveScoutingEntry, savePitScoutingEntry } from '@/core/db/database';
 import type { ScoutingEntryBase } from '@/core/types/scouting-entry';
-import type { PitScoutingEntryBase, DrivetrainType, ProgrammingLanguage } from '@/core/types/pit-scouting';
+// import type { PitScoutingEntryBase, DrivetrainType, ProgrammingLanguage } from '@/core/types/pit-scouting';
+import type { PitScoutingEntryBase} from '@/core/types/pit-scouting';
 import { setCurrentEvent } from '@/core/lib/tba/eventDataUtils';
 import { cacheTBAMatches, clearEventCache, clearEventValidationResults, storeValidationResult } from '@/core/lib/tbaCache';
 import { getOrCreateScoutByName, updateScoutStats } from '@/core/lib/scoutGamificationUtils';
@@ -1117,7 +1118,9 @@ export async function generateDemoEvent(options: DemoDataOptions = {}): Promise<
                 scoutName: pitScout,
                 timestamp: Date.now() - Math.random() * 86400000, // Random time in last 24 hours
                 robotPhoto: undefined, // Could add placeholder URLs if needed
-                
+                // weight: Math.round(weight * 10) / 10, // Round to 1 decimal
+                // drivetrain,
+                // programmingLanguage,
                 notes: generatePitNotes(profile, { canAutoClimbL1, targetClimbLevel, fuelCapacity, canGoUnderTrench }),
                 gameData: {
                     // Physical Specifications

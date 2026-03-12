@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import type { PitScoutingEntryBase, DrivetrainType, ProgrammingLanguage } from "@/types/database";
+// import type { PitScoutingEntryBase, DrivetrainType, ProgrammingLanguage } from "@/types/database";
+import type { PitScoutingEntryBase} from "@/types/database";
 import {
   savePitScoutingEntry,
   loadPitScoutingByTeamAndEvent,
@@ -11,9 +12,9 @@ interface PitScoutingFormState {
   eventKey: string;
   scoutName: string;
   robotPhoto?: string;
-  weight?: number;
-  drivetrain?: DrivetrainType;
-  programmingLanguage?: ProgrammingLanguage;
+  // weight?: number;
+  // drivetrain?: DrivetrainType;
+  // programmingLanguage?: ProgrammingLanguage;
   notes?: string;
   gameData?: Record<string, unknown>;
 }
@@ -27,9 +28,9 @@ interface UsePitScoutingFormReturn {
   setEventKey: (value: string) => void;
   setScoutName: (value: string) => void;
   setRobotPhoto: (value: string | undefined) => void;
-  setWeight: (value: number | undefined) => void;
-  setDrivetrain: (value: DrivetrainType | undefined) => void;
-  setProgrammingLanguage: (value: ProgrammingLanguage | undefined) => void;
+  // setWeight: (value: number | undefined) => void;
+  // setDrivetrain: (value: DrivetrainType | undefined) => void;
+  // setProgrammingLanguage: (value: ProgrammingLanguage | undefined) => void;
   setNotes: (value: string | undefined) => void;
 
   // Game data setter (for game-specific questions)
@@ -52,9 +53,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
     eventKey: localStorage.getItem("eventKey") || "",
     scoutName: localStorage.getItem("currentScout") || "",
     robotPhoto: undefined,
-    weight: undefined,
-    drivetrain: undefined,
-    programmingLanguage: undefined,
+    // weight: undefined,
+    // drivetrain: undefined,
+    // programmingLanguage: undefined,
     notes: undefined,
     gameData: undefined,
   });
@@ -82,7 +83,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
           ...prev,
           scoutName: existing.scoutName,
           robotPhoto: existing.robotPhoto,
-          
+          // weight: existing.weight,
+          // drivetrain: existing.drivetrain,
+          // programmingLanguage: existing.programmingLanguage,
           notes: existing.notes,
           gameData: existing.gameData,
         }));
@@ -116,20 +119,20 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
     setFormState((prev) => ({ ...prev, robotPhoto: value }));
   }, []);
 
-  const setWeight = useCallback((value: number | undefined) => {
-    setFormState((prev) => ({ ...prev, weight: value }));
-  }, []);
+  // const setWeight = useCallback((value: number | undefined) => {
+  //   setFormState((prev) => ({ ...prev, weight: value }));
+  // }, []);
 
-  const setDrivetrain = useCallback((value: DrivetrainType | undefined) => {
-    setFormState((prev) => ({ ...prev, drivetrain: value }));
-  }, []);
+  // const setDrivetrain = useCallback((value: DrivetrainType | undefined) => {
+  //   setFormState((prev) => ({ ...prev, drivetrain: value }));
+  // }, []);
 
-  const setProgrammingLanguage = useCallback(
-    (value: ProgrammingLanguage | undefined) => {
-      setFormState((prev) => ({ ...prev, programmingLanguage: value }));
-    },
-    []
-  );
+  // const setProgrammingLanguage = useCallback(
+  //   (value: ProgrammingLanguage | undefined) => {
+  //     setFormState((prev) => ({ ...prev, programmingLanguage: value }));
+  //   },
+  //   []
+  // );
 
   const setNotes = useCallback((value: string | undefined) => {
     setFormState((prev) => ({ ...prev, notes: value }));
@@ -177,9 +180,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
         scoutName: formState.scoutName,
         timestamp: Date.now(),
         robotPhoto: formState.robotPhoto,
-        weight: formState.weight,
-        drivetrain: formState.drivetrain,
-        programmingLanguage: formState.programmingLanguage,
+        // weight: formState.weight,
+        // drivetrain: formState.drivetrain,
+        // programmingLanguage: formState.programmingLanguage,
         notes: formState.notes,
         gameData: formState.gameData ?? {}, // Default to empty object if undefined
       };
@@ -209,9 +212,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
       eventKey: localStorage.getItem("eventKey") || "",
       scoutName: localStorage.getItem("currentScout") || "",
       robotPhoto: undefined,
-      weight: undefined,
-      drivetrain: undefined,
-      programmingLanguage: undefined,
+      // weight: undefined,
+      // drivetrain: undefined,
+      // programmingLanguage: undefined,
       notes: undefined,
       gameData: undefined,
     });
@@ -224,9 +227,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
     setEventKey,
     setScoutName,
     setRobotPhoto,
-    setWeight,
-    setDrivetrain,
-    setProgrammingLanguage,
+    // setWeight,
+    // setDrivetrain,
+    // setProgrammingLanguage,
     setNotes,
     setGameData,
     validateForm,

@@ -7,6 +7,17 @@
  * Game-specific data is stored in the `gameData` field.
  */
 
+// /**
+//  * Standard FRC drivetrain types
+//  * Swerve is becoming dominant, but all types are still in use
+//  */
+// export type DrivetrainType = 'swerve' | 'tank' | 'mecanum' | 'other';
+
+// /**
+//  * Standard FRC programming languages
+//  * Java is the most common, followed by C++ and Python
+//  */
+// export type ProgrammingLanguage = 'Java' | 'C++' | 'Python' | 'LabVIEW' | 'other';
 
 /**
  * Base interface for pit scouting entries
@@ -42,7 +53,9 @@ export interface PitScoutingEntryBase {
 
     // Universal pit scouting fields (not game-specific)
     robotPhoto?: string;            // Base64 or URL
-
+    // weight?: number;                // Robot weight in pounds
+    // drivetrain?: DrivetrainType;    // Standard FRC drivetrain types
+    // programmingLanguage?: ProgrammingLanguage; // Standard FRC programming languages
     notes?: string;                 // General observations
 
     // Game-specific data (defined by game implementation)
