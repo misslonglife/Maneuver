@@ -21,8 +21,8 @@ export type {
   PitScoutingEntryBase,
   PitScoutingData,
   PitScoutingStats,
-  DrivetrainType,
-  ProgrammingLanguage,
+  // DrivetrainType,
+  // ProgrammingLanguage,
 } from '../core/types/pit-scouting';
 
 // Strategy and gamification types (from core/types/strategy.ts)
