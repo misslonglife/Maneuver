@@ -335,9 +335,7 @@ export const exportPitScoutingToCSV = async (excludedFields: string[] = []): Pro
       entry.eventKey,
       entry.scoutName,
       new Date(entry.timestamp).toISOString(),
-      entry.weight?.toString() || '',
-      entry.drivetrain || '',
-      entry.programmingLanguage || '',
+    
       entry.robotPhoto ? 'Has Image' : 'No Image',
       entry.notes || ''
     ];

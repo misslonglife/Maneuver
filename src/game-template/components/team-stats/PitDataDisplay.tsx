@@ -142,18 +142,8 @@ export function PitDataDisplay({ teamNumber, selectedEvent }: PitDataDisplayProp
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Drivetrain</span>
-                                    <div className="font-medium text-lg capitalize">{entry.drivetrain || "Unknown"}</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Weight</span>
-                                    <div className="font-medium text-lg">{entry.weight ? `${entry.weight} lbs` : "Unknown"}</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Programming</span>
-                                    <div className="font-medium text-lg">{entry.programmingLanguage || "Unknown"}</div>
-                                </div>
+                                
+                            
                                 <div className="space-y-1">
                                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Dimensions</span>
                                     <div className="font-medium text-lg">

@@ -82,9 +82,7 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
           ...prev,
           scoutName: existing.scoutName,
           robotPhoto: existing.robotPhoto,
-          weight: existing.weight,
-          drivetrain: existing.drivetrain,
-          programmingLanguage: existing.programmingLanguage,
+          
           notes: existing.notes,
           gameData: existing.gameData,
         }));
