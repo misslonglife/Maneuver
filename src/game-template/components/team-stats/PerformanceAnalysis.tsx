@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Badge } from "@/core/components/ui/badge";
 import { ProgressCard } from "@/core/components/team-stats/ProgressCard";
+import { MatchProgressionChart } from "./MatchProgressionChart";
+import type { MatchProgressionMatchResult } from "./MatchProgressionChart";
 import { MatchStatsDialog } from "./MatchStatsDialog";
-import { MatchProgressionChart } from "@/core/components/team-stats/MatchProgressionChart";
-import { DefenseAgainstTeamAnalysis } from "./DefenseAgainstTeamAnalysis";
 import type { TeamStats } from "@/core/types/team-stats";
 import type { RateSectionDefinition, MatchBadgeDefinition } from "@/types/team-stats-display";
 
@@ -12,8 +12,6 @@ interface PerformanceAnalysisProps {
     compareStats: TeamStats | null;
     rateSections: RateSectionDefinition[];
     matchBadges: MatchBadgeDefinition[];
-    selectedTeam: string;
-    selectedEvent: string;
     onMatchDataChanged?: () => void;
 }
 
@@ -22,12 +20,11 @@ export function PerformanceAnalysis({
     compareStats,
     rateSections,
     matchBadges,
-    selectedTeam,
-    selectedEvent,
     onMatchDataChanged,
 }: PerformanceAnalysisProps) {
-    const baseMatchResults = (teamStats as TeamStats & { matchResults?: Record<string, unknown>[] })?.matchResults;
-    const hasMatchResults = Array.isArray(baseMatchResults) && baseMatchResults.length > 0;
+    const matchResults = (teamStats as TeamStats & { matchResults?: Record<string, unknown>[] })?.matchResults;
+    const compareMatchResults = (compareStats as (TeamStats & { matchResults?: Record<string, unknown>[] }) | null)?.matchResults;
+    const hasMatchResults = Array.isArray(matchResults) && matchResults.length > 0;
 
     if (teamStats.matchesPlayed === 0 && !hasMatchResults) {
         return (
@@ -46,41 +43,13 @@ export function PerformanceAnalysis({
         return typeof value === 'number' ? value : 0;
     };
 
-    const hasMatchBreakdown = (match: Record<string, unknown>) => {
-        if (match['brokeDown'] === true) return true;
-
-        const gameData = match['gameData'];
-        if (!gameData || typeof gameData !== 'object') return false;
-
-        const auto = (gameData as Record<string, unknown>)['auto'];
-        const teleop = (gameData as Record<string, unknown>)['teleop'];
-
-        const autoBrokenDownCount = auto && typeof auto === 'object'
-            ? Number((auto as Record<string, unknown>)['brokenDownCount'] || 0)
-            : 0;
-        const teleopBrokenDownCount = teleop && typeof teleop === 'object'
-            ? Number((teleop as Record<string, unknown>)['brokenDownCount'] || 0)
-            : 0;
-
-        return autoBrokenDownCount > 0 || teleopBrokenDownCount > 0;
-    };
-
-    const hasMatchNoShow = (match: Record<string, unknown>) => {
-        if (match['noShow'] === true) return true;
-        return typeof match['comment'] === 'string' && /no\s*show/i.test(match['comment']);
-    };
-
-    // Extract match results for progression chart
-    const matchResults = (teamStats as TeamStats & { matchResults?: any[] })?.matchResults || [];
-    const compareMatchResults = compareStats ? (compareStats as TeamStats & { matchResults?: any[] })?.matchResults || [] : undefined;
-
     const renderMatchResults = () => {
         if (!matchResults || !Array.isArray(matchResults)) {
             return <p className="text-muted-foreground text-center py-4">No match data available</p>;
         }
 
         return (
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-96 overflow-y-auto">
                 {matchResults.map((match, index: number) => {
                     const eventKey = typeof match['eventKey'] === 'string' ? match['eventKey'] : null;
                     const matchNumber = String(match['matchNumber'] || '');
@@ -91,8 +60,6 @@ export function PerformanceAnalysis({
                     const teleopPoints = String(match['teleopPoints'] || 0);
                     const endgamePoints = String(match['endgamePoints'] || 0);
                     const comment = typeof match['comment'] === 'string' ? match['comment'] : "";
-                    const matchHasBreakdown = hasMatchBreakdown(match);
-                    const matchHasNoShow = hasMatchNoShow(match);
                     const ignoreForStats = !!match['ignoreForStats'];
 
                     return (
@@ -121,12 +88,6 @@ export function PerformanceAnalysis({
                                     )}
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2">
-                                    {matchHasNoShow && (
-                                        <Badge variant="destructive">No Show</Badge>
-                                    )}
-                                    {matchHasBreakdown && (
-                                        <Badge variant="destructive">Broke Down</Badge>
-                                    )}
                                     {matchBadges.map(badge => {
                                         const matchValue = match[badge.key];
                                         if (matchValue === badge.showWhen) {
@@ -168,16 +129,11 @@ export function PerformanceAnalysis({
                                     endgamePoints: typeof match['endgamePoints'] === 'number' ? match['endgamePoints'] : 0,
                                     totalPoints: typeof match['totalPoints'] === 'number' ? match['totalPoints'] : 0,
                                     autoPassedMobilityLine: !!match['autoPassedMobilityLine'],
-                                    climbAttempted: !!match['climbAttempted'],
-                                    climbSucceeded: !!match['endgameSuccess'],
+                                    climbAttempted: !!match['climbAttempted'] || !!match['climbed'],
+                                    climbSucceeded: !!match['climbed'],
                                     parkAttempted: !!match['parkAttempted'],
                                     brokeDown: !!match['brokeDown'],
                                     playedDefense: !!match['playedDefense'],
-                                    autoPath: Array.isArray(match['autoPath']) ? match['autoPath'] : [],
-                                    teleopPath: Array.isArray(match['teleopPath']) ? match['teleopPath'] : [],
-                                    autoFuel: typeof match['autoFuel'] === 'number' ? match['autoFuel'] : 0,
-                                    autoFuelPassed: typeof match['autoFuelPassed'] === 'number' ? match['autoFuelPassed'] : 0,
-                                    climbLevel: typeof match['climbLevel'] === 'number' ? match['climbLevel'] : undefined,
                                     ignoreForStats,
                                     gameData: match['gameData'] as {
                                         auto?: Record<string, unknown>;
@@ -198,18 +154,17 @@ export function PerformanceAnalysis({
     };
 
     return (
-        <div className="space-y-6 pb-6">            {/* Match Progression Chart */}
-            <MatchProgressionChart
-                matchResults={matchResults}
-                compareMatchResults={compareMatchResults}
-                teamNumber={teamStats.teamNumber}
-                compareTeamNumber={compareStats?.teamNumber}
-            />
-
-            <DefenseAgainstTeamAnalysis
-                teamNumber={selectedTeam}
-                selectedEvent={selectedEvent}
-            />
+        <div className="space-y-6 pb-6">
+            {hasMatchResults && (
+                <MatchProgressionChart
+                    matchResults={matchResults as MatchProgressionMatchResult[]}
+                    compareMatchResults={Array.isArray(compareMatchResults)
+                        ? compareMatchResults as MatchProgressionMatchResult[]
+                        : undefined}
+                    teamNumber={teamStats.teamNumber}
+                    compareTeamNumber={compareStats?.teamNumber}
+                />
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
@@ -284,7 +239,7 @@ export function PerformanceAnalysis({
                     </CardContent>
                 </Card>
 
-                <Card className="self-start">
+                <Card>
                     <CardHeader>
                         <CardTitle>Match-by-Match Performance</CardTitle>
                     </CardHeader>

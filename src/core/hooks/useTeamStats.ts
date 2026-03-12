@@ -27,8 +27,13 @@ export const useTeamStats = () => {
     const [isLoading, setIsLoading] = useState(true);
     const fuelOprCacheRef = useRef<Map<string, Map<number, { auto: number; teleop: number; total: number }>>>(new Map());
 
-    const resolveOprEventKeys = useCallback((eventFilter?: string, entries: ScoutingEntryBase[] = []): string[] => {
-        if (eventFilter && eventFilter !== 'all') {
+    const resolveOprEventKeys = useCallback((eventFilter?: string | string[], entries: ScoutingEntryBase[] = []): string[] => {
+        if (Array.isArray(eventFilter)) {
+            const selected = [...new Set(eventFilter.filter((eventKey): eventKey is string => !!eventKey && eventKey !== 'all'))];
+            if (selected.length > 0) {
+                return selected;
+            }
+        } else if (eventFilter && eventFilter !== 'all') {
             return [eventFilter];
         }
 
@@ -127,7 +132,7 @@ export const useTeamStats = () => {
     /**
      * Calculate stats for a specific team and optional event
      */
-    const calculateStats = useCallback(async (teamNumber: string, eventFilter?: string): Promise<TeamStats | null> => {
+    const calculateStats = useCallback(async (teamNumber: string, eventFilter?: string | string[]): Promise<TeamStats | null> => {
         if (!teamNumber) return null;
 
         try {
@@ -135,12 +140,16 @@ export const useTeamStats = () => {
             const teamNum = parseInt(teamNumber);
             const round1 = (value: number) => Math.round(value * 10) / 10;
 
-            const coprEventKeys = eventFilter && eventFilter !== 'all'
-                ? [eventFilter]
+            const selectedEventKeys = Array.isArray(eventFilter)
+                ? [...new Set(eventFilter.filter((key): key is string => !!key && key !== 'all'))]
+                : (eventFilter && eventFilter !== 'all' ? [eventFilter] : []);
+
+            const coprEventKeys = selectedEventKeys.length > 0
+                ? selectedEventKeys
                 : [...new Set(getCachedCOPREventKeys())];
 
-            const statboticsEventKeys = eventFilter && eventFilter !== 'all'
-                ? [eventFilter]
+            const statboticsEventKeys = selectedEventKeys.length > 0
+                ? selectedEventKeys
                 : [...new Set(getCachedStatboticsEventKeys())];
 
             const coprSamples = coprEventKeys
@@ -168,10 +177,22 @@ export const useTeamStats = () => {
                 return round1(value);
             };
 
-            if (eventFilter && eventFilter !== "all") {
-                entries = await loadScoutingEntriesByTeamAndEvent(teamNum, eventFilter);
+            const resolvedEventKey = selectedEventKeys.length === 0
+                ? 'all'
+                : selectedEventKeys.length === 1
+                    ? selectedEventKeys[0] || 'all'
+                    : 'multiple';
+
+            const singleEventKey = selectedEventKeys[0];
+
+            if (selectedEventKeys.length === 1 && singleEventKey) {
+                entries = await loadScoutingEntriesByTeamAndEvent(teamNum, singleEventKey);
             } else {
                 entries = await loadScoutingEntriesByTeam(teamNum);
+                if (selectedEventKeys.length > 0) {
+                    const selectedEventKeySet = new Set(selectedEventKeys);
+                    entries = entries.filter(entry => selectedEventKeySet.has(entry.eventKey));
+                }
             }
 
             const eventKeysForOpr = resolveOprEventKeys(eventFilter, entries);
@@ -210,7 +231,7 @@ export const useTeamStats = () => {
                 // Return a basic object with matchesPlayed: 0
                 return {
                     teamNumber: teamNum,
-                    eventKey: eventFilter || '',
+                    eventKey: resolvedEventKey,
                     matchCount: 0,
                     totalPoints: 0,
                     autoPoints: 0,
@@ -321,6 +342,8 @@ export const useTeamStats = () => {
             baseStats.statboticsTotalTower = statboticsTotalTower === undefined ? undefined : round1(statboticsTotalTower);
             baseStats.statboticsAutoTower = statboticsAutoTower === undefined ? undefined : round1(statboticsAutoTower);
             baseStats.statboticsEndgameTower = statboticsEndgameTower === undefined ? undefined : round1(statboticsEndgameTower);
+
+            baseStats.eventKey = resolvedEventKey;
 
             return baseStats;
         } catch (error) {
