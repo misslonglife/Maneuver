@@ -1,0 +1,159 @@
+## 🏗️ Repository Structure
+
+```
+Maneuver-2026/
+├── src/
+│   ├── core/                    # 📦 Framework (from maneuver-core)
+│   │   ├── components/          # Reusable UI components
+│   │   ├── contexts/            # React contexts (Game, Theme, etc.)
+│   │   ├── db/                  # Dexie database setup
+│   │   ├── hooks/               # Custom React hooks
+│   │   ├── layouts/             # Page layouts
+│   │   ├── lib/                 # Utilities and helpers
+│   │   ├── pages/               # Application pages/routes
+│   │   └── types/               # TypeScript type definitions
+│   │
+│   ├── game-template/           # 🎮 2026 REBUILT Implementation
+│   │   ├── components/          # Game-specific UI (field maps, scoring)
+│   │   │   ├── auto-path/       # Autonomous path tracking
+│   │   │   ├── field-map/       # Interactive field canvas
+│   │   │   ├── teleop-path/     # Teleop path tracking
+│   │   │   ├── scoring/         # Fuel scoring components
+│   │   │   ├── endgame/         # Climb selection
+│   │   │   └── pit-scouting/    # 2026-specific pit questions
+│   │   ├── contexts/            # Scoring & path contexts
+│   │   ├── gamification/        # Achievements system
+│   │   ├── GAME_2026.md         # Complete game rules reference
+│   │   ├── game-schema.ts       # Single source of truth for 2026 config
+│   │   ├── scoring.ts           # Point calculations for fuel/climbing
+│   │   ├── transformation.ts    # Data transformation logic
+│   │   └── ...config files
+│   │
+│   ├── App.tsx                  # Main application entry
+│   └── main.tsx                 # React DOM render
+│
+├── docs/                        # 📚 Documentation
+└── public/                      # Static assets
+```
+
+| Directory | Purpose |
+|-----------|---------|
+| `src/core/` | Year-agnostic framework code (from maneuver-core) |
+| `src/game-template/` | 2026 REBUILT game implementation — **customize for your team's needs** |
+| `docs/` | Comprehensive documentation for framework features |
+
+### Using This App
+
+# Create .env from example
+cp .env.example .env
+# Edit .env and add your TBA API key
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+
+### For Your Team
+
+If you want to customize this for your team:
+
+1. **Fork** this repository to your organization
+2. **Customize** strategy configs in `src/game-template/` for your team's preferences
+3. **Modify** pick list criteria in `pick-list-config.ts`
+4. **Adjust** achievements in `gamification/achievements.ts`
+5. **Deploy** to Netlify/Vercel using your fork
+
+### Receiving Framework Updates
+
+To pull bug fixes and framework enhancements from maneuver-core:
+
+```bash
+# Add maneuver-core as upstream remote
+git remote add upstream https://github.com/ShinyShips/maneuver-core.git
+
+# Fetch and merge updates (resolve conflicts favoring YOUR game-template/)
+git fetch upstream
+git merge upstream/main
+```
+git fetch upstream
+git merge upstream/main --allow-unrelated-histories
+# Resolve conflicts: keep YOUR version for game-template/, keep UPSTREAM for core/
+
+# Future updates are simple
+git fetch upstream
+git merge upstream/main
+```
+
+> **Tip**: When resolving conflicts, game-specific files in `src/game-template/` should keep your version, while framework files in `src/core/` should typically use the upstream version.
+
+### Environment Setup
+
+Copy `.env.example` to `.env` and add your API keys:
+
+```env
+# The Blue Alliance API Key
+# Get your key at: https://www.thebluealliance.com/account
+VITE_TBA_API_KEY=your_tba_api_key_here
+
+# Nexus Stats API Key (optional, for additional match data)
+# Get your key at: https://frc.nexus/
+VITE_NEXUS_API_KEY=your_nexus_api_key_here
+```
+
+
+## 📚 Documentation
+
+### Getting Started
+- [docs/README.md](docs/README.md) - Documentation index
+
+### Architecture
+| Topic | Link |
+|-------|------|
+| Framework Design | [docs/FRAMEWORK_DESIGN.md](docs/FRAMEWORK_DESIGN.md) |
+| Architecture Strategy | [docs/ARCHITECTURE_STRATEGY.md](docs/ARCHITECTURE_STRATEGY.md) |
+| Game Components | [docs/GAME_COMPONENTS.md](docs/GAME_COMPONENTS.md) |
+
+### Feature Guides
+| Feature | Link |
+|---------|------|
+| Database | [docs/DATABASE.md](docs/DATABASE.md) |
+| PWA Setup | [docs/PWA.md](docs/PWA.md) |
+| QR Data Transfer | [docs/QR_DATA_TRANSFER.md](docs/QR_DATA_TRANSFER.md) |
+| JSON Transfer | [docs/JSON_DATA_TRANSFER.md](docs/JSON_DATA_TRANSFER.md) |
+| Peer Transfer (WebRTC) | [docs/PEER_TRANSFER.md](docs/PEER_TRANSFER.md) |
+| Data Transformation | [docs/DATA_TRANSFORMATION.md](docs/DATA_TRANSFORMATION.md) |
+
+### Page Documentation
+| Page | Link |
+|------|------|
+| Scouting Workflow | [docs/SCOUTING_WORKFLOW.md](docs/SCOUTING_WORKFLOW.md) |
+| Strategy Overview | [docs/STRATEGY_OVERVIEW.md](docs/STRATEGY_OVERVIEW.md) |
+| Match Strategy | [docs/MATCH_STRATEGY.md](docs/MATCH_STRATEGY.md) |
+| Match Validation | [docs/MATCH_VALIDATION.md](docs/MATCH_VALIDATION.md) |
+| Team Stats | [docs/TEAM_STATS.md](docs/TEAM_STATS.md) |
+| Pick Lists | [docs/PICK_LISTS.md](docs/PICK_LISTS.md) |
+| Pit Scouting | [docs/PIT_SCOUTING.md](docs/PIT_SCOUTING.md) |
+| Scout Management | [docs/SCOUT_MANAGEMENT.md](docs/SCOUT_MANAGEMENT.md) |
+| Achievements | [docs/ACHIEVEMENTS.md](docs/ACHIEVEMENTS.md) |
+
+### Developer Guides
+| Topic | Link |
+|-------|------|
+| React Contexts | [docs/CONTEXTS_GUIDE.md](docs/CONTEXTS_GUIDE.md) |
+| Hooks Reference | [docs/HOOKS_REFERENCE.md](docs/HOOKS_REFERENCE.md) |
+| Utility Hooks | [docs/UTILITY_HOOKS.md](docs/UTILITY_HOOKS.md) |
+| Navigation | [docs/NAVIGATION_SETUP.md](docs/NAVIGATION_SETUP.md) |
+
+### Key 2026 Configurations
+
+| File | Purpose |
+|------|---------|
+| `game-schema.ts` | Actions, zones, workflow, constants |
+| `scoring.ts` | Point calculations for fuel, climbing, penalties |
+| `strategy-config.ts` | Team statistics columns and aggregations |
+| `pick-list-config.ts` | Alliance selection criteria |
+| `match-strategy-config.ts` | Pre-match field annotations |
+| `GAME_2026.md` | Complete game rules reference |
