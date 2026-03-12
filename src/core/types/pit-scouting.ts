@@ -53,9 +53,7 @@ export interface PitScoutingEntryBase {
 
     // Universal pit scouting fields (not game-specific)
     robotPhoto?: string;            // Base64 or URL
-    weight?: number;                // Robot weight in pounds
-    drivetrain?: DrivetrainType;    // Standard FRC drivetrain types
-    programmingLanguage?: ProgrammingLanguage; // Standard FRC programming languages
+
     notes?: string;                 // General observations
 
     // Game-specific data (defined by game implementation)
