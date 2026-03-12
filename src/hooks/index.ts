@@ -31,6 +31,7 @@ export { useAllMatches } from '../core/hooks/useAllMatches';
 export { useTeamStats } from '../core/hooks/useTeamStats';
 export { useTeamStatistics } from '../core/hooks/useTeamStatistics';
 export { useAllTeamStats } from '../core/hooks/useAllTeamStats';
+export { useTeamProfiles, useTeamProfile, useTeamsForEvent } from '../core/hooks/useTeamProfiles';
 export { useChartData } from '../core/hooks/useChartData';
 
 // TBA hooks

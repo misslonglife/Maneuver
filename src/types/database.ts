@@ -9,11 +9,13 @@
  *   2. PitScoutingDB: Pit scouting entries
  *   3. TBACacheDB: TBA match validation data cache
  *   4. ScoutProfileDB: Gamification (scouts, predictions, achievements)
+ *   5. TeamDB: SINGLE SOURCE OF TRUTH for team metadata (TBA + Statbotics + history)
  * 
  * Framework provides base interfaces; game implementations extend with game-specific fields.
  */
 
 import type { ScoutingEntryBase } from './scouting-entry';
+import type { TeamProfile } from '../core/types/team-profile';
 
 // ============================================================================
 // Match Scouting Database
@@ -113,4 +115,25 @@ export interface ScoutProfileDatabaseSchema {
   scouts: import('@/game-template/gamification').Scout;
   predictions: import('@/game-template/gamification').MatchPrediction;
   scoutAchievements: import('@/game-template/gamification').ScoutAchievement;
+}
+
+// ============================================================================
+// Team Database (SINGLE SOURCE OF TRUTH for team metadata)
+// ============================================================================
+
+/**
+ * Team database schema
+ * 
+ * SINGLE SOURCE OF TRUTH for consolidated team metadata from:
+ * - TBA: Basic team info (name, country, city, state)
+ * - Statbotics: Current rankings (global and event-specific)
+ * - TBA match history: Competition results (wins/losses/ties, ranking trends)
+ * 
+ * Indexed by teamNumber for fast lookups.
+ * Competition history is filtered in-memory by eventKey (no compound index needed).
+ * 
+ * Design principle: One table, multiple uses (overview, analytics, scouting reference).
+ */
+export interface TeamDatabaseSchema {
+  teamProfiles: TeamProfile;
 }

@@ -51,6 +51,43 @@ export {
 } from '../core/db/database';
 
 // ============================================================================
+// TEAM PROFILE DATABASE
+// ============================================================================
+
+// Team database instance and class
+export { teamDB, TeamDB } from '../core/db/TeamDB';
+
+// Team CRUD operations
+export {
+  saveTeamProfile,
+  saveTeamProfiles,
+  loadTeamProfile,
+  loadAllTeamProfiles,
+  loadTeamsByEvent,
+  loadTeamProfiles,
+  updateTeamRanking,
+  updateCompetitionHistory,
+  deleteTeamProfile,
+  clearAllTeamProfiles,
+  clearTeamProfilesByEvent,
+  recomputeAggregateStats,
+  getTeamDBStats,
+} from '../core/db/teamUtils';
+
+// Team data consolidation and refresh
+export {
+  refreshTeamDataForEvent,
+  refreshTeamDataForEvents,
+} from '../core/db/teamDataManager';
+
+// Team profile types
+export type {
+  TeamProfile,
+  CompetitionRecord,
+  StatboticsRanking,
+} from '../core/types/team-profile';
+
+// ============================================================================
 // GAMIFICATION EXPORTS (re-exported from template for convenience)
 // ============================================================================
 

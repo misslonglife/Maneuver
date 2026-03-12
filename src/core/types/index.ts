@@ -8,6 +8,7 @@
  * - scouting-entry.ts: ScoutingEntryBase and match scouting types
  * - team-stats.ts: TeamStats calculated statistics
  * - pit-scouting.ts: PitScoutingEntryBase and pit scouting types
+ * - team-profile.ts: TeamProfile unified team metadata (TBA + Statbotics + history)
  */
 
 // Match scouting types
@@ -18,3 +19,6 @@ export * from './team-stats';
 
 // Pit scouting types
 export * from './pit-scouting';
+
+// Team profile types (single source of truth for team metadata)
+export * from './team-profile';

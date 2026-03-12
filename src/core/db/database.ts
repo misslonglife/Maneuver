@@ -4,9 +4,14 @@
  * This is the year-agnostic database infrastructure.
  * Game-specific data goes in the `gameData` field as JSON.
  * 
- * Two separate databases:
+ * DATABASES in this framework:
  * 1. MatchScoutingDB - Match scouting entries
  * 2. PitScoutingDB - Pit scouting/robot capabilities
+ * 3. TeamDB - SINGLE SOURCE OF TRUTH for team metadata (see src/core/db/TeamDB.ts)
+ *    - Consolidates TBA team info + Statbotics rankings + competition history
+ *    - Managed via teamUtils.ts (CRUD) and teamDataManager.ts (orchestration)
+ * 
+ * See src/types/database.ts for complete schema documentation.
  */
 
 import Dexie, { type Table } from 'dexie';
