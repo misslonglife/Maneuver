@@ -5,22 +5,26 @@
 | **maneuver-core** | Framework template | [GitHub](https://github.com/ShinyShips/maneuver-core) |
 | **Maneuver-2026** | 2026 REBUILT implementation (this repo) | Active Development |
 
-```
-
 ## 🛠️ Tech Stack
 
 | Category | Technology |
 |----------|------------|
 | Frontend | React 18 + TypeScript + Vite |
-| Backtend | Google Cloud +
+| Backend | Node.js + Express (Google Cloud Run / Cloud Functions) |
 | Styling | Tailwind CSS + shadcn/ui |
 | Database | Dexie.js (IndexedDB) |
-| PWA | Vite PWA plugin |
-| Data Transfer | QR fountain codes + JSON |
-| API | The Blue Alliance (TBA) |
-| Deployment | Netlify / Vercel |
+| PWA | Vite PWA Plugin |
+| Cloud Sync | Google Sheets API |
+| Data Transfer | QR Fountain Codes + JSON |
+| External APIs | The Blue Alliance (TBA), Statbotics |
+| Deployment (Frontend) | Netlify / Vercel |
+| Deployment (Backend) | Google Cloud Run / Cloud Functions |
 
-```
+---
+
+## 📦 System Architecture
+
+
 ## 📝 License
 
 MIT License - see [LICENSE](LICENSE) for details.
