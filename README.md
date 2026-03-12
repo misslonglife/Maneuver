@@ -12,6 +12,7 @@
 | Category | Technology |
 |----------|------------|
 | Frontend | React 18 + TypeScript + Vite |
+| Backtend | Google Cloud +
 | Styling | Tailwind CSS + shadcn/ui |
 | Database | Dexie.js (IndexedDB) |
 | PWA | Vite PWA plugin |
@@ -19,6 +20,7 @@
 | API | The Blue Alliance (TBA) |
 | Deployment | Netlify / Vercel |
 
+```
 ## 📝 License
 
 MIT License - see [LICENSE](LICENSE) for details.
