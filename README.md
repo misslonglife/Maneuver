@@ -23,6 +23,17 @@
 ---
 
 ## 📦 System Architecture
+Scout Tablet (PWA)
+↓
+React + Dexie (IndexedDB)
+↓
+Sync Service
+↓
+Backend API (Express)
+↓
+Google Sheets API
+↓
+Google Sheets Dashboard
 
 
 ## 📝 License
