@@ -1,0 +1,23 @@
+## Core Architecture Concept
+
+### 1. Offline First with Dexie (IndexedDB)
+- Free; user data is saved locally when offline.
+- All data is initially stored on the client side.
+
+### 2. Online Sync to Google Sheets
+- Directly serves as a report and statistics dashboard.
+- Sheets API free quota is sufficient for normal competition use.
+- Batch writes can be used to reduce API request frequency.
+
+### 3. ML / Analytics → Backend Pulls Data as Needed
+- No need to write data in real-time to cloud Firestore.
+- Periodically export data from Google Sheets to Node.js / Python / Cloud Functions.
+- ML training or predictions can be performed on the backend.
+- Sheets provides historical data for free, saving Firestore credits.
+
+### 4. Optional Caching / Batch Processing
+- For partial real-time functionality, deploy a lightweight Node.js API.
+- The API only pulls data in batches when users are online or sends predictions.
+- Avoids full real-time Firestore usage and high costs.
+
+### 5. Data Flow Overview
