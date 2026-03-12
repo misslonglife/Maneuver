@@ -7,17 +7,6 @@
  * Game-specific data is stored in the `gameData` field.
  */
 
-/**
- * Standard FRC drivetrain types
- * Swerve is becoming dominant, but all types are still in use
- */
-export type DrivetrainType = 'swerve' | 'tank' | 'mecanum' | 'other';
-
-/**
- * Standard FRC programming languages
- * Java is the most common, followed by C++ and Python
- */
-export type ProgrammingLanguage = 'Java' | 'C++' | 'Python' | 'LabVIEW' | 'other';
 
 /**
  * Base interface for pit scouting entries
