@@ -7,6 +7,14 @@ import {
 } from "@/core/db/database";
 import { toast } from "sonner";
 
+interface NotesObject {
+  general?: string;
+  sponsors?: string;
+  outreach?: string;
+  uniqueMechanisms?: string;
+  autoReport?: string;
+}
+
 interface PitScoutingFormState {
   teamNumber: number | "";
   eventKey: string;
@@ -15,7 +23,7 @@ interface PitScoutingFormState {
   // weight?: number;
   // drivetrain?: DrivetrainType;
   // programmingLanguage?: ProgrammingLanguage;
-  notes?: string;
+  notes?: NotesObject;
   gameData?: Record<string, unknown>;
 }
 
@@ -31,7 +39,7 @@ interface UsePitScoutingFormReturn {
   // setWeight: (value: number | undefined) => void;
   // setDrivetrain: (value: DrivetrainType | undefined) => void;
   // setProgrammingLanguage: (value: ProgrammingLanguage | undefined) => void;
-  setNotes: (value: string | undefined) => void;
+  setNotes: (value: NotesObject | undefined) => void;
 
   // Game data setter (for game-specific questions)
   setGameData: (data: Record<string, unknown> | undefined) => void;
@@ -134,7 +142,7 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
   //   []
   // );
 
-  const setNotes = useCallback((value: string | undefined) => {
+  const setNotes = useCallback((value: NotesObject | undefined) => {
     setFormState((prev) => ({ ...prev, notes: value }));
   }, []);
 

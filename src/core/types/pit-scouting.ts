@@ -56,7 +56,13 @@ export interface PitScoutingEntryBase {
     // weight?: number;                // Robot weight in pounds
     // drivetrain?: DrivetrainType;    // Standard FRC drivetrain types
     // programmingLanguage?: ProgrammingLanguage; // Standard FRC programming languages
-    notes?: string;                 // General observations
+    notes?: {
+    general?: string;
+    sponsors?: string;
+    outreach?: string;
+    uniqueMechanisms?: string;
+    autoReport?: string;
+  };
 
     // Game-specific data (defined by game implementation)
     gameData: Record<string, unknown>; // Game implementations define typed structure here (required, use {} for empty)
