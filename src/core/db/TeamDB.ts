@@ -29,7 +29,7 @@ export class TeamDB extends Dexie {
       // - teamNumber: primary key, enables by-team lookups
       // - competitionHistory entries don't have eventKey at root level,
       //   so queries by event should filter in-memory after bulk load
-      teamProfiles: '++teamNumber', // Primary key: team number
+      teamProfiles: 'teamNumber', // Primary key: team number
     });
   }
 }

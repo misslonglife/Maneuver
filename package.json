@@ -65,10 +65,13 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "cors": "^2.8.6",
     "d3": "^7.9.0",
     "dexie": "^4.2.1",
     "dexie-react-hooks": "^1.1.7",
+    "express": "^5.2.1",
     "framer-motion": "^11.18.2",
+    "googleapis": "^171.4.0",
     "js-base64": "^3.7.8",
     "jsqr": "^1.4.0",
     "luby-transform": "^0.2.0",
@@ -89,6 +92,7 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "vaul": "^1.1.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
