@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Label } from "@/core/components/ui/label";
 import { Input } from "@/core/components/ui/input";
 import { Button } from "@/core/components/ui/button";
@@ -5,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/c
 import { Badge } from "@/core/components/ui/badge";
 import { EventNameSelector } from "@/core/components/GameStartComponents/EventNameSelector";
 import { User, Hash, Calendar, FolderOpen, ClipboardList } from "lucide-react";
+import { TeamCard } from "@/core/components/team";
+import { loadTeamProfile } from "@/core/db/teamUtils";
+import type { TeamProfile } from "@/core/types/team-profile";
 
 interface BasicInformationProps {
   teamNumber: number | "";
@@ -33,6 +37,32 @@ export function BasicInformation({
   assignedTeamsCount = 0,
   completedAssignedCount = 0,
 }: BasicInformationProps) {
+  const [teamProfile, setTeamProfile] = useState<TeamProfile | null>(null);
+  const [isLoadingTeam, setIsLoadingTeam] = useState(false);
+
+  // Fetch team profile when team number changes
+  useEffect(() => {
+    const fetchTeamProfile = async () => {
+      if (teamNumber === "") {
+        setTeamProfile(null);
+        return;
+      }
+
+      setIsLoadingTeam(true);
+      try {
+        const profile = await loadTeamProfile(teamNumber);
+        setTeamProfile(profile || null);
+      } catch (error) {
+        console.error(`Failed to load team profile for team ${teamNumber}:`, error);
+        setTeamProfile(null);
+      } finally {
+        setIsLoadingTeam(false);
+      }
+    };
+
+    fetchTeamProfile();
+  }, [teamNumber]);
+
   const handleTeamNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "") {
@@ -138,6 +168,20 @@ export function BasicInformation({
             className="text-lg"
           />
         </div>
+
+        {/* Team Card Display */}
+        {teamProfile && !isLoadingTeam && (
+          <div className="mt-6 pt-4 border-t">
+            <TeamCard team={teamProfile} />
+          </div>
+        )}
+
+        {/* Loading State */}
+        {isLoadingTeam && (
+          <div className="mt-6 pt-4 border-t text-center text-sm text-muted-foreground">
+            Loading team information...
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -55,6 +55,35 @@ TBA API          Statbotics API           IndexedDB (TeamDB)
 ```
 
 ---
+           TBA API
+              │
+              │  team info
+              ▼
+        TeamDataManager
+              │
+              │ merge
+              │
+    ┌─────────┴──────────┐
+    │                    │
+Statbotics API      Match Cache
+  rankings          competition history
+    │                    │
+    └──────────┬─────────┘
+               ▼
+            TeamDB
+        (IndexedDB/Dexie)
+               │
+               │
+         teamUtils (CRUD)
+               │
+               ▼
+          React Hooks
+      useTeamProfiles()
+      useTeamProfile()
+      useTeamsForEvent()
+               │
+               ▼
+               UI
 
 ## User Workflows
 
