@@ -1,0 +1,12 @@
+node_modules
+/**/build
+**/.next
+dist
+build
+./**/.next
+commitlint.config.js
+.husky
+.git
+.gitignore
+vite.config.ts
+vitest.config.ts
