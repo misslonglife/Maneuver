@@ -1,16 +1,22 @@
-import { useMemo, useState } from "react";
-import { AlertTriangle } from "lucide-react";
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { Badge } from "@/core/components/ui/badge";
-import { Button } from "@/core/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/core/components/ui/card";
+import { useMemo, useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
+import { Badge } from '@/core/components/ui/badge';
+import { Button } from '@/core/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/core/components/ui/select";
+} from '@/core/components/ui/select';
 
 interface EventDataClearCardProps {
   eventKeys: string[];
@@ -18,7 +24,7 @@ interface EventDataClearCardProps {
 }
 
 export const EventDataClearCard = ({ eventKeys, onClearEventData }: EventDataClearCardProps) => {
-  const [selectedEventKey, setSelectedEventKey] = useState<string>("");
+  const [selectedEventKey, setSelectedEventKey] = useState<string>('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
 
@@ -34,7 +40,7 @@ export const EventDataClearCard = ({ eventKeys, onClearEventData }: EventDataCle
     try {
       await onClearEventData(selectedEventKey);
       setShowConfirm(false);
-      setSelectedEventKey("");
+      setSelectedEventKey('');
     } finally {
       setIsClearing(false);
     }
@@ -45,7 +51,7 @@ export const EventDataClearCard = ({ eventKeys, onClearEventData }: EventDataCle
       <CardHeader>
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-lg">Delete Specific Event Data</CardTitle>
-          <Badge variant={sortedEventKeys.length > 0 ? "default" : "secondary"}>
+          <Badge variant={sortedEventKeys.length > 0 ? 'default' : 'secondary'}>
             {sortedEventKeys.length} events
           </Badge>
         </div>
@@ -56,10 +62,12 @@ export const EventDataClearCard = ({ eventKeys, onClearEventData }: EventDataCle
       <CardContent className="space-y-4">
         <Select value={selectedEventKey} onValueChange={setSelectedEventKey}>
           <SelectTrigger>
-            <SelectValue placeholder={sortedEventKeys.length > 0 ? "Select an event" : "No events found"} />
+            <SelectValue
+              placeholder={sortedEventKeys.length > 0 ? 'Select an event' : 'No events found'}
+            />
           </SelectTrigger>
           <SelectContent>
-            {sortedEventKeys.map((eventKey) => (
+            {sortedEventKeys.map(eventKey => (
               <SelectItem key={eventKey} value={eventKey}>
                 {eventKey}
               </SelectItem>
@@ -81,7 +89,8 @@ export const EventDataClearCard = ({ eventKeys, onClearEventData }: EventDataCle
             <Alert>
               <AlertTriangle className="h-5 w-5" color="red" />
               <AlertDescription>
-                This will permanently delete all stored scouting and cached API data for <strong>{selectedEventKey}</strong>.
+                This will permanently delete all stored scouting and cached API data for{' '}
+                <strong>{selectedEventKey}</strong>.
               </AlertDescription>
             </Alert>
             <div className="flex gap-2">
@@ -92,7 +101,7 @@ export const EventDataClearCard = ({ eventKeys, onClearEventData }: EventDataCle
                 disabled={isClearing}
                 onClick={handleConfirmDelete}
               >
-                {isClearing ? "Deleting..." : "Yes, Delete Event"}
+                {isClearing ? 'Deleting...' : 'Yes, Delete Event'}
               </Button>
               <Button
                 variant="outline"

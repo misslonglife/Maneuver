@@ -1,9 +1,9 @@
 /**
  * React Hook for TBA Match Validation Data
- * 
+ *
  * Provides a unified interface for fetching and caching TBA match data
  * with automatic cache management.
- * 
+ *
  * Phase 2: TBA Integration - React Hook
  */
 
@@ -38,10 +38,18 @@ export interface UseTBAMatchDataReturn {
   cacheMetadata: TBACacheMetadata | null;
   isOnline: boolean;
   cacheExpired: boolean;
-  
+
   // Functions
-  fetchMatch: (matchKey: string, apiKey: string, forceRefresh?: boolean) => Promise<TBAMatchData | null>;
-  fetchEventMatches: (eventKey: string, apiKey: string, forceRefresh?: boolean) => Promise<TBAMatchData[]>;
+  fetchMatch: (
+    matchKey: string,
+    apiKey: string,
+    forceRefresh?: boolean
+  ) => Promise<TBAMatchData | null>;
+  fetchEventMatches: (
+    eventKey: string,
+    apiKey: string,
+    forceRefresh?: boolean
+  ) => Promise<TBAMatchData[]>;
   getMatch: (matchKey: string) => Promise<TBAMatchData | null>;
   clearCache: (eventKey: string) => Promise<void>;
   refreshCacheStats: () => Promise<void>;
@@ -49,11 +57,11 @@ export interface UseTBAMatchDataReturn {
 
 /**
  * Hook for fetching and caching TBA match data
- * 
+ *
  * @example
  * ```tsx
  * const { fetchEventMatches, matches, loading } = useTBAMatchData();
- * 
+ *
  * useEffect(() => {
  *   fetchEventMatches('2025mrcmp', apiKey);
  * }, []);
@@ -71,10 +79,10 @@ export function useTBAMatchData(): UseTBAMatchDataReturn {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -84,181 +92,191 @@ export function useTBAMatchData(): UseTBAMatchDataReturn {
   /**
    * Fetch a single match from TBA (with caching)
    */
-  const fetchMatch = useCallback(async (
-    matchKey: string,
-    apiKey: string,
-    forceRefresh: boolean = false
-  ): Promise<TBAMatchData | null> => {
-    setLoading(true);
-    setError(null);
+  const fetchMatch = useCallback(
+    async (
+      matchKey: string,
+      apiKey: string,
+      forceRefresh: boolean = false
+    ): Promise<TBAMatchData | null> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Check cache first unless force refresh
-      if (!forceRefresh) {
-        const cached = await getCachedTBAMatch(matchKey);
-        if (cached) {
-          console.log(`Using cached data for match ${matchKey}`);
-          return cached as TBAMatchData;  // Type assertion: cache stores generic, we return typed
+      try {
+        // Check cache first unless force refresh
+        if (!forceRefresh) {
+          const cached = await getCachedTBAMatch(matchKey);
+          if (cached) {
+            console.log(`Using cached data for match ${matchKey}`);
+            return cached as TBAMatchData; // Type assertion: cache stores generic, we return typed
+          }
         }
+
+        // Fetch from TBA
+        console.log(`Fetching match ${matchKey} from TBA`);
+        const matchData = await fetchTBAMatchDetail(matchKey, apiKey);
+
+        // Cache the result
+        await cacheTBAMatch(matchData);
+
+        return matchData;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch match data';
+        setError(errorMessage);
+        toast.error(errorMessage);
+        return null;
+      } finally {
+        setLoading(false);
       }
-
-      // Fetch from TBA
-      console.log(`Fetching match ${matchKey} from TBA`);
-      const matchData = await fetchTBAMatchDetail(matchKey, apiKey);
-
-      // Cache the result
-      await cacheTBAMatch(matchData);
-
-      return matchData;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch match data';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   /**
    * Fetch all matches for an event from TBA (with offline-first caching)
    */
-  const fetchEventMatches = useCallback(async (
-    eventKey: string,
-    apiKey: string,
-    forceRefresh: boolean = false
-  ): Promise<TBAMatchData[]> => {
-    const requestKey = `${eventKey}:${forceRefresh ? 'force' : 'normal'}`;
-    const existingRequest = inFlightEventFetches.get(requestKey);
-    if (existingRequest) {
-      return existingRequest;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    const requestPromise = (async () => {
-      try {
-      const isDemoEvent = /^demo/i.test(eventKey);
-
-      // Check cache first (always, even if expired - offline-first)
-      const cached = await getCachedTBAEventMatches(eventKey, true); // true = include expired
-      
-      // Check cache expiration status
-      const expiration = await getCacheExpiration(eventKey);
-      setCacheExpired(expiration.isExpired);
-      
-      // If we have cached data and we're offline, use it regardless of expiration
-      if (cached.length > 0 && !navigator.onLine) {
-        console.log(`Using cached data for event ${eventKey} (offline mode)`);
-        setMatches(cached);
-        
-        // Update metadata
-        const meta = await getCacheMetadata(eventKey);
-        setCacheMetadata(meta);
-        
-        if (expiration.isExpired) {
-          toast.warning(`Showing cached data (offline). Last updated ${formatCacheAge(expiration.lastFetchedAt!)}`);
-        } else {
-          toast.success(`Loaded ${cached.length} matches from cache (offline)`);
-        }
-        
-        return cached;
-      }
-      
-      // If we have fresh cached data and not forcing refresh, use it
-      if (cached.length > 0 && !forceRefresh && !expiration.isExpired) {
-        console.log(`Using fresh cached data for event ${eventKey}`);
-        setMatches(cached);
-        
-        // Update metadata
-        const meta = await getCacheMetadata(eventKey);
-        setCacheMetadata(meta);
-        
-        toast.success(`Loaded ${cached.length} matches from cache`);
-        return cached;
+  const fetchEventMatches = useCallback(
+    async (
+      eventKey: string,
+      apiKey: string,
+      forceRefresh: boolean = false
+    ): Promise<TBAMatchData[]> => {
+      const requestKey = `${eventKey}:${forceRefresh ? 'force' : 'normal'}`;
+      const existingRequest = inFlightEventFetches.get(requestKey);
+      if (existingRequest) {
+        return existingRequest;
       }
 
-      // Demo events are local-only and should never call TBA/proxy
-      if (isDemoEvent) {
-        if (cached.length > 0) {
-          console.log(`Using cached local demo data for event ${eventKey}`);
-          setMatches(cached);
-          const meta = await getCacheMetadata(eventKey);
-          setCacheMetadata(meta);
+      setLoading(true);
+      setError(null);
+
+      const requestPromise = (async () => {
+        try {
+          const isDemoEvent = /^demo/i.test(eventKey);
+
+          // Check cache first (always, even if expired - offline-first)
+          const cached = await getCachedTBAEventMatches(eventKey, true); // true = include expired
+
+          // Check cache expiration status
+          const expiration = await getCacheExpiration(eventKey);
           setCacheExpired(expiration.isExpired);
-          toast.success(`Loaded ${cached.length} demo matches from local cache`);
-          return cached;
+
+          // If we have cached data and we're offline, use it regardless of expiration
+          if (cached.length > 0 && !navigator.onLine) {
+            console.log(`Using cached data for event ${eventKey} (offline mode)`);
+            setMatches(cached);
+
+            // Update metadata
+            const meta = await getCacheMetadata(eventKey);
+            setCacheMetadata(meta);
+
+            if (expiration.isExpired) {
+              toast.warning(
+                `Showing cached data (offline). Last updated ${formatCacheAge(expiration.lastFetchedAt!)}`
+              );
+            } else {
+              toast.success(`Loaded ${cached.length} matches from cache (offline)`);
+            }
+
+            return cached;
+          }
+
+          // If we have fresh cached data and not forcing refresh, use it
+          if (cached.length > 0 && !forceRefresh && !expiration.isExpired) {
+            console.log(`Using fresh cached data for event ${eventKey}`);
+            setMatches(cached);
+
+            // Update metadata
+            const meta = await getCacheMetadata(eventKey);
+            setCacheMetadata(meta);
+
+            toast.success(`Loaded ${cached.length} matches from cache`);
+            return cached;
+          }
+
+          // Demo events are local-only and should never call TBA/proxy
+          if (isDemoEvent) {
+            if (cached.length > 0) {
+              console.log(`Using cached local demo data for event ${eventKey}`);
+              setMatches(cached);
+              const meta = await getCacheMetadata(eventKey);
+              setCacheMetadata(meta);
+              setCacheExpired(expiration.isExpired);
+              toast.success(`Loaded ${cached.length} demo matches from local cache`);
+              return cached;
+            }
+
+            throw new Error(
+              'No local demo match cache found. Load Demo Data from Home page first.'
+            );
+          }
+
+          // If we're online, try to fetch fresh data
+          if (navigator.onLine) {
+            console.log(`Fetching event ${eventKey} from TBA`);
+            const matchesData = await fetchTBAEventMatchesDetailed(eventKey, apiKey);
+
+            // Filter for matches with score breakdowns only
+            const matchesWithBreakdowns = matchesData.filter(hasScoreBreakdown);
+
+            // Cache the results (replaces old data)
+            await cacheTBAMatches(matchesWithBreakdowns);
+
+            setMatches(matchesWithBreakdowns);
+            setCacheExpired(false);
+
+            // Update metadata
+            const meta = await getCacheMetadata(eventKey);
+            setCacheMetadata(meta);
+
+            toast.success(`Loaded ${matchesWithBreakdowns.length} matches from TBA`);
+            return matchesWithBreakdowns;
+          }
+
+          // If we reach here, we're offline and have no cache
+          throw new Error('No cached data available and you are offline');
+        } catch (err) {
+          const errorMessage = err instanceof Error ? err.message : 'Failed to fetch event matches';
+          setError(errorMessage);
+
+          // Don't show error toast if we're offline and have cached data
+          const cached = await getCachedTBAEventMatches(eventKey, true);
+          if (cached.length === 0 || navigator.onLine) {
+            toast.error(errorMessage);
+          }
+
+          return [];
         }
+      })();
 
-        throw new Error('No local demo match cache found. Load Demo Data from Home page first.');
+      inFlightEventFetches.set(requestKey, requestPromise);
+
+      try {
+        return await requestPromise;
+      } finally {
+        inFlightEventFetches.delete(requestKey);
+        setLoading(false);
       }
-      
-      // If we're online, try to fetch fresh data
-      if (navigator.onLine) {
-        console.log(`Fetching event ${eventKey} from TBA`);
-        const matchesData = await fetchTBAEventMatchesDetailed(eventKey, apiKey);
+    },
+    []
+  );
 
-        // Filter for matches with score breakdowns only
-        const matchesWithBreakdowns = matchesData.filter(hasScoreBreakdown);
+  /**
+   * Format cache age for display
+   */
+  function formatCacheAge(timestamp: number): string {
+    const ageMs = Date.now() - timestamp;
+    const ageMinutes = Math.floor(ageMs / (1000 * 60));
 
-        // Cache the results (replaces old data)
-        await cacheTBAMatches(matchesWithBreakdowns);
-
-        setMatches(matchesWithBreakdowns);
-        setCacheExpired(false);
-        
-        // Update metadata
-        const meta = await getCacheMetadata(eventKey);
-        setCacheMetadata(meta);
-
-        toast.success(`Loaded ${matchesWithBreakdowns.length} matches from TBA`);
-        return matchesWithBreakdowns;
-      }
-      
-      // If we reach here, we're offline and have no cache
-      throw new Error('No cached data available and you are offline');
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch event matches';
-        setError(errorMessage);
-      
-        // Don't show error toast if we're offline and have cached data
-        const cached = await getCachedTBAEventMatches(eventKey, true);
-        if (cached.length === 0 || navigator.onLine) {
-          toast.error(errorMessage);
-        }
-      
-        return [];
-      }
-    })();
-
-    inFlightEventFetches.set(requestKey, requestPromise);
-
-    try {
-      return await requestPromise;
-    } finally {
-      inFlightEventFetches.delete(requestKey);
-      setLoading(false);
+    if (ageMinutes < 1) {
+      return 'just now';
+    } else if (ageMinutes < 60) {
+      return `${ageMinutes} min ago`;
+    } else {
+      const ageHours = Math.floor(ageMinutes / 60);
+      const remainingMins = ageMinutes % 60;
+      return `${ageHours}h ${remainingMins}m ago`;
     }
-  }, []);
-
-/**
- * Format cache age for display
- */
-function formatCacheAge(timestamp: number): string {
-  const ageMs = Date.now() - timestamp;
-  const ageMinutes = Math.floor(ageMs / (1000 * 60));
-  
-  if (ageMinutes < 1) {
-    return 'just now';
-  } else if (ageMinutes < 60) {
-    return `${ageMinutes} min ago`;
-  } else {
-    const ageHours = Math.floor(ageMinutes / 60);
-    const remainingMins = ageMinutes % 60;
-    return `${ageHours}h ${remainingMins}m ago`;
   }
-}
 
   /**
    * Get a match from cache only (no API call)

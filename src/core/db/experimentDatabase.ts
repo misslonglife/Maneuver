@@ -17,7 +17,8 @@ export class ExperimentDB extends Dexie {
 
     this.version(1).stores({
       sessions: 'id, participantCode, group, createdAt, completedAt',
-      responses: 'id, sessionId, clipId, block, interfaceType, startedAt, submittedAt, [sessionId+block]',
+      responses:
+        'id, sessionId, clipId, block, interfaceType, startedAt, submittedAt, [sessionId+block]',
       answerKeys: 'id, clipId, updatedAt',
       preferences: 'id, sessionId, submittedAt',
     });
@@ -26,7 +27,7 @@ export class ExperimentDB extends Dexie {
 
 export const experimentDB = new ExperimentDB();
 
-experimentDB.open().catch((error) => {
+experimentDB.open().catch(error => {
   console.error('Failed to open ExperimentDB:', error);
 });
 
@@ -96,20 +97,27 @@ export const importExperimentBundle = async (bundle: {
   answerKeys?: ExperimentAnswerKey[];
   preferences?: ExperimentPreferenceForm[];
 }) => {
-  await experimentDB.transaction('rw', experimentDB.sessions, experimentDB.responses, experimentDB.answerKeys, experimentDB.preferences, async () => {
-    if (bundle.sessions?.length) {
-      await experimentDB.sessions.bulkPut(bundle.sessions);
+  await experimentDB.transaction(
+    'rw',
+    experimentDB.sessions,
+    experimentDB.responses,
+    experimentDB.answerKeys,
+    experimentDB.preferences,
+    async () => {
+      if (bundle.sessions?.length) {
+        await experimentDB.sessions.bulkPut(bundle.sessions);
+      }
+      if (bundle.responses?.length) {
+        await experimentDB.responses.bulkPut(bundle.responses);
+      }
+      if (bundle.answerKeys?.length) {
+        await experimentDB.answerKeys.bulkPut(bundle.answerKeys);
+      }
+      if (bundle.preferences?.length) {
+        await experimentDB.preferences.bulkPut(bundle.preferences);
+      }
     }
-    if (bundle.responses?.length) {
-      await experimentDB.responses.bulkPut(bundle.responses);
-    }
-    if (bundle.answerKeys?.length) {
-      await experimentDB.answerKeys.bulkPut(bundle.answerKeys);
-    }
-    if (bundle.preferences?.length) {
-      await experimentDB.preferences.bulkPut(bundle.preferences);
-    }
-  });
+  );
 
   return {
     sessions: bundle.sessions?.length ?? 0,
@@ -120,10 +128,17 @@ export const importExperimentBundle = async (bundle: {
 };
 
 export const clearExperimentData = async () => {
-  await experimentDB.transaction('rw', experimentDB.sessions, experimentDB.responses, experimentDB.answerKeys, experimentDB.preferences, async () => {
-    await experimentDB.sessions.clear();
-    await experimentDB.responses.clear();
-    await experimentDB.answerKeys.clear();
-    await experimentDB.preferences.clear();
-  });
+  await experimentDB.transaction(
+    'rw',
+    experimentDB.sessions,
+    experimentDB.responses,
+    experimentDB.answerKeys,
+    experimentDB.preferences,
+    async () => {
+      await experimentDB.sessions.clear();
+      await experimentDB.responses.clear();
+      await experimentDB.answerKeys.clear();
+      await experimentDB.preferences.clear();
+    }
+  );
 };

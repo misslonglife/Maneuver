@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Validation Summary Card Component
- * 
+ *
  * Displays aggregate statistics from validation results.
  * Shows total validated, passed, flagged, failed matches,
  * and detailed discrepancy counts.
@@ -33,15 +33,21 @@ export const ValidationSummaryCard: React.FC<ValidationSummaryCardProps> = ({ su
           </div>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Passed</p>
-            <p className="text-2xl font-bold text-green-500 dark:text-green-400">{summary.passedMatches}</p>
+            <p className="text-2xl font-bold text-green-500 dark:text-green-400">
+              {summary.passedMatches}
+            </p>
           </div>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Flagged</p>
-            <p className="text-2xl font-bold text-yellow-500 dark:text-yellow-400">{summary.flaggedMatches}</p>
+            <p className="text-2xl font-bold text-yellow-500 dark:text-yellow-400">
+              {summary.flaggedMatches}
+            </p>
           </div>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Failed</p>
-            <p className="text-2xl font-bold text-red-500 dark:text-red-400">{summary.failedMatches}</p>
+            <p className="text-2xl font-bold text-red-500 dark:text-red-400">
+              {summary.failedMatches}
+            </p>
           </div>
         </div>
 
@@ -53,11 +59,15 @@ export const ValidationSummaryCard: React.FC<ValidationSummaryCardProps> = ({ su
             </div>
             <div>
               <p className="text-muted-foreground">Critical</p>
-              <p className="font-medium text-red-500 dark:text-red-400">{summary.criticalDiscrepancies}</p>
+              <p className="font-medium text-red-500 dark:text-red-400">
+                {summary.criticalDiscrepancies}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Warnings</p>
-              <p className="font-medium text-yellow-500 dark:text-yellow-400">{summary.warningDiscrepancies}</p>
+              <p className="font-medium text-yellow-500 dark:text-yellow-400">
+                {summary.warningDiscrepancies}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Avg Confidence</p>

@@ -1,8 +1,15 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/core/components/ui/dialog";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/core/components/ui/dialog';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import type { ConflictInfo } from '@/core/lib/scoutingDataUtils';
 
@@ -29,7 +36,7 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
   onBatchResolve,
   onUndo,
   canUndo = false,
-  isProcessing = false
+  isProcessing = false,
 }) => {
   if (!conflict) return null;
 
@@ -51,21 +58,21 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
             <div className="flex flex-col items-center gap-3 bg-card p-6 rounded-lg shadow-lg border">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm font-medium">Processing conflicts...</p>
-              <p className="text-xs text-muted-foreground">This may take a moment for large datasets</p>
+              <p className="text-xs text-muted-foreground">
+                This may take a moment for large datasets
+              </p>
             </div>
           </div>
         )}
-        
+
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
             Data Conflict Detected
           </DialogTitle>
           <DialogDescription>
-            Conflict {currentIndex + 1} of {totalConflicts} • 
-            Match {incomingData.matchNumber} • 
-            Team {incomingData.teamNumber} • 
-            {incomingData.allianceColor} Alliance
+            Conflict {currentIndex + 1} of {totalConflicts} • Match {incomingData.matchNumber} •
+            Team {incomingData.teamNumber} •{incomingData.allianceColor} Alliance
           </DialogDescription>
         </DialogHeader>
 
@@ -76,12 +83,12 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
               <p className="text-sm text-amber-800 dark:text-amber-200">
                 {conflict.conflictType === 'corrected-vs-uncorrected' ? (
                   <>
-                    <strong>Your local data has been corrected</strong>, but the incoming data is uncorrected. 
-                    This typically means you have more accurate information locally.
+                    <strong>Your local data has been corrected</strong>, but the incoming data is
+                    uncorrected. This typically means you have more accurate information locally.
                   </>
                 ) : (
                   <>
-                    <strong>Both entries have been corrected</strong>, but at different times. 
+                    <strong>Both entries have been corrected</strong>, but at different times.
                     Review both to determine which has the most accurate information.
                   </>
                 )}
@@ -92,7 +99,9 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
           {/* Side-by-side comparison */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Local (Current) Data */}
-            <Card className={!conflict.isNewerIncoming ? 'border-blue-200 dark:border-blue-800' : ''}>
+            <Card
+              className={!conflict.isNewerIncoming ? 'border-blue-200 dark:border-blue-800' : ''}
+            >
               <CardHeader>
                 <CardTitle className="text-base flex items-center justify-between">
                   <span>Local (Current)</span>
@@ -113,7 +122,10 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
                 {localData.isCorrected && (
                   <>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+                      >
                         Corrected
                       </Badge>
                       {localData.correctionCount && localData.correctionCount > 1 && (
@@ -146,7 +158,9 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
             </Card>
 
             {/* Incoming Data */}
-            <Card className={conflict.isNewerIncoming ? 'border-green-200 dark:border-green-800' : ''}>
+            <Card
+              className={conflict.isNewerIncoming ? 'border-green-200 dark:border-green-800' : ''}
+            >
               <CardHeader>
                 <CardTitle className="text-base flex items-center justify-between">
                   <span>Incoming (From Import)</span>
@@ -158,23 +172,27 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
               <CardContent className="space-y-2 text-sm">
                 <div>
                   <span className="font-medium">Scout: </span>
-                  {incomingData.scoutName as string || 'Unknown'}
+                  {(incomingData.scoutName as string) || 'Unknown'}
                 </div>
                 <div>
                   <span className="font-medium">Timestamp: </span>
                   {formatTimestamp(conflict.incoming.timestamp)}
                 </div>
-                {incomingData.isCorrected as boolean && (
+                {(incomingData.isCorrected as boolean) && (
                   <>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+                      >
                         Corrected
                       </Badge>
-                      {Boolean(incomingData.correctionCount) && Number(incomingData.correctionCount) > 1 && (
-                        <span className="text-xs text-muted-foreground">
-                          ({String(incomingData.correctionCount)} times)
-                        </span>
-                      )}
+                      {Boolean(incomingData.correctionCount) &&
+                        Number(incomingData.correctionCount) > 1 && (
+                          <span className="text-xs text-muted-foreground">
+                            ({String(incomingData.correctionCount)} times)
+                          </span>
+                        )}
                     </div>
                     {incomingData.lastCorrectedAt && (
                       <div>
@@ -204,12 +222,17 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
           {conflict.changedFields && conflict.changedFields.length > 0 && (
             <Card className="border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20">
               <CardHeader>
-                <CardTitle className="text-base">Changed Fields ({conflict.changedFields.length})</CardTitle>
+                <CardTitle className="text-base">
+                  Changed Fields ({conflict.changedFields.length})
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {conflict.changedFields.map(({ field, localValue, incomingValue }) => (
-                    <div key={field} className="grid grid-cols-1 gap-2 p-3 bg-background rounded border">
+                    <div
+                      key={field}
+                      className="grid grid-cols-1 gap-2 p-3 bg-background rounded border"
+                    >
                       <div className="font-medium text-purple-700 dark:text-purple-300 text-sm">
                         {field}
                       </div>
@@ -234,14 +257,10 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
         <DialogFooter className="flex flex-col gap-3">
           {/* All buttons in one grid - undo spans both columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
-            <Button 
-              onClick={() => onResolve('skip')}
-              className="p-2"
-              disabled={isProcessing}
-            >
+            <Button onClick={() => onResolve('skip')} className="p-2" disabled={isProcessing}>
               Skip - Keep Local Data
             </Button>
-            <Button 
+            <Button
               variant="destructive"
               onClick={() => onResolve('replace')}
               className="p-2"
@@ -249,41 +268,45 @@ const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
             >
               Replace - Use Incoming Data
             </Button>
-            
+
             {/* Batch actions in same grid */}
             {totalConflicts > 1 && onBatchResolve && (
               <>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => onBatchResolve('skip')}
                   className="p-2"
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
-                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...</>
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...
+                    </>
                   ) : (
                     <>Skip All Remaining ({totalConflicts - currentIndex - 1} left)</>
                   )}
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => onBatchResolve('replace')}
                   className="p-2"
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
-                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...</>
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...
+                    </>
                   ) : (
                     <>Replace All Remaining ({totalConflicts - currentIndex - 1} left)</>
                   )}
                 </Button>
               </>
             )}
-            
+
             {/* Undo button spans both columns */}
             {canUndo && onUndo && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={onUndo}
                 className="p-2 sm:col-span-2"
                 disabled={isProcessing}

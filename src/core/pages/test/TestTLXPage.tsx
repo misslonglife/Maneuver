@@ -9,13 +9,18 @@ import {
   getResponsesBySession,
   saveExperimentResponse,
 } from '@/core/db/experimentDatabase';
-import type { ExperimentResponse, ExperimentSession, TLXRawScores } from '@/core/lib/experiment/types';
+import type {
+  ExperimentResponse,
+  ExperimentSession,
+  TLXRawScores,
+} from '@/core/lib/experiment/types';
 
 const tlxPrompts = [
   {
     key: 'mentalDemand',
     label: 'Mental Demand',
-    description: 'How much mental and perceptual activity was required (thinking, deciding, calculating, remembering, looking, searching)?',
+    description:
+      'How much mental and perceptual activity was required (thinking, deciding, calculating, remembering, looking, searching)?',
     lowAnchor: 'Very low',
     highAnchor: 'Very high',
   },
@@ -29,7 +34,8 @@ const tlxPrompts = [
   {
     key: 'temporalDemand',
     label: 'Temporal Demand',
-    description: 'How much time pressure did you feel due to the pace or rate at which tasks occurred?',
+    description:
+      'How much time pressure did you feel due to the pace or rate at which tasks occurred?',
     lowAnchor: 'Very low',
     highAnchor: 'Very high',
   },
@@ -80,21 +86,23 @@ const TestTLXPage = () => {
       return;
     }
 
-    Promise.all([getExperimentSession(sessionId), getResponsesBySession(sessionId)]).then(([loadedSession, responses]) => {
-      if (!loadedSession) {
-        navigate('/test');
-        return;
-      }
+    Promise.all([getExperimentSession(sessionId), getResponsesBySession(sessionId)]).then(
+      ([loadedSession, responses]) => {
+        if (!loadedSession) {
+          navigate('/test');
+          return;
+        }
 
-      const blockResponse = responses.find((item) => item.block === block);
-      if (!blockResponse) {
-        navigate('/test');
-        return;
-      }
+        const blockResponse = responses.find(item => item.block === block);
+        if (!blockResponse) {
+          navigate('/test');
+          return;
+        }
 
-      setSession(loadedSession);
-      setResponse(blockResponse);
-    });
+        setSession(loadedSession);
+        setResponse(blockResponse);
+      }
+    );
   }, [block, navigate, sessionId]);
 
   const nextInterface = useMemo(() => {
@@ -151,8 +159,8 @@ const TestTLXPage = () => {
                 max={10}
                 step={1}
                 value={[tlx[key]]}
-                onValueChange={(value) => {
-                  setTlx((prev) => ({
+                onValueChange={value => {
+                  setTlx(prev => ({
                     ...prev,
                     [key]: value[0] ?? prev[key],
                   }));

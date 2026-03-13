@@ -1,7 +1,7 @@
 /**
  * NotificationContext - Toast notification system
  * Framework context - game-agnostic
- * 
+ *
  * Provides a centralized notification system for displaying
  * toast messages, alerts, and confirmations.
  */
@@ -27,7 +27,7 @@ interface NotificationContextValue {
   showNotification: (notification: Omit<Notification, 'id'>) => string;
   dismissNotification: (id: string) => void;
   clearAll: () => void;
-  
+
   // Convenience methods
   success: (message: string, title?: string) => string;
   error: (message: string, title?: string) => string;
@@ -52,7 +52,7 @@ interface NotificationProviderProps {
    * Default: 5000 (5 seconds)
    */
   defaultDuration?: number;
-  
+
   /**
    * Maximum number of notifications to show at once
    * Default: 5
@@ -63,7 +63,7 @@ interface NotificationProviderProps {
 export function NotificationProvider({
   children,
   defaultDuration = 5000,
-  maxNotifications = 5
+  maxNotifications = 5,
 }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
@@ -75,10 +75,10 @@ export function NotificationProvider({
       const newNotification: Notification = {
         ...notification,
         id,
-        duration
+        duration,
       };
 
-      setNotifications((prev) => {
+      setNotifications(prev => {
         const updated = [...prev, newNotification];
         // Keep only the most recent notifications
         return updated.slice(-maxNotifications);
@@ -87,7 +87,7 @@ export function NotificationProvider({
       // Auto-dismiss if duration > 0
       if (duration > 0) {
         setTimeout(() => {
-          setNotifications((prev) => prev.filter((n) => n.id !== id));
+          setNotifications(prev => prev.filter(n => n.id !== id));
         }, duration);
       }
 
@@ -97,7 +97,7 @@ export function NotificationProvider({
   );
 
   const dismissNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
   const clearAll = useCallback(() => {
@@ -141,12 +141,8 @@ export function NotificationProvider({
     success,
     error,
     warning,
-    info
+    info,
   };
 
-  return (
-    <NotificationContext.Provider value={value}>
-      {children}
-    </NotificationContext.Provider>
-  );
+  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
 }

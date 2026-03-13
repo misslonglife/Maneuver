@@ -1,8 +1,8 @@
-import { cn } from "@/core/lib/utils";
-import { Button } from "@/core/components/ui/button";
-import { Card, CardContent } from "@/core/components/ui/card";
-import { DataAttribution } from "@/core/components/DataAttribution";
-import { useState, useEffect } from "react";
+import { cn } from '@/core/lib/utils';
+import { Button } from '@/core/components/ui/button';
+import { Card, CardContent } from '@/core/components/ui/card';
+import { DataAttribution } from '@/core/components/DataAttribution';
+import { useState, useEffect } from 'react';
 import { analytics } from '@/core/lib/analytics';
 import { haptics } from '@/core/lib/haptics';
 
@@ -23,18 +23,17 @@ interface HomePageProps {
   demoScheduleStats?: string;
 }
 
-
 const HomePage = ({
   logo,
-  appName = "Maneuver",
-  version = "2026.2.0",
+  appName = 'Maneuver',
+  version = '2026.2.0',
   onLoadDemoData,
   onLoadDemoScheduleOnly,
   onClearData,
   checkExistingData,
   demoDataDescription = "Load sample scouting data to explore the app's features",
-  demoDataStats = "Demo data loaded successfully!",
-  demoScheduleStats = "Demo schedule loaded successfully!"
+  demoDataStats = 'Demo data loaded successfully!',
+  demoScheduleStats = 'Demo schedule loaded successfully!',
 }: HomePageProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,7 +47,7 @@ const HomePage = ({
           const hasData = await checkExistingData();
           setIsLoaded(hasData);
         } catch (error) {
-          console.error("Error checking existing data:", error);
+          console.error('Error checking existing data:', error);
         }
       }
     };
@@ -83,9 +82,9 @@ const HomePage = ({
       analytics.trackEvent('demo_data_loaded');
     } catch (error) {
       haptics.error();
-      console.error("HomePage - Error loading demo data:", error);
+      console.error('HomePage - Error loading demo data:', error);
       if (error instanceof Error) {
-        console.error("Error details:", error.message, error.stack);
+        console.error('Error details:', error.message, error.stack);
       }
     } finally {
       setIsLoading(false);
@@ -108,9 +107,9 @@ const HomePage = ({
       analytics.trackEvent('demo_schedule_loaded');
     } catch (error) {
       haptics.error();
-      console.error("HomePage - Error loading demo schedule:", error);
+      console.error('HomePage - Error loading demo schedule:', error);
       if (error instanceof Error) {
-        console.error("Error details:", error.message, error.stack);
+        console.error('Error details:', error.message, error.stack);
       }
     } finally {
       setIsLoading(false);
@@ -128,7 +127,7 @@ const HomePage = ({
       setIsLoaded(false);
       analytics.trackEvent('demo_data_cleared');
     } catch (error) {
-      console.error("Error clearing data:", error);
+      console.error('Error clearing data:', error);
       setIsLoaded(false);
       analytics.trackEvent('demo_data_cleared');
     }
@@ -138,10 +137,10 @@ const HomePage = ({
     <main className="relative h-screen w-full">
       <div
         className={cn(
-          "flex flex-col h-screen w-full justify-center items-center gap-6 2xl:pb-6",
-          "bg-size-[40px_40px]",
-          "bg-[linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
-          "dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]"
+          'flex flex-col h-screen w-full justify-center items-center gap-6 2xl:pb-6',
+          'bg-size-[40px_40px]',
+          'bg-[linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]',
+          'dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]'
         )}
       >
         <div className="flex flex-col w-auto justify-center items-center gap-6 scale-75 md:scale-75 lg:scale-100">
@@ -170,19 +169,13 @@ const HomePage = ({
             <CardContent className="p-6">
               <div className="text-center space-y-4">
                 <h2 className="text-lg font-semibold">Demo Data</h2>
-                <p className="text-sm text-muted-foreground">
-                  {demoDataDescription}
-                </p>
+                <p className="text-sm text-muted-foreground">{demoDataDescription}</p>
 
                 {!isLoaded ? (
                   <div className="space-y-2">
                     {onLoadDemoData && (
-                      <Button
-                        onClick={loadDemoData}
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        {isLoading && loadingType === 'demo' ? "Loading..." : "Load Demo Data"}
+                      <Button onClick={loadDemoData} disabled={isLoading} className="w-full">
+                        {isLoading && loadingType === 'demo' ? 'Loading...' : 'Load Demo Data'}
                       </Button>
                     )}
                     {onLoadDemoScheduleOnly && (
@@ -192,7 +185,9 @@ const HomePage = ({
                         variant="outline"
                         className="w-full"
                       >
-                        {isLoading && loadingType === 'schedule' ? "Loading..." : "Load Demo Schedule"}
+                        {isLoading && loadingType === 'schedule'
+                          ? 'Loading...'
+                          : 'Load Demo Schedule'}
                       </Button>
                     )}
                   </div>
@@ -215,12 +210,7 @@ const HomePage = ({
                       {loadedType === 'schedule' ? demoScheduleStats : demoDataStats}
                     </div>
                     {onClearData && (
-                      <Button
-                        onClick={clearData}
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
+                      <Button onClick={clearData} variant="outline" size="sm" className="w-full">
                         Clear Data
                       </Button>
                     )}

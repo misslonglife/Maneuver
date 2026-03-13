@@ -1,12 +1,12 @@
 /**
  * 2026 Game-Specific Scoring Sections Component
- * 
+ *
  * Auto phase: Uses AutoFieldMap for guided path visualization
  * Teleop phase: Uses TeleopFieldMap for zone-based field tracking
  */
 
-import { AutoFieldMap } from "@/game-template/components/auto-path/AutoFieldMap";
-import { TeleopFieldMap } from "@/game-template/components/teleop-path/TeleopFieldMap";
+import { AutoFieldMap } from '@/game-template/components/auto-path/AutoFieldMap';
+import { TeleopFieldMap } from '@/game-template/components/teleop-path/TeleopFieldMap';
 
 interface ScoringSectionsProps {
   phase: 'auto' | 'teleop';
@@ -36,7 +36,6 @@ export function ScoringSections({
   onBack,
   onProceed,
 }: ScoringSectionsProps) {
-
   // ==========================================================================
   // AUTO PHASE: Field Map
   // ==========================================================================
@@ -75,4 +74,3 @@ export function ScoringSections({
     />
   );
 }
-

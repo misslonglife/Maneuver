@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
 import { Map, CheckCircle } from 'lucide-react';
 import { PitScoutLegend } from './shared/PitScoutLegend';
 import { getScoutColorMap } from './shared/scoutUtils';
@@ -75,11 +75,14 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
 
   // Calculate bounds from only the elements we're rendering (pits and areas)
   const calculateViewBox = () => {
-    let minX = 0, minY = 0, maxX = 800, maxY = 600;
+    let minX = 0,
+      minY = 0,
+      maxX = 800,
+      maxY = 600;
     const padding = 50;
 
     // Find bounds from only pits and areas (ignore walls since we don't render them)
-    const allPoints: { x: number, y: number }[] = [];
+    const allPoints: { x: number; y: number }[] = [];
 
     if (pitMapData.pits) {
       Object.values(pitMapData.pits).forEach((pit: FlexiblePitData) => {
@@ -89,7 +92,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
           if (pit.size?.x !== undefined && pit.size?.y !== undefined) {
             allPoints.push({
               x: pit.position.x + pit.size.x,
-              y: pit.position.y + pit.size.y
+              y: pit.position.y + pit.size.y,
             });
           }
         }
@@ -103,7 +106,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
           if (area.size?.x !== undefined && area.size?.y !== undefined) {
             allPoints.push({
               x: area.position.x + area.size.x,
-              y: area.position.y + area.size.y
+              y: area.position.y + area.size.y,
             });
           }
         }
@@ -151,10 +154,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
       const prevX = prevPitTyped.position?.x || prevPitTyped.x || 0;
       const prevY = prevPitTyped.position?.y || prevPitTyped.y || 0;
 
-      const distance = Math.sqrt(
-        Math.pow(currentX - prevX, 2) +
-        Math.pow(currentY - prevY, 2)
-      );
+      const distance = Math.sqrt(Math.pow(currentX - prevX, 2) + Math.pow(currentY - prevY, 2));
       return distance < 100; // Arbitrary threshold for "close"
     });
   };
@@ -184,11 +184,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
             )}
 
             {assignmentMode === 'manual' && !assignmentsConfirmed && assignments.length > 0 && (
-              <Button
-                onClick={onConfirmAssignments}
-                size="sm"
-                className="flex items-center gap-2"
-              >
+              <Button onClick={onConfirmAssignments} size="sm" className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
                 Confirm Assignments ({assignments.length} teams)
               </Button>
@@ -204,9 +200,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
             </span>
             <div className="flex items-center gap-4">
               {pitMapData.pits && (
-                <span className="text-sm">
-                  {Object.keys(pitMapData.pits).length} pit locations
-                </span>
+                <span className="text-sm">{Object.keys(pitMapData.pits).length} pit locations</span>
               )}
               {pitAddresses && (
                 <span className="text-sm text-blue-600">
@@ -230,11 +224,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
             )}
 
             {assignmentMode === 'manual' && !assignmentsConfirmed && assignments.length > 0 && (
-              <Button
-                onClick={onConfirmAssignments}
-                size="sm"
-                className="flex items-center gap-2"
-              >
+              <Button onClick={onConfirmAssignments} size="sm" className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
                 Confirm Assignments ({assignments.length} teams)
               </Button>
@@ -292,206 +282,223 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
               />
 
               {/* Render pit areas */}
-              {pitMapData.areas && Object.entries(pitMapData.areas).map(([areaId, area]: [string, FlexibleAreaData]) => {
-                const x = area.position?.x || area.x || 0;
-                const y = area.position?.y || area.y || 0;
-                const width = area.size?.x || area.width || 50;
-                const height = area.size?.y || area.height || 50;
+              {pitMapData.areas &&
+                Object.entries(pitMapData.areas).map(
+                  ([areaId, area]: [string, FlexibleAreaData]) => {
+                    const x = area.position?.x || area.x || 0;
+                    const y = area.position?.y || area.y || 0;
+                    const width = area.size?.x || area.width || 50;
+                    const height = area.size?.y || area.height || 50;
 
-                return (
-                  <g key={areaId}>
-                    <rect
-                      x={x}
-                      y={y}
-                      width={width}
-                      height={height}
-                      fill="#f3f4f6"
-                      stroke="#9ca3af"
-                      strokeWidth="2"
-                      rx="3"
-                    />
-                    <text
-                      x={x + width / 2}
-                      y={y + height / 2}
-                      textAnchor="middle"
-                      fontSize="12"
-                      fill="#374151"
-                      fontWeight="500"
-                    >
-                      {area.label || ""}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* Render pit locations with click-to-assign functionality */}
-              {pitMapData.pits && Object.entries(pitMapData.pits).map(([pitId, pit]: [string, FlexiblePitData]) => {
-                const teamNumber = pit.team ? (typeof pit.team === 'string' ? parseInt(pit.team) : pit.team) : null;
-                const x = pit.position?.x || 0;
-                const y = pit.position?.y || 0;
-                const width = pit.size?.x || 100;
-                const height = pit.size?.y || 100;
-
-                // Find assignment for this team
-                const assignment = teamNumber ? assignments.find(a => a.teamNumber === teamNumber) : null;
-                const isAssigned = !!assignment;
-                const isCompleted = assignment?.completed || false;
-                const isClickableForAssignment = assignmentMode === 'manual' && !assignmentsConfirmed && selectedScoutForAssignment && teamNumber;
-                const isClickableForCompletion = assignmentsConfirmed && isAssigned && teamNumber;
-                const isClickable = isClickableForAssignment || isClickableForCompletion;
-
-                // Get colors based on assignment
-                let fillColor = "rgba(229, 231, 235, 0.3)"; // Empty pit default
-                let strokeColor = "#9ca3af"; // Empty pit default
-
-                if (teamNumber) {
-                  if (isAssigned && assignment.scoutName) {
-                    const scoutColor = scoutColors[assignment.scoutName];
-                    if (scoutColor) {
-                      fillColor = isCompleted ? scoutColor.bg : scoutColor.bg;
-                      strokeColor = scoutColor.border;
-                      // Add opacity for non-completed assignments
-                      if (!isCompleted) {
-                        fillColor = scoutColor.bg + 'dd'; // Add transparency
-                      }
-                    }
-                  } else {
-                    // Unassigned team
-                    fillColor = "#374151";
-                    strokeColor = "#1f2937";
-                  }
-                }
-
-                // Override stroke for clickable state
-                if (isClickable) {
-                  if (isClickableForAssignment) {
-                    strokeColor = "#10b981"; // Green for assignment
-                  } else if (isClickableForCompletion) {
-                    strokeColor = "#f59e0b"; // Amber for completion toggle
-                  }
-                }
-
-                return (
-                  <g key={pitId}>
-                    {/* Pit rectangle with scout colors */}
-                    <rect
-                      x={x}
-                      y={y}
-                      width={width}
-                      height={height}
-                      fill={fillColor}
-                      stroke={strokeColor}
-                      strokeWidth={isClickable ? "3" : "2"}
-                      strokeDasharray={isClickableForAssignment ? "5,5" : "0"}
-                      rx="4"
-                      className={isClickable ? "cursor-pointer" : ""}
-                      onClick={() => {
-                        if (isClickableForAssignment && selectedScoutForAssignment) {
-                          onManualAssignment(teamNumber, selectedScoutForAssignment);
-                        } else if (isClickableForCompletion && assignment) {
-                          onToggleCompleted(assignment.id);
-                        }
-                      }}
-                    />
-
-                    {teamNumber && (
-                      <>
-                        {/* Team number */}
+                    return (
+                      <g key={areaId}>
+                        <rect
+                          x={x}
+                          y={y}
+                          width={width}
+                          height={height}
+                          fill="#f3f4f6"
+                          stroke="#9ca3af"
+                          strokeWidth="2"
+                          rx="3"
+                        />
                         <text
                           x={x + width / 2}
-                          y={y + height / 2 - 5}
+                          y={y + height / 2}
                           textAnchor="middle"
-                          fontSize="18"
-                          fill="white"
-                          fontWeight="bold"
-                          className={isClickable ? "cursor-pointer" : ""}
-                          onClick={() => {
-                            if (isClickableForAssignment && selectedScoutForAssignment) {
-                              onManualAssignment(teamNumber, selectedScoutForAssignment);
-                            } else if (isClickableForCompletion && assignment) {
-                              onToggleCompleted(assignment.id);
-                            }
-                          }}
+                          fontSize="12"
+                          fill="#374151"
+                          fontWeight="500"
                         >
-                          {teamNumber}
+                          {area.label || ''}
                         </text>
+                      </g>
+                    );
+                  }
+                )}
 
-                        {/* Scout name when assigned */}
-                        {isAssigned && (
+              {/* Render pit locations with click-to-assign functionality */}
+              {pitMapData.pits &&
+                Object.entries(pitMapData.pits).map(([pitId, pit]: [string, FlexiblePitData]) => {
+                  const teamNumber = pit.team
+                    ? typeof pit.team === 'string'
+                      ? parseInt(pit.team)
+                      : pit.team
+                    : null;
+                  const x = pit.position?.x || 0;
+                  const y = pit.position?.y || 0;
+                  const width = pit.size?.x || 100;
+                  const height = pit.size?.y || 100;
+
+                  // Find assignment for this team
+                  const assignment = teamNumber
+                    ? assignments.find(a => a.teamNumber === teamNumber)
+                    : null;
+                  const isAssigned = !!assignment;
+                  const isCompleted = assignment?.completed || false;
+                  const isClickableForAssignment =
+                    assignmentMode === 'manual' &&
+                    !assignmentsConfirmed &&
+                    selectedScoutForAssignment &&
+                    teamNumber;
+                  const isClickableForCompletion = assignmentsConfirmed && isAssigned && teamNumber;
+                  const isClickable = isClickableForAssignment || isClickableForCompletion;
+
+                  // Get colors based on assignment
+                  let fillColor = 'rgba(229, 231, 235, 0.3)'; // Empty pit default
+                  let strokeColor = '#9ca3af'; // Empty pit default
+
+                  if (teamNumber) {
+                    if (isAssigned && assignment.scoutName) {
+                      const scoutColor = scoutColors[assignment.scoutName];
+                      if (scoutColor) {
+                        fillColor = isCompleted ? scoutColor.bg : scoutColor.bg;
+                        strokeColor = scoutColor.border;
+                        // Add opacity for non-completed assignments
+                        if (!isCompleted) {
+                          fillColor = scoutColor.bg + 'dd'; // Add transparency
+                        }
+                      }
+                    } else {
+                      // Unassigned team
+                      fillColor = '#374151';
+                      strokeColor = '#1f2937';
+                    }
+                  }
+
+                  // Override stroke for clickable state
+                  if (isClickable) {
+                    if (isClickableForAssignment) {
+                      strokeColor = '#10b981'; // Green for assignment
+                    } else if (isClickableForCompletion) {
+                      strokeColor = '#f59e0b'; // Amber for completion toggle
+                    }
+                  }
+
+                  return (
+                    <g key={pitId}>
+                      {/* Pit rectangle with scout colors */}
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={fillColor}
+                        stroke={strokeColor}
+                        strokeWidth={isClickable ? '3' : '2'}
+                        strokeDasharray={isClickableForAssignment ? '5,5' : '0'}
+                        rx="4"
+                        className={isClickable ? 'cursor-pointer' : ''}
+                        onClick={() => {
+                          if (isClickableForAssignment && selectedScoutForAssignment) {
+                            onManualAssignment(teamNumber, selectedScoutForAssignment);
+                          } else if (isClickableForCompletion && assignment) {
+                            onToggleCompleted(assignment.id);
+                          }
+                        }}
+                      />
+
+                      {teamNumber && (
+                        <>
+                          {/* Team number */}
                           <text
                             x={x + width / 2}
-                            y={y + height / 2 + 12}
+                            y={y + height / 2 - 5}
                             textAnchor="middle"
-                            fontSize="10"
+                            fontSize="18"
                             fill="white"
-                            fontWeight="500"
+                            fontWeight="bold"
+                            className={isClickable ? 'cursor-pointer' : ''}
+                            onClick={() => {
+                              if (isClickableForAssignment && selectedScoutForAssignment) {
+                                onManualAssignment(teamNumber, selectedScoutForAssignment);
+                              } else if (isClickableForCompletion && assignment) {
+                                onToggleCompleted(assignment.id);
+                              }
+                            }}
                           >
-                            {assignment.scoutName}
+                            {teamNumber}
                           </text>
-                        )}
 
-                        {/* Completion checkmark overlay */}
-                        {isCompleted && (
-                          <>
-                            <circle
-                              cx={x + width - 15}
-                              cy={y + 15}
-                              r="10"
-                              fill="#10b981"
-                              stroke="white"
-                              strokeWidth="2"
-                            />
+                          {/* Scout name when assigned */}
+                          {isAssigned && (
                             <text
-                              x={x + width - 15}
-                              y={y + 20}
+                              x={x + width / 2}
+                              y={y + height / 2 + 12}
                               textAnchor="middle"
-                              fontSize="12"
+                              fontSize="10"
                               fill="white"
-                              fontWeight="bold"
+                              fontWeight="500"
                             >
-                              ✓
+                              {assignment.scoutName}
                             </text>
-                          </>
-                        )}
-                      </>
-                    )}
+                          )}
 
-                    {/* Empty pit display */}
-                    {!teamNumber && (
-                      <text
-                        x={x + width / 2}
-                        y={y + height / 2}
-                        textAnchor="middle"
-                        fontSize="12"
-                        fill="#6b7280"
-                      >
-                        {pitId}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
+                          {/* Completion checkmark overlay */}
+                          {isCompleted && (
+                            <>
+                              <circle
+                                cx={x + width - 15}
+                                cy={y + 15}
+                                r="10"
+                                fill="#10b981"
+                                stroke="white"
+                                strokeWidth="2"
+                              />
+                              <text
+                                x={x + width - 15}
+                                y={y + 20}
+                                textAnchor="middle"
+                                fontSize="12"
+                                fill="white"
+                                fontWeight="bold"
+                              >
+                                ✓
+                              </text>
+                            </>
+                          )}
+                        </>
+                      )}
+
+                      {/* Empty pit display */}
+                      {!teamNumber && (
+                        <text
+                          x={x + width / 2}
+                          y={y + height / 2}
+                          textAnchor="middle"
+                          fontSize="12"
+                          fill="#6b7280"
+                        >
+                          {pitId}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
 
               {/* Render labels */}
-              {pitMapData.labels && Object.entries(pitMapData.labels).map(([labelId, label]: [string, FlexibleLabelData]) => {
-                const lx = label.position?.x ?? label.x ?? 0;
-                const ly = label.position?.y ?? label.y ?? 0;
-                const text = label.label ?? label.text ?? "";
+              {pitMapData.labels &&
+                Object.entries(pitMapData.labels).map(
+                  ([labelId, label]: [string, FlexibleLabelData]) => {
+                    const lx = label.position?.x ?? label.x ?? 0;
+                    const ly = label.position?.y ?? label.y ?? 0;
+                    const text = label.label ?? label.text ?? '';
 
-                return (
-                  <text
-                    key={labelId}
-                    x={lx}
-                    y={ly}
-                    fontSize="16"
-                    fill="#374151"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                  >
-                    {text}
-                  </text>
-                );
-              })}
+                    return (
+                      <text
+                        key={labelId}
+                        x={lx}
+                        y={ly}
+                        fontSize="16"
+                        fill="#374151"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                      >
+                        {text}
+                      </text>
+                    );
+                  }
+                )}
 
               {/* Arrow marker definition */}
               <defs>
@@ -503,10 +510,7 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
                   refY="3.5"
                   orient="auto"
                 >
-                  <polygon
-                    points="0 0, 10 3.5, 0 7"
-                    fill="#f59e0b"
-                  />
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b" />
                 </marker>
               </defs>
             </svg>
@@ -537,10 +541,9 @@ const PitMapCard: React.FC<PitMapCardProps> = ({
           {/* Spatial Assignment Info */}
           {assignmentsConfirmed && assignments.length > 0 && (
             <div className="text-center text-xs text-muted-foreground mt-2">
-              {isSpatialAssignment() ?
-                '🗺️ Teams assigned using spatial proximity for optimal scouting routes' :
-                '📝 Teams assigned in numerical sequence'
-              }
+              {isSpatialAssignment()
+                ? '🗺️ Teams assigned using spatial proximity for optimal scouting routes'
+                : '📝 Teams assigned in numerical sequence'}
             </div>
           )}
         </div>

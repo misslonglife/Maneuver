@@ -17,7 +17,7 @@ export function WebRTCNotifications() {
     const wasConnected = lastConnectionStatusRef.current.includes('Connected');
     const isNowConnected = connectionStatus.includes('Connected');
     const isNowDisconnected = !isNowConnected;
-    
+
     // Only show toasts for scouts (leads manage their own connections)
     if (mode === 'scout') {
       if (wasConnected && isNowDisconnected) {
@@ -28,7 +28,7 @@ export function WebRTCNotifications() {
         toast.success('Connected to lead scout');
       }
     }
-    
+
     lastConnectionStatusRef.current = connectionStatus;
   }, [connectionStatus, mode]);
 

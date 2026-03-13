@@ -126,23 +126,18 @@ export interface Achievement {
  * Achievement categories
  */
 export type AchievementCategory =
-  | 'accuracy'      // Prediction accuracy
-  | 'volume'        // Quantity of entries/predictions
-  | 'streaks'       // Consecutive successes
-  | 'special'       // Unique/rare accomplishments
-  | 'social'        // Team collaboration
-  | 'time'          // Time-based (early bird, night owl)
-  | 'improvement';  // Personal progress
+  | 'accuracy' // Prediction accuracy
+  | 'volume' // Quantity of entries/predictions
+  | 'streaks' // Consecutive successes
+  | 'special' // Unique/rare accomplishments
+  | 'social' // Team collaboration
+  | 'time' // Time-based (early bird, night owl)
+  | 'improvement'; // Personal progress
 
 /**
  * Achievement tiers (difficulty levels)
  */
-export type AchievementTier =
-  | 'bronze'
-  | 'silver'
-  | 'gold'
-  | 'platinum'
-  | 'legendary';
+export type AchievementTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'legendary';
 
 /**
  * Achievement requirement structure
@@ -183,8 +178,8 @@ export interface Leaderboard {
 // TEAM PERFORMANCE & STRATEGY ANALYSIS TYPES
 // ==============================================================================
 
-export type AggregationType = "average" | "median" | "max" | "min" | "p75" | "p25" | "sum";
-export type FilterOperator = ">" | ">=" | "<" | "<=" | "=" | "!=" | "between";
+export type AggregationType = 'average' | 'median' | 'max' | 'min' | 'p75' | 'p25' | 'sum';
+export type FilterOperator = '>' | '>=' | '<' | '<=' | '=' | '!=' | 'between';
 
 export interface ColumnFilter {
   operator: FilterOperator;

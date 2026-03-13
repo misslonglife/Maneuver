@@ -1,17 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
-import { useDataStats } from "@/core/hooks/useDataStats";
-import { useDataCleaning } from "@/core/hooks/useDataCleaning";
-import { DeviceInfoCard } from "@/core/components/data-management/ClearComponents/DeviceInfoCard";
-import { BackupRecommendationAlert } from "@/core/components/data-management/ClearComponents/BackupRecommendationAlert";
-import { ClearAllDataDialog } from "@/core/components/data-management/ClearComponents/ClearAllDataDialog";
-import { DataClearCard } from "@/core/components/data-management/ClearComponents/DataClearCard";
-import { EventDataClearCard } from "@/core/components/data-management/ClearComponents/EventDataClearCard";
-import { db, pitDB } from "@/core/db/database";
-import { gamificationDB as gameDB } from "@/game-template/gamification";
-
+import { useState, useEffect, useCallback } from 'react';
+import { useDataStats } from '@/core/hooks/useDataStats';
+import { useDataCleaning } from '@/core/hooks/useDataCleaning';
+import { DeviceInfoCard } from '@/core/components/data-management/ClearComponents/DeviceInfoCard';
+import { BackupRecommendationAlert } from '@/core/components/data-management/ClearComponents/BackupRecommendationAlert';
+import { ClearAllDataDialog } from '@/core/components/data-management/ClearComponents/ClearAllDataDialog';
+import { DataClearCard } from '@/core/components/data-management/ClearComponents/DataClearCard';
+import { EventDataClearCard } from '@/core/components/data-management/ClearComponents/EventDataClearCard';
+import { db, pitDB } from '@/core/db/database';
+import { gamificationDB as gameDB } from '@/game-template/gamification';
 
 const ClearDataPage = () => {
-  const [playerStation, setPlayerStation] = useState("");
+  const [playerStation, setPlayerStation] = useState('');
   const [showClearAllConfirm, setShowClearAllConfirm] = useState(false);
   const [eventKeys, setEventKeys] = useState<string[]>([]);
 
@@ -70,7 +69,8 @@ const ClearDataPage = () => {
     addFromArrayStorage('customEventsList');
     addFromArrayStorage('event_history');
 
-    const eventKeyPattern = /^(?:tba_event_teams_|nexus_pit_addresses_|nexus_pit_map_|nexus_event_teams_|matches_|match_results_|event_info_|pit_assignments_|pit_assignments_meta_|pit_assignments_mine_|tba_match_schedule_|tba_match_data_|matchResults_|stakesAwarded_)(.+)$/;
+    const eventKeyPattern =
+      /^(?:tba_event_teams_|nexus_pit_addresses_|nexus_pit_map_|nexus_event_teams_|matches_|match_results_|event_info_|pit_assignments_|pit_assignments_meta_|pit_assignments_mine_|tba_match_schedule_|tba_match_data_|matchResults_|stakesAwarded_)(.+)$/;
 
     Object.keys(localStorage).forEach(storageKey => {
       const match = storageKey.match(eventKeyPattern);
@@ -118,7 +118,7 @@ const ClearDataPage = () => {
   }, [getEventKeysFromStorage]);
 
   useEffect(() => {
-    const station = localStorage.getItem("playerStation") || "Unknown";
+    const station = localStorage.getItem('playerStation') || 'Unknown';
     setPlayerStation(station);
   }, []);
 
@@ -147,9 +147,7 @@ const ClearDataPage = () => {
         {/* Top Row - Device Info and Alert */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
           <DeviceInfoCard playerStation={playerStation} />
-          <BackupRecommendationAlert
-            onClearAllClick={() => setShowClearAllConfirm(true)}
-          />
+          <BackupRecommendationAlert onClearAllClick={() => setShowClearAllConfirm(true)} />
         </div>
 
         {/* Data Clear Cards Grid */}

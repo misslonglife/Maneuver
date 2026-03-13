@@ -4,12 +4,7 @@
  */
 
 // Database instances and classes
-export {
-  db,
-  pitDB,
-  MatchScoutingDB,
-  PitScoutingDB,
-} from '../core/db/database';
+export { db, pitDB, MatchScoutingDB, PitScoutingDB } from '../core/db/database';
 
 // Scouting data operations
 export {
@@ -27,16 +22,10 @@ export {
 } from '../core/db/database';
 
 // Database statistics
-export {
-  getDBStats,
-  queryScoutingEntries,
-} from '../core/db/database';
+export { getDBStats, queryScoutingEntries } from '../core/db/database';
 
 // Import/export
-export {
-  exportScoutingData,
-  importScoutingData,
-} from '../core/db/database';
+export { exportScoutingData, importScoutingData } from '../core/db/database';
 
 // Pit scouting operations
 export {
@@ -75,17 +64,10 @@ export {
 } from '../core/db/teamUtils';
 
 // Team data consolidation and refresh
-export {
-  refreshTeamDataForEvent,
-  refreshTeamDataForEvents,
-} from '../core/db/teamDataManager';
+export { refreshTeamDataForEvent, refreshTeamDataForEvents } from '../core/db/teamDataManager';
 
 // Team profile types
-export type {
-  TeamProfile,
-  CompetitionRecord,
-  StatboticsRanking,
-} from '../core/types/team-profile';
+export type { TeamProfile, CompetitionRecord, StatboticsRanking } from '../core/types/team-profile';
 
 // ============================================================================
 // GAMIFICATION EXPORTS (re-exported from template for convenience)
@@ -125,10 +107,7 @@ export {
   saveScoutingData,
 } from '../core/db/dataUtils';
 
-export type {
-  ConflictResolution,
-  ConflictResult,
-} from '../core/db/dataUtils';
+export type { ConflictResolution, ConflictResult } from '../core/db/dataUtils';
 
 // Experiment database (A/B interface study)
 export {

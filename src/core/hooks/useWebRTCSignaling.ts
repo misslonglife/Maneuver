@@ -112,7 +112,8 @@ export function useWebRTCSignaling({
         }
 
         if (!functionsAvailableRef.current) {
-          const devError = 'Netlify Functions not available. Please run with "npm run dev" instead of "npm run dev:vite" to enable room code connections.';
+          const devError =
+            'Netlify Functions not available. Please run with "npm run dev" instead of "npm run dev:vite" to enable room code connections.';
           console.error('❌', devError);
           setError(devError);
           setConnected(false);
@@ -185,10 +186,9 @@ export function useWebRTCSignaling({
     // console.log(`🔄 Polling room ${roomId} as ${peerId.substring(0, 8)}...`);
 
     try {
-      const response = await fetch(
-        `${signalingUrl}?roomId=${roomId}&peerId=${peerId}`,
-        { method: 'GET' }
-      );
+      const response = await fetch(`${signalingUrl}?roomId=${roomId}&peerId=${peerId}`, {
+        method: 'GET',
+      });
 
       if (!response.ok) {
         throw new Error(`Polling failed: ${response.statusText}`);
@@ -203,19 +203,27 @@ export function useWebRTCSignaling({
         const messageCount = data.messages.length;
 
         if (data.messages.length > 0) {
-          console.log(`📨 Received ${data.messages.length} messages:`, data.messages.map((m: { type: string; peerName?: string }) => `${m.type} from ${m.peerName}`).join(', '));
+          console.log(
+            `📨 Received ${data.messages.length} messages:`,
+            data.messages
+              .map((m: { type: string; peerName?: string }) => `${m.type} from ${m.peerName}`)
+              .join(', ')
+          );
         }
         for (const message of data.messages) {
           // Process all messages from the server without client-side deduplication
           // The server already handles message delivery tracking, so if we received it,
           // it's a new message that should be processed
-          console.log(`✅ Processing message: ${message.type} from ${message.peerName || message.peerId}`);
+          console.log(
+            `✅ Processing message: ${message.type} from ${message.peerName || message.peerId}`
+          );
           onMessage?.(message);
         }
 
-        currentPollIntervalRef.current = messageCount > 0
-          ? BASE_POLL_INTERVAL_MS
-          : Math.min(MAX_POLL_INTERVAL_MS, Math.floor(currentPollIntervalRef.current * 1.5));
+        currentPollIntervalRef.current =
+          messageCount > 0
+            ? BASE_POLL_INTERVAL_MS
+            : Math.min(MAX_POLL_INTERVAL_MS, Math.floor(currentPollIntervalRef.current * 1.5));
       }
     } catch (err) {
       // Polling errors are expected when disconnecting, only log in dev
@@ -304,7 +312,12 @@ export function useWebRTCSignaling({
   });
 
   useEffect(() => {
-    console.log('📡 Signaling hook effect:', { enabled, roomId, hasJoined: hasJoinedRef.current, currentRoom: currentRoomRef.current });
+    console.log('📡 Signaling hook effect:', {
+      enabled,
+      roomId,
+      hasJoined: hasJoinedRef.current,
+      currentRoom: currentRoomRef.current,
+    });
 
     if (enabled && roomId) {
       // Only join if we haven't joined this room yet
@@ -325,7 +338,12 @@ export function useWebRTCSignaling({
       // Use refs to get the LATEST values, not the captured ones from closure
       const currentEnabled = enabledRef.current;
       const currentRoomId = roomIdRef.current;
-      console.log('🧹 Signaling cleanup:', { currentEnabled, currentRoomId, hasJoined: hasJoinedRef.current, currentRoom: currentRoomRef.current });
+      console.log('🧹 Signaling cleanup:', {
+        currentEnabled,
+        currentRoomId,
+        hasJoined: hasJoinedRef.current,
+        currentRoom: currentRoomRef.current,
+      });
 
       // Only leave if actually disabled or room changed
       if (hasJoinedRef.current && (!currentEnabled || currentRoomRef.current !== currentRoomId)) {

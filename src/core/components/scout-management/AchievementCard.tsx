@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Badge } from "@/core/components/ui/badge";
-import { Progress } from "@/core/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Badge } from '@/core/components/ui/badge';
+import { Progress } from '@/core/components/ui/progress';
 import { ACHIEVEMENT_TIERS } from '@/game-template/gamification';
 import type { Achievement } from '@/core/types/achievements';
 import { Lock, Trophy } from 'lucide-react';
@@ -19,34 +19,42 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
   isUnlocked,
   progress = 0,
   unlockedAt,
-  showProgress = true
+  showProgress = true,
 }) => {
   const tierStyle = ACHIEVEMENT_TIERS[achievement.tier];
 
   return (
-    <Card className={`relative transition-all duration-200 hover:shadow-md ${isUnlocked
-        ? `${tierStyle.bgColor} ${tierStyle.borderColor} border-2`
-        : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700'
-      }`}>
+    <Card
+      className={`relative transition-all duration-200 hover:shadow-md ${
+        isUnlocked
+          ? `${tierStyle.bgColor} ${tierStyle.borderColor} border-2`
+          : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700'
+      }`}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <div className={`text-2xl p-2 rounded-full ${isUnlocked ? tierStyle.bgColor : 'bg-gray-200 dark:bg-gray-800'
-              }`}>
+            <div
+              className={`text-2xl p-2 rounded-full ${
+                isUnlocked ? tierStyle.bgColor : 'bg-gray-200 dark:bg-gray-800'
+              }`}
+            >
               {isUnlocked ? achievement.icon : <Lock className="h-5 w-5 text-gray-400" />}
             </div>
             <div>
-              <CardTitle className={`text-lg ${isUnlocked ? tierStyle.textColor : 'text-gray-400 dark:text-gray-500'
-                }`}>
+              <CardTitle
+                className={`text-lg ${
+                  isUnlocked ? tierStyle.textColor : 'text-gray-400 dark:text-gray-500'
+                }`}
+              >
                 {achievement.name}
               </CardTitle>
               <Badge
                 variant="secondary"
-                className={`text-xs mt-1 ${isUnlocked ? tierStyle.textColor : 'text-gray-400'
-                  }`}
+                className={`text-xs mt-1 ${isUnlocked ? tierStyle.textColor : 'text-gray-400'}`}
                 style={{
                   backgroundColor: isUnlocked ? tierStyle.color + '20' : undefined,
-                  borderColor: isUnlocked ? tierStyle.color : undefined
+                  borderColor: isUnlocked ? tierStyle.color : undefined,
                 }}
               >
                 {achievement.tier.toUpperCase()}
@@ -64,10 +72,11 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       </CardHeader>
 
       <CardContent className="pt-0">
-        <p className={`text-sm mb-3 ${isUnlocked
-            ? 'text-gray-700 dark:text-gray-300'
-            : 'text-gray-500 dark:text-gray-400'
-          }`}>
+        <p
+          className={`text-sm mb-3 ${
+            isUnlocked ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'
+          }`}
+        >
           {achievement.description}
         </p>
 

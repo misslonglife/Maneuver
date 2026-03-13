@@ -59,7 +59,9 @@ interface LocalScheduleMatch {
 /**
  * Get match result with winner determination
  */
-export const getMatchResult = (match: TBAMatch): {
+export const getMatchResult = (
+  match: TBAMatch
+): {
   redScore: number;
   blueScore: number;
   winner: 'red' | 'blue' | 'tie';
@@ -67,10 +69,10 @@ export const getMatchResult = (match: TBAMatch): {
 } => {
   const redScore = match.alliances.red.score;
   const blueScore = match.alliances.blue.score;
-  
+
   let winner: 'red' | 'blue' | 'tie';
   let winningAlliance: 'red' | 'blue' | '';
-  
+
   if (redScore > blueScore) {
     winner = 'red';
     winningAlliance = 'red';
@@ -81,7 +83,7 @@ export const getMatchResult = (match: TBAMatch): {
     winner = 'tie';
     winningAlliance = '';
   }
-  
+
   return {
     redScore,
     blueScore,
@@ -101,11 +103,9 @@ export const getEventTeams = async (eventKey: string, apiKey: string): Promise<T
     }
   }
 
-  const teamKeys = await proxyGetJson<string[]>(
-    'tba',
-    `/event/${eventKey}/teams/keys`,
-    { apiKeyOverride: apiKey || undefined }
-  );
+  const teamKeys = await proxyGetJson<string[]>('tba', `/event/${eventKey}/teams/keys`, {
+    apiKeyOverride: apiKey || undefined,
+  });
 
   return teamKeys
     .map(key => {
@@ -180,9 +180,9 @@ export const storeEventTeams = (eventKey: string, teams: TBATeam[]): void => {
   const data = {
     teamNumbers,
     timestamp: Date.now(),
-    eventKey
+    eventKey,
   };
-  
+
   try {
     localStorage.setItem(storageKey, JSON.stringify(data));
     console.log(`Stored ${teamNumbers.length} team numbers for event ${eventKey}`);
@@ -197,18 +197,20 @@ export const storeEventTeams = (eventKey: string, teams: TBATeam[]): void => {
  */
 export const getStoredEventTeams = (eventKey: string): number[] | null => {
   const storageKey = `${TEAMS_STORAGE_PREFIX}${eventKey}`;
-  
+
   try {
     const stored = localStorage.getItem(storageKey);
     if (!stored) return null;
-    
+
     const data = JSON.parse(stored);
     // Check for both old format (teams) and new format (teamNumbers) for backward compatibility
     if (data.teamNumbers) {
       return data.teamNumbers;
     } else if (data.teams) {
       // Legacy format - extract team numbers from full team objects
-      return data.teams.map((team: TBATeam) => team.team_number).sort((a: number, b: number) => a - b);
+      return data.teams
+        .map((team: TBATeam) => team.team_number)
+        .sort((a: number, b: number) => a - b);
     }
     return null;
   } catch (error) {
@@ -232,7 +234,7 @@ export const clearStoredEventTeams = (eventKey: string): void => {
  */
 export const getAllStoredEventTeams = (): { [eventKey: string]: number[] } => {
   const result: { [eventKey: string]: number[] } = {};
-  
+
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key && key.startsWith(TEAMS_STORAGE_PREFIX)) {
@@ -241,13 +243,15 @@ export const getAllStoredEventTeams = (): { [eventKey: string]: number[] } => {
         if (stored) {
           const data = JSON.parse(stored);
           const eventKey = key.replace(TEAMS_STORAGE_PREFIX, '');
-          
+
           // Handle both new format (teamNumbers) and legacy format (teams)
           if (data.teamNumbers) {
             result[eventKey] = data.teamNumbers;
           } else if (data.teams) {
             // Legacy format - extract team numbers
-            result[eventKey] = data.teams.map((team: TBATeam) => team.team_number).sort((a: number, b: number) => a - b);
+            result[eventKey] = data.teams
+              .map((team: TBATeam) => team.team_number)
+              .sort((a: number, b: number) => a - b);
           }
         }
       } catch (error) {
@@ -255,6 +259,6 @@ export const getAllStoredEventTeams = (): { [eventKey: string]: number[] } => {
       }
     }
   }
-  
+
   return result;
 };

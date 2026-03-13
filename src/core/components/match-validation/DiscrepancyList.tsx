@@ -10,7 +10,9 @@ interface DiscrepancyWithAlliance extends Discrepancy {
 
 interface DiscrepancyListProps {
   discrepancies: DiscrepancyWithAlliance[];
-  getSeverityVariant: (severity: Discrepancy['severity']) => 'destructive' | 'default' | 'secondary' | 'outline';
+  getSeverityVariant: (
+    severity: Discrepancy['severity']
+  ) => 'destructive' | 'default' | 'secondary' | 'outline';
 }
 
 export const DiscrepancyList: React.FC<DiscrepancyListProps> = ({
@@ -41,7 +43,11 @@ export const DiscrepancyList: React.FC<DiscrepancyListProps> = ({
                   <div className="flex items-center gap-2 mb-1">
                     <Badge
                       variant="outline"
-                      className={disc.alliance === 'red' ? 'bg-red-100 dark:bg-red-950 border-red-300 dark:border-red-800' : 'bg-blue-100 dark:bg-blue-950 border-blue-300 dark:border-blue-800'}
+                      className={
+                        disc.alliance === 'red'
+                          ? 'bg-red-100 dark:bg-red-950 border-red-300 dark:border-red-800'
+                          : 'bg-blue-100 dark:bg-blue-950 border-blue-300 dark:border-blue-800'
+                      }
                     >
                       {disc.alliance.toUpperCase()}
                     </Badge>

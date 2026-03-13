@@ -56,6 +56,6 @@ export function getFountainEstimate(
     blockSize,
     estimatedBlocks,
     redundancyFactor,
-    targetPackets: Math.ceil(estimatedBlocks * redundancyFactor)
+    targetPackets: Math.ceil(estimatedBlocks * redundancyFactor),
   };
 }

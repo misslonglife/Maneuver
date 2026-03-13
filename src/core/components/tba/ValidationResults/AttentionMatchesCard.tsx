@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Attention Matches Card Component
- * 
+ *
  * Displays matches that require attention - failed and flagged matches.
  * Failed matches require re-scouting, flagged matches need review.
  */
@@ -22,7 +22,7 @@ interface AttentionMatchesCardProps {
 export const AttentionMatchesCard: React.FC<AttentionMatchesCardProps> = ({
   failedMatches,
   flaggedMatches,
-  onMatchClick
+  onMatchClick,
 }) => {
   if (failedMatches.length === 0 && flaggedMatches.length === 0) {
     return null;
@@ -45,7 +45,7 @@ export const AttentionMatchesCard: React.FC<AttentionMatchesCardProps> = ({
               Failed - Re-Scout Required ({failedMatches.length})
             </h4>
             <div className="space-y-1">
-              {failedMatches.map((result) => (
+              {failedMatches.map(result => (
                 <div
                   key={result.matchKey}
                   className="p-3 border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 rounded-lg cursor-pointer hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors"
@@ -76,7 +76,7 @@ export const AttentionMatchesCard: React.FC<AttentionMatchesCardProps> = ({
               Flagged for Review ({flaggedMatches.length})
             </h4>
             <div className="space-y-1">
-              {flaggedMatches.slice(0, 10).map((result) => (
+              {flaggedMatches.slice(0, 10).map(result => (
                 <div
                   key={result.matchKey}
                   className="p-3 border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/30 rounded-lg cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-950/50 transition-colors"
@@ -88,12 +88,18 @@ export const AttentionMatchesCard: React.FC<AttentionMatchesCardProps> = ({
                     </span>
                     <div className="flex gap-2">
                       {result.criticalDiscrepancies > 0 && (
-                        <Badge variant="outline" className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-700">
+                        <Badge
+                          variant="outline"
+                          className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-700"
+                        >
                           {result.criticalDiscrepancies} critical
                         </Badge>
                       )}
                       {result.warningDiscrepancies > 0 && (
-                        <Badge variant="outline" className="text-yellow-600 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700">
+                        <Badge
+                          variant="outline"
+                          className="text-yellow-600 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700"
+                        >
                           {result.warningDiscrepancies} warnings
                         </Badge>
                       )}

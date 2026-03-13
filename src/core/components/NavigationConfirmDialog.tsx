@@ -16,11 +16,11 @@ interface NavigationConfirmDialogProps {
   destinationLabel?: string;
 }
 
-export function NavigationConfirmDialog({ 
-  open, 
-  onConfirm, 
-  onCancel, 
-  destinationLabel = "this page" 
+export function NavigationConfirmDialog({
+  open,
+  onConfirm,
+  onCancel,
+  destinationLabel = 'this page',
 }: NavigationConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen: boolean) => !isOpen && onCancel()}>
@@ -34,23 +34,21 @@ export function NavigationConfirmDialog({
             <div className="space-y-2">
               <p>
                 You are currently in the middle of scouting a match. If you navigate to{' '}
-                <span className="font-medium">{destinationLabel}</span>, all unsaved match data will be lost.
+                <span className="font-medium">{destinationLabel}</span>, all unsaved match data will
+                be lost.
               </p>
               <p className="text-sm text-muted-foreground">
-                This includes any autonomous actions, teleop scoring, and other data you've recorded for this match.
+                This includes any autonomous actions, teleop scoring, and other data you've recorded
+                for this match.
               </p>
             </div>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel} className='p-2'>
+          <Button variant="outline" onClick={onCancel} className="p-2">
             Continue Scouting
           </Button>
-          <Button 
-            variant="destructive"
-            onClick={onConfirm}
-            className="p-2 text-white"
-          >
+          <Button variant="destructive" onClick={onConfirm} className="p-2 text-white">
             Leave and Lose Data
           </Button>
         </DialogFooter>

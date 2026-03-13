@@ -1,7 +1,7 @@
-import { Label } from "@/core/components/ui/label";
-import { Textarea } from "@/core/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { FileText } from "lucide-react";
+import { Label } from '@/core/components/ui/label';
+import { Textarea } from '@/core/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { FileText } from 'lucide-react';
 
 interface NotesObject {
   general?: string;
@@ -16,10 +16,7 @@ interface AdditionalNotesProps {
   onNotesChange: (value: NotesObject) => void;
 }
 
-export function AdditionalNotes({
-  notes = {},
-  onNotesChange,
-}: AdditionalNotesProps) {
+export function AdditionalNotes({ notes = {}, onNotesChange }: AdditionalNotesProps) {
   const handleFieldChange = (field: keyof NotesObject, value: string | undefined) => {
     onNotesChange({
       ...notes,
@@ -38,14 +35,12 @@ export function AdditionalNotes({
       <CardContent className="space-y-4">
         {/* General Observations */}
         <div className="space-y-2">
-          <Label htmlFor="general">
-            General Observations
-          </Label>
+          <Label htmlFor="general">General Observations</Label>
           <Textarea
             id="general"
             placeholder="Any additional observations about the robot, team, or strategy..."
-            value={notes.general ?? ""}
-            onChange={(e) => handleFieldChange("general", e.target.value)}
+            value={notes.general ?? ''}
+            onChange={e => handleFieldChange('general', e.target.value)}
             rows={4}
             className="resize-none"
           />
@@ -53,14 +48,12 @@ export function AdditionalNotes({
 
         {/* Unique Mechanisms */}
         <div className="space-y-2">
-          <Label htmlFor="uniqueMechanisms">
-            Unique Mechanisms (ASK & OBSERVE)
-          </Label>
+          <Label htmlFor="uniqueMechanisms">Unique Mechanisms (ASK & OBSERVE)</Label>
           <Textarea
             id="uniqueMechanisms"
             placeholder="Any unusual or innovative mechanical designs observed..."
-            value={notes.uniqueMechanisms ?? ""}
-            onChange={(e) => handleFieldChange("uniqueMechanisms", e.target.value)}
+            value={notes.uniqueMechanisms ?? ''}
+            onChange={e => handleFieldChange('uniqueMechanisms', e.target.value)}
             rows={3}
             className="resize-none"
           />
@@ -68,14 +61,12 @@ export function AdditionalNotes({
 
         {/* Auto Report */}
         <div className="space-y-2">
-          <Label htmlFor="autoReport">
-            Autonomous Route/Path (ASK)
-          </Label>
+          <Label htmlFor="autoReport">Autonomous Route/Path (ASK)</Label>
           <Textarea
             id="autoReport"
             placeholder="What the team reports about their autonomous capabilities..."
-            value={notes.autoReport ?? ""}
-            onChange={(e) => handleFieldChange("autoReport", e.target.value)}
+            value={notes.autoReport ?? ''}
+            onChange={e => handleFieldChange('autoReport', e.target.value)}
             rows={3}
             className="resize-none"
           />
@@ -83,14 +74,12 @@ export function AdditionalNotes({
 
         {/* Sponsors */}
         <div className="space-y-2">
-          <Label htmlFor="sponsors">
-            Sponsors & Partners (OBSERVE ONLY)
-          </Label>
+          <Label htmlFor="sponsors">Sponsors & Partners (OBSERVE ONLY)</Label>
           <Textarea
             id="sponsors"
             placeholder="(NON-LOCAL) Notable sponsors or partner companies displayed on robot..."
-            value={notes.sponsors ?? ""}
-            onChange={(e) => handleFieldChange("sponsors", e.target.value)}
+            value={notes.sponsors ?? ''}
+            onChange={e => handleFieldChange('sponsors', e.target.value)}
             rows={3}
             className="resize-none"
           />
@@ -98,23 +87,20 @@ export function AdditionalNotes({
 
         {/* Outreach */}
         <div className="space-y-2">
-          <Label htmlFor="outreach">
-            Outreach & Team Culture (OBSERVE ONLY)
-          </Label>
+          <Label htmlFor="outreach">Outreach & Team Culture (OBSERVE ONLY)</Label>
           <Textarea
             id="outreach"
             placeholder="Team culture, community engagement, or notable outreach efforts..."
-            value={notes.outreach ?? ""}
-            onChange={(e) => handleFieldChange("outreach", e.target.value)}
+            value={notes.outreach ?? ''}
+            onChange={e => handleFieldChange('outreach', e.target.value)}
             rows={3}
             className="resize-none"
           />
         </div>
 
-        
-
         <p className="text-sm text-muted-foreground">
-          Optional: All fields are optional. Fill in any details that may be relevant for strategy or match planning.
+          Optional: All fields are optional. Fill in any details that may be relevant for strategy
+          or match planning.
         </p>
       </CardContent>
     </Card>

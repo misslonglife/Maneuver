@@ -1,7 +1,13 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/core/components/ui/dialog";
-import { Button } from "@/core/components/ui/button";
-import { AlertCircle, FileStack, Loader2 } from "lucide-react";
-import type { ScoutingEntryBase } from "@/types/scouting-entry";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/core/components/ui/dialog';
+import { Button } from '@/core/components/ui/button';
+import { AlertCircle, FileStack, Loader2 } from 'lucide-react';
+import type { ScoutingEntryBase } from '@/types/scouting-entry';
 
 interface BatchConflictDialogProps {
   isOpen: boolean;
@@ -14,7 +20,7 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
   isOpen,
   entries,
   onResolve,
-  isProcessing = false
+  isProcessing = false,
 }) => {
   if (entries.length === 0) return null;
 
@@ -38,11 +44,13 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
             <div className="flex flex-col items-center gap-3 bg-card p-6 rounded-lg shadow-lg border">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm font-medium">Processing duplicates...</p>
-              <p className="text-xs text-muted-foreground">This may take a moment for large datasets</p>
+              <p className="text-xs text-muted-foreground">
+                This may take a moment for large datasets
+              </p>
             </div>
           </div>
         )}
-        
+
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-yellow-500" />
@@ -54,8 +62,8 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
           {/* Warning message */}
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              Found <strong>{entries.length}</strong> entries that already exist in your local database. 
-              Both versions are uncorrected, so you should review whether to replace them.
+              Found <strong>{entries.length}</strong> entries that already exist in your local
+              database. Both versions are uncorrected, so you should review whether to replace them.
             </p>
           </div>
 
@@ -82,12 +90,10 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
               <span>Example Entries:</span>
             </div>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {entries.slice(0, 5).map((entry) => (
-                <div
-                  key={entry.id}
-                  className="text-sm p-2 bg-muted rounded border border-border"
-                >
-                  Match {String(entry.matchNumber || '')} • Team {String(entry.teamNumber || '')} • {String(entry.allianceColor || '')} Alliance
+              {entries.slice(0, 5).map(entry => (
+                <div key={entry.id} className="text-sm p-2 bg-muted rounded border border-border">
+                  Match {String(entry.matchNumber || '')} • Team {String(entry.teamNumber || '')} •{' '}
+                  {String(entry.allianceColor || '')} Alliance
                   {entry.scoutName ? ` • Scout: ${String(entry.scoutName)}` : ''}
                 </div>
               ))}
@@ -103,9 +109,15 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
           <div className="space-y-2 text-sm">
             <p className="font-medium">What would you like to do?</p>
             <ul className="space-y-1 text-muted-foreground ml-4">
-              <li>• <strong>Replace All</strong> - Overwrite local entries with incoming data</li>
-              <li>• <strong>Skip All</strong> - Keep your current local data</li>
-              <li>• <strong>Review Each</strong> - Decide individually for each conflict</li>
+              <li>
+                • <strong>Replace All</strong> - Overwrite local entries with incoming data
+              </li>
+              <li>
+                • <strong>Skip All</strong> - Keep your current local data
+              </li>
+              <li>
+                • <strong>Review Each</strong> - Decide individually for each conflict
+              </li>
             </ul>
           </div>
         </div>
@@ -118,7 +130,9 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
             disabled={isProcessing}
           >
             {isProcessing ? (
-              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...</>
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...
+              </>
             ) : (
               <>Skip All - Keep Local</>
             )}
@@ -137,7 +151,9 @@ export const BatchConflictDialog: React.FC<BatchConflictDialogProps> = ({
             disabled={isProcessing}
           >
             {isProcessing ? (
-              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...</>
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...
+              </>
             ) : (
               <>Replace All</>
             )}

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Badge } from "@/core/components/ui/badge";
-import { Button } from "@/core/components/ui/button";
-import { Progress } from "@/core/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Badge } from '@/core/components/ui/badge';
+import { Button } from '@/core/components/ui/button';
+import { Progress } from '@/core/components/ui/progress';
 import { Trophy, Star, Target, ChevronRight, RefreshCw } from 'lucide-react';
-import { getAchievementStats, getNextAchievements, backfillAchievementsForAllScouts } from '@/core/lib/achievementUtils';
+import {
+  getAchievementStats,
+  getNextAchievements,
+  backfillAchievementsForAllScouts,
+} from '@/core/lib/achievementUtils';
 import { ACHIEVEMENT_TIERS } from '@/game-template/gamification';
 import type { Achievement } from '@/core/types/achievements';
 
@@ -25,10 +29,12 @@ interface AchievementStats {
 export const AchievementOverview: React.FC<AchievementOverviewProps> = ({
   scoutName,
   onViewAll,
-  onDataRefresh
+  onDataRefresh,
 }) => {
   const [stats, setStats] = useState<AchievementStats | null>(null);
-  const [nextAchievements, setNextAchievements] = useState<Array<Achievement & { progress: number }>>([]);
+  const [nextAchievements, setNextAchievements] = useState<
+    Array<Achievement & { progress: number }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [backfillLoading, setBackfillLoading] = useState(false);
 
@@ -40,7 +46,7 @@ export const AchievementOverview: React.FC<AchievementOverviewProps> = ({
       // Reload achievement data
       const [achievementStats, upcomingAchievements] = await Promise.all([
         getAchievementStats(scoutName),
-        getNextAchievements(scoutName, 2)
+        getNextAchievements(scoutName, 2),
       ]);
 
       setStats(achievementStats);
@@ -65,7 +71,7 @@ export const AchievementOverview: React.FC<AchievementOverviewProps> = ({
       try {
         const [achievementStats, upcomingAchievements] = await Promise.all([
           getAchievementStats(scoutName),
-          getNextAchievements(scoutName, 2)
+          getNextAchievements(scoutName, 2),
         ]);
 
         setStats(achievementStats);
@@ -124,7 +130,9 @@ export const AchievementOverview: React.FC<AchievementOverviewProps> = ({
             <div className="text-xs text-gray-500">Complete</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-600">+{stats.totalStakesFromAchievements}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              +{stats.totalStakesFromAchievements}
+            </div>
             <div className="text-xs text-gray-500">Stakes</div>
           </div>
         </div>
@@ -169,19 +177,23 @@ export const AchievementOverview: React.FC<AchievementOverviewProps> = ({
             </h4>
             <div className="space-y-2">
               {nextAchievements.map(achievement => (
-                <div key={achievement.id} className="p-2 rounded bg-gray-50 dark:bg-gray-800 border">
+                <div
+                  key={achievement.id}
+                  className="p-2 rounded bg-gray-50 dark:bg-gray-800 border"
+                >
                   <div className="flex items-center gap-2">
                     <span className="text-sm">{achievement.icon}</span>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">{achievement.name}</div>
-                      <div className="text-xs text-gray-500 truncate">{achievement.description}</div>
+                      <div className="text-xs text-gray-500 truncate">
+                        {achievement.description}
+                      </div>
                       {achievement.progress > 0 && (
                         <div className="flex items-center gap-2 mt-1">
-                          <Progress
-                            value={achievement.progress}
-                            className="flex-1 h-1.5"
-                          />
-                          <span className="text-xs text-gray-500">{Math.round(achievement.progress)}%</span>
+                          <Progress value={achievement.progress} className="flex-1 h-1.5" />
+                          <span className="text-xs text-gray-500">
+                            {Math.round(achievement.progress)}%
+                          </span>
                         </div>
                       )}
                     </div>

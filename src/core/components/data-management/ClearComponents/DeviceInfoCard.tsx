@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { convertTeamRole } from "@/core/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { convertTeamRole } from '@/core/lib/utils';
 
 interface DeviceInfoCardProps {
   playerStation: string;

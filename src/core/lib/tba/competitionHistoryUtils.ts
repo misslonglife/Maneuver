@@ -1,6 +1,6 @@
 /**
  * Competition History Utilities
- * 
+ *
  * Extracts competition results (wins/losses/ties/rankings) from TBA match data.
  * Builds CompetitionRecord objects from raw TBA match results.
  */
@@ -62,10 +62,12 @@ export const computeTeamCompetitionRecord = (
   // This would need to be computed from playoff bracket or sourced elsewhere
   const totalMatches = wins + losses + ties;
   const winRate = totalMatches > 0 ? wins / totalMatches : 0;
-  const avgRank = totalMatches > 0 ? rankings.length > 0 
-    ? rankings.reduce((a, b) => a + b, 0) / rankings.length 
-    : undefined 
-    : undefined;
+  const avgRank =
+    totalMatches > 0
+      ? rankings.length > 0
+        ? rankings.reduce((a, b) => a + b, 0) / rankings.length
+        : undefined
+      : undefined;
 
   return {
     eventKey,

@@ -1,6 +1,6 @@
 /**
  * Hooks re-exports
- * 
+ *
  * This file re-exports all hooks from the core module
  * for the public API.
  */
@@ -8,7 +8,14 @@
 // Utility hooks
 export { useIsMobile } from '../core/hooks/use-mobile';
 export { usePWA } from '../core/hooks/usePWA';
-export { useMediaQuery, mediaQueries, useIsDarkMode, useIsPortrait, useIsRetina, usePrefersReducedMotion } from '../core/hooks/useMediaQuery';
+export {
+  useMediaQuery,
+  mediaQueries,
+  useIsDarkMode,
+  useIsPortrait,
+  useIsRetina,
+  usePrefersReducedMotion,
+} from '../core/hooks/useMediaQuery';
 export { useLocalStorage } from '../core/hooks/useLocalStorage';
 export { useDebounce, useDebouncedCallback } from '../core/hooks/useDebounce';
 export { useNavigationConfirm } from '../core/hooks/useNavigationConfirm';

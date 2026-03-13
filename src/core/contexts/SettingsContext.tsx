@@ -1,7 +1,7 @@
 /**
  * SettingsContext - Application settings and user preferences
  * Framework context - game-agnostic
- * 
+ *
  * Manages user preferences and app configuration with localStorage persistence.
  */
 
@@ -11,21 +11,21 @@ import { useLocalStorage } from '@/core/hooks/useLocalStorage';
 export interface AppSettings {
   // Theme
   theme: 'light' | 'dark' | 'system';
-  
+
   // Accessibility
   reducedMotion: boolean;
   highContrast: boolean;
   fontSize: 'small' | 'medium' | 'large';
-  
+
   // Notifications
   enableNotifications: boolean;
   soundEnabled: boolean;
-  
+
   // Data
   autoSync: boolean;
   syncInterval: number; // minutes
   confirmBeforeDelete: boolean;
-  
+
   // UI Preferences
   compactMode: boolean;
   showDebugInfo: boolean;
@@ -42,14 +42,14 @@ const defaultSettings: AppSettings = {
   syncInterval: 5,
   confirmBeforeDelete: true,
   compactMode: false,
-  showDebugInfo: false
+  showDebugInfo: false,
 };
 
 interface SettingsContextValue {
   settings: AppSettings;
   updateSettings: (settings: Partial<AppSettings>) => void;
   resetSettings: () => void;
-  
+
   // Convenience getters
   isDarkMode: boolean;
   isCompactMode: boolean;
@@ -73,7 +73,7 @@ interface SettingsProviderProps {
    * Default: 'app-settings'
    */
   storageKey?: string;
-  
+
   /**
    * Default settings override
    */
@@ -83,20 +83,20 @@ interface SettingsProviderProps {
 export function SettingsProvider({
   children,
   storageKey = 'app-settings',
-  defaults
+  defaults,
 }: SettingsProviderProps) {
-  const [settings, setSettings, resetSettings] = useLocalStorage<AppSettings>(
-    storageKey,
-    { ...defaultSettings, ...defaults }
-  );
+  const [settings, setSettings, resetSettings] = useLocalStorage<AppSettings>(storageKey, {
+    ...defaultSettings,
+    ...defaults,
+  });
 
   const updateSettings = (newSettings: Partial<AppSettings>) => {
-    setSettings((prev) => ({ ...prev, ...newSettings }));
+    setSettings(prev => ({ ...prev, ...newSettings }));
   };
 
   // Convenience getters
-  const isDarkMode = 
-    settings.theme === 'dark' || 
+  const isDarkMode =
+    settings.theme === 'dark' ||
     (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const isCompactMode = settings.compactMode;
@@ -108,12 +108,8 @@ export function SettingsProvider({
     resetSettings,
     isDarkMode,
     isCompactMode,
-    shouldReduceMotion
+    shouldReduceMotion,
   };
 
-  return (
-    <SettingsContext.Provider value={value}>
-      {children}
-    </SettingsContext.Provider>
-  );
+  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 }

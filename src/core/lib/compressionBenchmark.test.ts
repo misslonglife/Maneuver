@@ -23,15 +23,15 @@ function createSyntheticScoutingPayload(entryCount: number) {
         teleopActions: ['score', 'score', 'assist', 'score'],
         endgame: index % 3 === 0 ? 'park' : 'climb',
         robotStatus: ['normal', 'normal', index % 5 === 0 ? 'disabled' : 'normal'],
-        penalties: index % 7 === 0 ? ['foul'] : []
-      }
+        penalties: index % 7 === 0 ? ['foul'] : [],
+      },
     };
   });
 
   return {
     entries,
     exportedAt: Date.now(),
-    version: '3.0-maneuver-core'
+    version: '3.0-maneuver-core',
   };
 }
 
@@ -40,9 +40,10 @@ describe('benchmarkCompressionVariants', () => {
     const payload = createSyntheticScoutingPayload(60);
     const result = benchmarkCompressionVariants(payload);
 
-    const reductionPct = result.baselineGzipBytes > 0
-      ? ((1 - (result.bestVariant.gzipBytes / result.baselineGzipBytes)) * 100).toFixed(1)
-      : '0.0';
+    const reductionPct =
+      result.baselineGzipBytes > 0
+        ? ((1 - result.bestVariant.gzipBytes / result.baselineGzipBytes) * 100).toFixed(1)
+        : '0.0';
 
     console.log('[Compression Benchmark]');
     console.table(
@@ -50,26 +51,32 @@ describe('benchmarkCompressionVariants', () => {
         variant: variant.name,
         bytes: variant.gzipBytes,
         packets: variant.estimatedFountainPackets,
-        reduction: result.baselineGzipBytes > 0
-          ? `${((1 - (variant.gzipBytes / result.baselineGzipBytes)) * 100).toFixed(1)}%`
-          : '0.0%'
+        reduction:
+          result.baselineGzipBytes > 0
+            ? `${((1 - variant.gzipBytes / result.baselineGzipBytes) * 100).toFixed(1)}%`
+            : '0.0%',
       }))
     );
-    console.log(`[Compression Benchmark] Best: ${result.bestVariant.name} (${reductionPct}% smaller)`);
+    console.log(
+      `[Compression Benchmark] Best: ${result.bestVariant.name} (${reductionPct}% smaller)`
+    );
 
     expect(result.baselineGzipBytes).toBeGreaterThan(0);
     expect(result.baselineFountainPackets).toBeGreaterThan(0);
     expect(result.bestVariant.gzipBytes).toBeLessThanOrEqual(result.baselineGzipBytes);
-    expect(result.bestVariant.estimatedFountainPackets).toBeLessThanOrEqual(result.baselineFountainPackets);
+    expect(result.bestVariant.estimatedFountainPackets).toBeLessThanOrEqual(
+      result.baselineFountainPackets
+    );
   });
 
   it('prints benchmark results for larger event-sized payloads', () => {
     const payload = createSyntheticScoutingPayload(360);
     const result = benchmarkCompressionVariants(payload);
 
-    const reductionPct = result.baselineGzipBytes > 0
-      ? ((1 - (result.bestVariant.gzipBytes / result.baselineGzipBytes)) * 100).toFixed(1)
-      : '0.0';
+    const reductionPct =
+      result.baselineGzipBytes > 0
+        ? ((1 - result.bestVariant.gzipBytes / result.baselineGzipBytes) * 100).toFixed(1)
+        : '0.0';
 
     console.log('[Compression Benchmark - Large Payload]');
     console.table(
@@ -77,16 +84,21 @@ describe('benchmarkCompressionVariants', () => {
         variant: variant.name,
         bytes: variant.gzipBytes,
         packets: variant.estimatedFountainPackets,
-        reduction: result.baselineGzipBytes > 0
-          ? `${((1 - (variant.gzipBytes / result.baselineGzipBytes)) * 100).toFixed(1)}%`
-          : '0.0%'
+        reduction:
+          result.baselineGzipBytes > 0
+            ? `${((1 - variant.gzipBytes / result.baselineGzipBytes) * 100).toFixed(1)}%`
+            : '0.0%',
       }))
     );
-    console.log(`[Compression Benchmark - Large Payload] Best: ${result.bestVariant.name} (${reductionPct}% smaller)`);
+    console.log(
+      `[Compression Benchmark - Large Payload] Best: ${result.bestVariant.name} (${reductionPct}% smaller)`
+    );
 
     expect(result.baselineGzipBytes).toBeGreaterThan(0);
     expect(result.baselineFountainPackets).toBeGreaterThan(0);
     expect(result.bestVariant.gzipBytes).toBeLessThanOrEqual(result.baselineGzipBytes);
-    expect(result.bestVariant.estimatedFountainPackets).toBeLessThanOrEqual(result.baselineFountainPackets);
+    expect(result.bestVariant.estimatedFountainPackets).toBeLessThanOrEqual(
+      result.baselineFountainPackets
+    );
   });
 });

@@ -1,17 +1,17 @@
 import { proxyGetJson } from './apiProxy';
 /**
  * Generic TBA (The Blue Alliance) Types
- * 
+ *
  * Year-agnostic types for working with TBA API data.
  * Game-specific implementations should extend these base types.
- * 
+ *
  * See: src/game-template/tba/tbaMatchData2025.ts for a complete example
  */
 
 /**
  * Generic TBA Match Data
  * Contains basic match information that exists across all years
- * 
+ *
  * @example
  * // For 2025 REEFSCAPE, extend with:
  * interface TBAMatchData2025 extends TBAMatchData {
@@ -22,17 +22,17 @@ import { proxyGetJson } from './apiProxy';
  * }
  */
 export interface TBAMatchData {
-  key: string;  // Match key (e.g., "2025mrcmp_qm1")
-  event_key: string;  // Event key (e.g., "2025mrcmp")
-  comp_level: string;  // Competition level: "qm", "sf", "f"
-  match_number: number;  // Match number within comp level
-  set_number: number;  // Set number (for playoffs)
-  
+  key: string; // Match key (e.g., "2025mrcmp_qm1")
+  event_key: string; // Event key (e.g., "2025mrcmp")
+  comp_level: string; // Competition level: "qm", "sf", "f"
+  match_number: number; // Match number within comp level
+  set_number: number; // Set number (for playoffs)
+
   // Alliance data (always present)
   alliances: {
     red: {
       score: number;
-      team_keys: string[];  // e.g., ["frc1", "frc2", "frc3"]
+      team_keys: string[]; // e.g., ["frc1", "frc2", "frc3"]
       dq_team_keys: string[];
       surrogate_team_keys: string[];
     };
@@ -43,19 +43,19 @@ export interface TBAMatchData {
       surrogate_team_keys: string[];
     };
   };
-  
+
   // Score breakdown (game-specific, may be null if not available)
   score_breakdown: Record<string, unknown> | null;
-  
+
   // Match result
-  winning_alliance: "red" | "blue" | "";
-  
+  winning_alliance: 'red' | 'blue' | '';
+
   // Timing
-  time: number;  // Scheduled time (Unix timestamp)
-  actual_time: number;  // Actual start time
-  predicted_time: number;  // Predicted time
-  post_result_time: number;  // Time results were posted
-  
+  time: number; // Scheduled time (Unix timestamp)
+  actual_time: number; // Actual start time
+  predicted_time: number; // Predicted time
+  post_result_time: number; // Time results were posted
+
   // Optional fields
   videos?: Array<{ key: string; type: string }>;
 }
@@ -92,22 +92,22 @@ export function extractTeamNumbers(teamKeys: string[]): number[] {
 /**
  * Get match display name
  * Formats match key into human-readable string
- * 
+ *
  * @example
  * "2025mrcmp_qm1" → "Qualification 1"
  * "2025mrcmp_sf1m1" → "Semifinal 1-1"
  */
 export function formatMatchName(match: TBAMatchData): string {
   const levelNames: Record<string, string> = {
-    'qm': 'Qualification',
-    'ef': 'Octofinal',
-    'qf': 'Quarterfinal',
-    'sf': 'Semifinal',
-    'f': 'Final'
+    qm: 'Qualification',
+    ef: 'Octofinal',
+    qf: 'Quarterfinal',
+    sf: 'Semifinal',
+    f: 'Final',
   };
-  
+
   const level = levelNames[match.comp_level] || match.comp_level;
-  
+
   if (match.comp_level === 'qm') {
     return `${level} ${match.match_number}`;
   } else {
@@ -121,7 +121,7 @@ export function formatMatchName(match: TBAMatchData): string {
 
 /**
  * Fetch detailed match data for a specific match from TBA
- * 
+ *
  * @param matchKey - TBA match key (e.g., '2025mrcmp_qm1')
  * @param apiKey - TBA API key
  * @returns Detailed match data with score breakdown
@@ -137,7 +137,7 @@ export async function fetchTBAMatchDetail(
 
 /**
  * Fetch all matches for an event (simple format, no score breakdowns)
- * 
+ *
  * @param eventKey - TBA event key (e.g., '2025mrcmp')
  * @param apiKey - TBA API key
  * @returns Array of simplified match data
@@ -154,7 +154,7 @@ export async function fetchTBAEventMatches(
 /**
  * Fetch all detailed matches for an event (with score breakdowns)
  * Note: This makes one API call and gets all data at once
- * 
+ *
  * @param eventKey - TBA event key (e.g., '2025mrcmp')
  * @param apiKey - TBA API key
  * @returns Array of detailed match data

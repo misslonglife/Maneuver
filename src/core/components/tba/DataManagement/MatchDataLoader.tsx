@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Badge } from "@/core/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Badge } from '@/core/components/ui/badge';
 import { CheckCircle } from 'lucide-react';
 
 // No props needed - component handles its own state
 const MatchDataLoader: React.FC = () => {
-  const [lastLoadedEvent, setLastLoadedEvent] = useState("");
+  const [lastLoadedEvent, setLastLoadedEvent] = useState('');
   const [matchCount, setMatchCount] = useState(0);
 
   // Check for existing match data on mount
   useEffect(() => {
-    const matchDataStr = localStorage.getItem("matchData");
-    const eventKey = localStorage.getItem("eventKey");
+    const matchDataStr = localStorage.getItem('matchData');
+    const eventKey = localStorage.getItem('eventKey');
 
     if (matchDataStr && eventKey) {
       try {
@@ -21,7 +21,7 @@ const MatchDataLoader: React.FC = () => {
           setMatchCount(matchData.length);
         }
       } catch (error) {
-        console.error("Error parsing existing match data:", error);
+        console.error('Error parsing existing match data:', error);
       }
     }
   }, []);
@@ -35,7 +35,8 @@ const MatchDataLoader: React.FC = () => {
             <div className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <span className="text-green-800 dark:text-green-200">
-                Currently loaded: <strong>{matchCount} matches</strong> from <strong>{lastLoadedEvent}</strong>
+                Currently loaded: <strong>{matchCount} matches</strong> from{' '}
+                <strong>{lastLoadedEvent}</strong>
               </span>
             </div>
           </CardContent>
@@ -50,19 +51,29 @@ const MatchDataLoader: React.FC = () => {
         <CardContent className="space-y-3">
           <div className="space-y-2 text-sm">
             <div className="flex items-start gap-2">
-              <Badge variant="outline" className="mt-0.5">1</Badge>
+              <Badge variant="outline" className="mt-0.5">
+                1
+              </Badge>
               <span>Enter the event key from The Blue Alliance (found on event pages)</span>
             </div>
             <div className="flex items-start gap-2">
-              <Badge variant="outline" className="mt-0.5">2</Badge>
+              <Badge variant="outline" className="mt-0.5">
+                2
+              </Badge>
               <span>Match data includes team lineups for all qualification matches</span>
             </div>
             <div className="flex items-start gap-2">
-              <Badge variant="outline" className="mt-0.5">3</Badge>
-              <span>Data is stored locally and used to populate team dropdowns during scouting</span>
+              <Badge variant="outline" className="mt-0.5">
+                3
+              </Badge>
+              <span>
+                Data is stored locally and used to populate team dropdowns during scouting
+              </span>
             </div>
             <div className="flex items-start gap-2">
-              <Badge variant="outline" className="mt-0.5">4</Badge>
+              <Badge variant="outline" className="mt-0.5">
+                4
+              </Badge>
               <span>Loading new event data will replace the previously loaded event</span>
             </div>
           </div>

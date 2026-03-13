@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Badge } from "@/core/components/ui/badge";
-import { Button } from "@/core/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/core/components/animate-ui/radix/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Badge } from '@/core/components/ui/badge';
+import { Button } from '@/core/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/core/components/animate-ui/radix/tabs';
 import { AchievementCard } from './AchievementCard';
-import { getScoutAchievements, getAchievementStats, backfillAchievementsForAllScouts } from '@/core/lib/achievementUtils';
+import {
+  getScoutAchievements,
+  getAchievementStats,
+  backfillAchievementsForAllScouts,
+} from '@/core/lib/achievementUtils';
 import { getAchievementsByCategory } from '@/core/lib/achievementTypes';
 import type { Achievement } from '@/core/types/achievements';
 import { ACHIEVEMENT_DEFINITIONS } from '@/game-template/gamification';
@@ -28,7 +32,7 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ scoutN
   const [stats, setStats] = useState<AchievementStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [backfillLoading, setBackfillLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
 
   const handleBackfillAchievements = async () => {
     setBackfillLoading(true);
@@ -73,27 +77,43 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ scoutN
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'accuracy': return Target;
-      case 'volume': return Trophy;
-      case 'streaks': return Zap;
-      case 'special': return Star;
-      case 'social': return Users;
-      case 'time': return Clock;
-      case 'improvement': return TrendingUp;
-      default: return Trophy;
+      case 'accuracy':
+        return Target;
+      case 'volume':
+        return Trophy;
+      case 'streaks':
+        return Zap;
+      case 'special':
+        return Star;
+      case 'social':
+        return Users;
+      case 'time':
+        return Clock;
+      case 'improvement':
+        return TrendingUp;
+      default:
+        return Trophy;
     }
   };
 
   const getCategoryName = (category: string) => {
     switch (category) {
-      case 'accuracy': return 'Accuracy';
-      case 'volume': return 'Volume';
-      case 'streaks': return 'Streaks';
-      case 'special': return 'Special';
-      case 'social': return 'Social';
-      case 'time': return 'Time';
-      case 'improvement': return 'Improvement';
-      default: return category;
+      case 'accuracy':
+        return 'Accuracy';
+      case 'volume':
+        return 'Volume';
+      case 'streaks':
+        return 'Streaks';
+      case 'special':
+        return 'Special';
+      case 'social':
+        return 'Social';
+      case 'time':
+        return 'Time';
+      case 'improvement':
+        return 'Improvement';
+      default:
+        return category;
     }
   };
 
@@ -122,12 +142,18 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ scoutN
   // Helper function to get tier order for sorting
   const getTierOrder = (tier: string) => {
     switch (tier) {
-      case 'bronze': return 1;
-      case 'silver': return 2;
-      case 'gold': return 3;
-      case 'platinum': return 4;
-      case 'legendary': return 5;
-      default: return 6;
+      case 'bronze':
+        return 1;
+      case 'silver':
+        return 2;
+      case 'gold':
+        return 3;
+      case 'platinum':
+        return 4;
+      case 'legendary':
+        return 5;
+      default:
+        return 6;
     }
   };
 
@@ -215,22 +241,19 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ scoutN
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="w-full"
-          enableSwipe={true}
-        >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" enableSwipe={true}>
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 mb-6">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="unlocked">Unlocked</TabsTrigger>
             <TabsTrigger value="progress">In Progress</TabsTrigger>
             <TabsTrigger value="recent">Recent</TabsTrigger>
-            {Object.keys(categories).slice(0, 4).map(category => (
-              <TabsTrigger key={category} value={category} className="hidden lg:flex">
-                {getCategoryName(category)}
-              </TabsTrigger>
-            ))}
+            {Object.keys(categories)
+              .slice(0, 4)
+              .map(category => (
+                <TabsTrigger key={category} value={category} className="hidden lg:flex">
+                  {getCategoryName(category)}
+                </TabsTrigger>
+              ))}
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
@@ -350,7 +373,7 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ scoutN
             )}
           </TabsContent>
 
-          {Object.keys(categories).map((category) => (
+          {Object.keys(categories).map(category => (
             <TabsContent key={category} value={category} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(unlockedByCategory[category] || []).map(achievement => (

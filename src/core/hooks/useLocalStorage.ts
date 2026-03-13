@@ -31,9 +31,9 @@ export function useLocalStorage<T>(
       try {
         // Allow value to be a function (same API as useState)
         const valueToStore = value instanceof Function ? value(storedValue) : value;
-        
+
         setStoredValue(valueToStore);
-        
+
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
@@ -48,7 +48,7 @@ export function useLocalStorage<T>(
   const removeValue = useCallback(() => {
     try {
       setStoredValue(initialValue);
-      
+
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem(key);
       }

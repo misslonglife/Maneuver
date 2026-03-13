@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Badge } from "@/core/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Badge } from '@/core/components/ui/badge';
 import { MapPin, Map, AlertCircle, Users } from 'lucide-react';
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
 import { hasStoredNexusTeams } from '@/core/lib/nexusUtils';
 import type { NexusPitAddresses, NexusPitMap } from '@/core/lib/nexusUtils';
 
@@ -12,11 +12,7 @@ interface PitDataDisplayProps {
   eventKey: string;
 }
 
-export const PitDataDisplay: React.FC<PitDataDisplayProps> = ({
-  addresses,
-  map,
-  eventKey
-}) => {
+export const PitDataDisplay: React.FC<PitDataDisplayProps> = ({ addresses, map, eventKey }) => {
   const addressCount = addresses ? Object.keys(addresses).length : 0;
   const hasMap = map !== null;
   const hasExtractedTeams = hasStoredNexusTeams(eventKey);
@@ -45,13 +41,13 @@ export const PitDataDisplay: React.FC<PitDataDisplayProps> = ({
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
-              <Badge variant={addressCount > 0 ? "default" : "secondary"}>
+              <Badge variant={addressCount > 0 ? 'default' : 'secondary'}>
                 {addressCount} Pit Addresses
               </Badge>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={hasMap ? "default" : "secondary"}>
-                {hasMap ? "Pit Map Available" : "No Pit Map"}
+              <Badge variant={hasMap ? 'default' : 'secondary'}>
+                {hasMap ? 'Pit Map Available' : 'No Pit Map'}
               </Badge>
             </div>
             {hasExtractedTeams && (
@@ -65,7 +61,8 @@ export const PitDataDisplay: React.FC<PitDataDisplayProps> = ({
           </div>
           {hasExtractedTeams && (
             <p className="text-xs text-muted-foreground mt-2">
-              Team list automatically extracted from pit addresses and stored for pit scouting assignments
+              Team list automatically extracted from pit addresses and stored for pit scouting
+              assignments
             </p>
           )}
         </CardContent>
@@ -85,7 +82,7 @@ export const PitDataDisplay: React.FC<PitDataDisplayProps> = ({
               {Object.entries(addresses)
                 .sort(([a], [b]) => parseInt(a) - parseInt(b))
                 .map(([teamNumber, pitAddress]) => (
-                  <div 
+                  <div
                     key={teamNumber}
                     className="flex items-center justify-between p-2 bg-muted rounded-md text-sm"
                   >
@@ -112,11 +109,13 @@ export const PitDataDisplay: React.FC<PitDataDisplayProps> = ({
           <CardContent>
             <div className="space-y-4">
               <div className="flex gap-4 text-sm text-muted-foreground">
-                <span>Map Size: {map.size?.width || 0} × {map.size?.height || 0}</span>
+                <span>
+                  Map Size: {map.size?.width || 0} × {map.size?.height || 0}
+                </span>
                 <span>Pits: {map.pits ? Object.keys(map.pits).length : 0}</span>
                 {map.areas && <span>Areas: {Object.keys(map.areas).length}</span>}
               </div>
-              
+
               {/* Simple text representation - could be enhanced with actual map rendering */}
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm text-muted-foreground mb-2">

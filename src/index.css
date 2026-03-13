@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 /* Local Font Declarations */
 @font-face {
@@ -93,7 +93,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: "Titillium Web", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Titillium Web', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -177,8 +177,8 @@ h1 {
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-family-titillium: "Titillium Web", system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --font-family-sans: "Titillium Web", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-titillium: 'Titillium Web', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-sans: 'Titillium Web', system-ui, Avenir, Helvetica, Arial, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -253,13 +253,13 @@ h1 {
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Prevent browser swipe-back navigation on mobile */
   html {
     overscroll-behavior-x: none;
     -webkit-overscroll-behavior-x: none;
   }
-  
+
   /* Additional iOS Safari optimizations */
   @supports (-webkit-touch-callout: none) {
     body {
@@ -268,9 +268,11 @@ h1 {
       -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
     }
-    
+
     /* Allow text selection where needed */
-    input, textarea, [contenteditable] {
+    input,
+    textarea,
+    [contenteditable] {
       -webkit-user-select: auto;
       user-select: auto;
       -webkit-touch-callout: default;
@@ -281,13 +283,13 @@ h1 {
 /* Apple Pencil and Touch Device Optimizations */
 @media (pointer: coarse) {
   /* Improve touch target sizes for Apple Pencil */
-  [data-slot="select-trigger"] {
+  [data-slot='select-trigger'] {
     min-height: 44px !important;
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
   }
-  
-  [data-slot="select-item"] {
+
+  [data-slot='select-item'] {
     min-height: 48px !important;
     touch-action: manipulation !important;
     cursor: pointer !important;
@@ -297,20 +299,20 @@ h1 {
     padding-top: 12px !important;
     padding-bottom: 12px !important;
   }
-  
-  [data-slot="select-item"]:hover,
-  [data-slot="select-item"]:focus {
+
+  [data-slot='select-item']:hover,
+  [data-slot='select-item']:focus {
     background-color: rgba(0, 0, 0, 0.08) !important;
     transition: background-color 0.1s ease !important;
   }
-  
-  [data-slot="select-item"]:active {
+
+  [data-slot='select-item']:active {
     background-color: rgba(0, 0, 0, 0.15) !important;
     transform: scale(0.98) !important;
     transition: all 0.1s ease !important;
   }
-  
-  [data-slot="select-content"] {
+
+  [data-slot='select-content'] {
     touch-action: manipulation !important;
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -319,17 +321,17 @@ h1 {
 
 /* Specific iPad/Apple Pencil support */
 @supports (-webkit-touch-callout: none) {
-  [data-slot="select-trigger"],
-  [data-slot="select-item"] {
+  [data-slot='select-trigger'],
+  [data-slot='select-item'] {
     -webkit-touch-callout: none !important;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.2) !important;
   }
-  
-  [data-slot="select-item"] {
+
+  [data-slot='select-item'] {
     position: relative !important;
   }
-  
-  [data-slot="select-item"]:before {
+
+  [data-slot='select-item']:before {
     content: '' !important;
     position: absolute !important;
     top: 0 !important;
@@ -340,15 +342,15 @@ h1 {
     pointer-events: none !important;
     transition: background-color 0.1s ease !important;
   }
-  
-  [data-slot="select-item"]:active:before {
+
+  [data-slot='select-item']:active:before {
     background-color: rgba(0, 0, 0, 0.15) !important;
   }
 }
 
 /* Force pointer events for Apple Pencil */
 @media (hover: none) and (pointer: coarse) {
-  [data-slot="select-item"] {
+  [data-slot='select-item'] {
     pointer-events: auto !important;
     touch-action: manipulation !important;
   }

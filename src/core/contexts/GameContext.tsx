@@ -1,7 +1,7 @@
 /**
  * GameContext - Game implementation provider
  * Framework context - game-agnostic
- * 
+ *
  * This context provides access to game-specific implementations
  * of the framework interfaces (scoring, validation, analysis, etc.)
  */
@@ -14,7 +14,7 @@ import type {
   ValidationRules,
   StrategyAnalysis,
   UIComponents,
-  DataTransformation
+  DataTransformation,
 } from '@/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,7 +54,7 @@ export function GameProvider<T extends ScoutingEntryBase = ScoutingEntryBase>({
   validation,
   analysis,
   ui,
-  transformation
+  transformation,
 }: GameProviderProps<T>) {
   const value: GameContextValue = {
     config,
@@ -62,12 +62,8 @@ export function GameProvider<T extends ScoutingEntryBase = ScoutingEntryBase>({
     validation,
     analysis,
     ui,
-    transformation
+    transformation,
   };
 
-  return (
-    <GameContext.Provider value={value}>
-      {children}
-    </GameContext.Provider>
-  );
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }

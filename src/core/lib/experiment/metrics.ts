@@ -6,7 +6,13 @@ import {
   SHOT_GRID_SHOOTABLE_ROWS,
 } from './constants';
 import { FIELD_ELEMENTS } from '@/game-template/components/field-map/constants';
-import type { AutoStartLocationValue, NormalizedExperimentMetrics, PhaseMetrics, ComparisonSummary, MetricComparison } from './types';
+import type {
+  AutoStartLocationValue,
+  NormalizedExperimentMetrics,
+  PhaseMetrics,
+  ComparisonSummary,
+  MetricComparison,
+} from './types';
 
 const createEmptyPhaseMetrics = (): PhaseMetrics => ({
   actionsTotal: 0,
@@ -38,20 +44,26 @@ export const createEmptyMetrics = (): NormalizedExperimentMetrics => ({
   teleop: createEmptyPhaseMetrics(),
 });
 
-const getGridCellIndex = (position: { x: number; y: number } | undefined, options?: { shootableOnly?: boolean }) => {
+const getGridCellIndex = (
+  position: { x: number; y: number } | undefined,
+  options?: { shootableOnly?: boolean }
+) => {
   if (!position) return null;
 
   const x = Math.min(0.999999, Math.max(0, position.x));
   const y = Math.min(0.999999, Math.max(0, position.y));
 
   const col = Math.floor(x * SHOT_GRID_COLS);
-  const row = SHOT_GRID_ROW_BOUNDARIES.findIndex((boundary) => y < boundary);
+  const row = SHOT_GRID_ROW_BOUNDARIES.findIndex(boundary => y < boundary);
 
   if (row < 0) {
     return null;
   }
 
-  if (options?.shootableOnly && !SHOT_GRID_SHOOTABLE_ROWS.includes(row as (typeof SHOT_GRID_SHOOTABLE_ROWS)[number])) {
+  if (
+    options?.shootableOnly &&
+    !SHOT_GRID_SHOOTABLE_ROWS.includes(row as (typeof SHOT_GRID_SHOOTABLE_ROWS)[number])
+  ) {
     return null;
   }
 
@@ -67,7 +79,7 @@ const resolveAutoStartLocation = (position?: { x: number; y: number }): AutoStar
   let closest: AutoStartLocationValue = 'none';
   let closestDistance = Number.POSITIVE_INFINITY;
 
-  AUTO_START_LOCATION_KEYS.forEach((startKey) => {
+  AUTO_START_LOCATION_KEYS.forEach(startKey => {
     const element = FIELD_ELEMENTS[startKey];
     if (!element) return;
 
@@ -84,7 +96,9 @@ const resolveAutoStartLocation = (position?: { x: number; y: number }): AutoStar
   return closest;
 };
 
-const resolveAutoStartLocationFromAction = (action: Record<string, any>): AutoStartLocationValue => {
+const resolveAutoStartLocationFromAction = (
+  action: Record<string, any>
+): AutoStartLocationValue => {
   const actionKey = String(action.action || '');
   if (AUTO_START_LOCATION_KEYS.includes(actionKey as (typeof AUTO_START_LOCATION_KEYS)[number])) {
     return actionKey as AutoStartLocationValue;
@@ -102,9 +116,9 @@ export const buildMetricsFromActions = (params: {
   const processActionList = (
     phase: 'auto' | 'teleop',
     actions: Array<Record<string, any>>,
-    phaseMetrics: PhaseMetrics,
+    phaseMetrics: PhaseMetrics
   ) => {
-    actions.forEach((action) => {
+    actions.forEach(action => {
       phaseMetrics.actionsTotal += 1;
 
       const actionType = String(action.type || '');
@@ -120,14 +134,16 @@ export const buildMetricsFromActions = (params: {
         phaseMetrics.fuelScored += Math.abs(fuelDelta);
         const shotGridIndex = getGridCellIndex(action.position, { shootableOnly: true });
         if (shotGridIndex !== null) {
-          phaseMetrics.shotGridCounts[shotGridIndex] = (phaseMetrics.shotGridCounts[shotGridIndex] ?? 0) + 1;
+          phaseMetrics.shotGridCounts[shotGridIndex] =
+            (phaseMetrics.shotGridCounts[shotGridIndex] ?? 0) + 1;
         }
       } else if (actionType === 'collect') {
         if (phase === 'auto') {
           phaseMetrics.collectActions += 1;
           const collectGridIndex = getGridCellIndex(action.position);
           if (collectGridIndex !== null) {
-            phaseMetrics.collectGridCounts[collectGridIndex] = (phaseMetrics.collectGridCounts[collectGridIndex] ?? 0) + 1;
+            phaseMetrics.collectGridCounts[collectGridIndex] =
+              (phaseMetrics.collectGridCounts[collectGridIndex] ?? 0) + 1;
           }
         }
       }
@@ -148,13 +164,33 @@ const normalizeCollectGridCounts = (counts: number[] | undefined) =>
 
 const flattenMetrics = (metrics: NormalizedExperimentMetrics): Record<string, number> => ({
   auto_score_actions: metrics.auto.scoreActions,
-  ...Object.fromEntries(AUTO_START_LOCATION_KEYS.map((key) => [`auto_start_location_${key}`, metrics.auto.autoStartLocation === key ? 1 : 0])),
-  ...Object.fromEntries(normalizeShotGridCounts(metrics.auto.shotGridCounts).map((value, index) => [`auto_shot_cell_${index}`, value])),
-  ...Object.fromEntries(normalizeCollectGridCounts(metrics.auto.collectGridCounts).map((value, index) => [`auto_collect_cell_${index}`, value])),
+  ...Object.fromEntries(
+    AUTO_START_LOCATION_KEYS.map(key => [
+      `auto_start_location_${key}`,
+      metrics.auto.autoStartLocation === key ? 1 : 0,
+    ])
+  ),
+  ...Object.fromEntries(
+    normalizeShotGridCounts(metrics.auto.shotGridCounts).map((value, index) => [
+      `auto_shot_cell_${index}`,
+      value,
+    ])
+  ),
+  ...Object.fromEntries(
+    normalizeCollectGridCounts(metrics.auto.collectGridCounts).map((value, index) => [
+      `auto_collect_cell_${index}`,
+      value,
+    ])
+  ),
   auto_collect_actions: metrics.auto.collectActions,
   auto_fuel_scored: metrics.auto.fuelScored,
   teleop_score_actions: metrics.teleop.scoreActions,
-  ...Object.fromEntries(normalizeShotGridCounts(metrics.teleop.shotGridCounts).map((value, index) => [`teleop_shot_cell_${index}`, value])),
+  ...Object.fromEntries(
+    normalizeShotGridCounts(metrics.teleop.shotGridCounts).map((value, index) => [
+      `teleop_shot_cell_${index}`,
+      value,
+    ])
+  ),
   teleop_fuel_scored: metrics.teleop.fuelScored,
   total_fuel_scored: metrics.auto.fuelScored + metrics.teleop.fuelScored,
 });
@@ -171,7 +207,7 @@ export const compareMetrics = (params: {
   const scoutFlat = flattenMetrics(params.scout);
   const answerFlat = flattenMetrics(params.answer);
 
-  const lineItems: MetricComparison[] = Object.keys(answerFlat).map((key) => {
+  const lineItems: MetricComparison[] = Object.keys(answerFlat).map(key => {
     const scoutValue = scoutFlat[key] ?? 0;
     const answerValue = answerFlat[key] ?? 0;
 

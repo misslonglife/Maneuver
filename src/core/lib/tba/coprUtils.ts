@@ -29,10 +29,7 @@ const parseTeamNumber = (teamKey: string): number | null => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-const pickMetricMap = (
-  response: RawCOPRResponse,
-  keys: string[]
-): Record<string, number> => {
+const pickMetricMap = (response: RawCOPRResponse, keys: string[]): Record<string, number> => {
   for (const key of keys) {
     const metricMap = response[key];
     if (metricMap && typeof metricMap === 'object') {
@@ -120,7 +117,7 @@ export const getCachedEventCOPRs = (eventKey: string): Map<number, COPRMetrics> 
       Object.entries(parsed.metricsByTeam)
         .map(([team, metrics]) => {
           const teamNumber = Number.parseInt(team, 10);
-          return Number.isFinite(teamNumber) ? [teamNumber, metrics] as const : null;
+          return Number.isFinite(teamNumber) ? ([teamNumber, metrics] as const) : null;
         })
         .filter((entry): entry is readonly [number, COPRMetrics] => entry !== null)
     );
@@ -134,11 +131,9 @@ export const fetchAndCacheEventCOPRs = async (
   eventKey: string,
   apiKey: string
 ): Promise<Map<number, COPRMetrics>> => {
-  const response = await proxyGetJson<RawCOPRResponse>(
-    'tba',
-    `/event/${eventKey}/coprs`,
-    { apiKeyOverride: apiKey || undefined }
-  );
+  const response = await proxyGetJson<RawCOPRResponse>('tba', `/event/${eventKey}/coprs`, {
+    apiKeyOverride: apiKey || undefined,
+  });
 
   const metricsMap = parseCOPRResponse(response);
 

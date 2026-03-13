@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Textarea } from "@/core/components/ui/textarea";
-import { Label } from "@/core/components/ui/label";
-import { toast } from "sonner";
-import { ArrowRight } from "lucide-react";
-import { useGame } from "@/core/contexts/GameContext";
-import { useWorkflowNavigation } from "@/core/hooks/useWorkflowNavigation";
-import { submitMatchData } from "@/core/lib/submitMatch";
-import { workflowConfig } from "@/game-template/game-schema";
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { Textarea } from '@/core/components/ui/textarea';
+import { Label } from '@/core/components/ui/label';
+import { toast } from 'sonner';
+import { ArrowRight } from 'lucide-react';
+import { useGame } from '@/core/contexts/GameContext';
+import { useWorkflowNavigation } from '@/core/hooks/useWorkflowNavigation';
+import { submitMatchData } from '@/core/lib/submitMatch';
+import { workflowConfig } from '@/game-template/game-schema';
 
 const EndgamePage = () => {
   const { ui, transformation } = useGame();
@@ -21,23 +21,23 @@ const EndgamePage = () => {
   const { getPrevRoute } = useWorkflowNavigation();
 
   const [robotStatus, setRobotStatus] = useState(() => {
-    const saved = localStorage.getItem("endgameRobotStatus");
+    const saved = localStorage.getItem('endgameRobotStatus');
     return saved ? JSON.parse(saved) : {};
   });
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
 
   const updateRobotStatus = (updates: Partial<any>) => {
     setRobotStatus((prev: any) => {
       const newStatus = { ...prev, ...updates };
-      localStorage.setItem("endgameRobotStatus", JSON.stringify(newStatus));
+      localStorage.setItem('endgameRobotStatus', JSON.stringify(newStatus));
       return newStatus;
     });
-    toast.success("Status updated");
+    toast.success('Status updated');
   };
 
   const handleSubmit = async () => {
     // Save endgame status to localStorage so submitMatch can access it
-    localStorage.setItem("endgameRobotStatus", JSON.stringify(robotStatus));
+    localStorage.setItem('endgameRobotStatus', JSON.stringify(robotStatus));
 
     await submitMatchData({
       inputs: states?.inputs,
@@ -86,11 +86,11 @@ const EndgamePage = () => {
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Alliance:</span>
                 <Badge
-                  variant={states.inputs.alliance === "red" ? "destructive" : "default"}
+                  variant={states.inputs.alliance === 'red' ? 'destructive' : 'default'}
                   className={
-                    states.inputs.alliance === "blue"
-                      ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-red-500 text-white hover:bg-red-600"
+                    states.inputs.alliance === 'blue'
+                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      : 'bg-red-500 text-white hover:bg-red-600'
                   }
                 >
                   {states.inputs.alliance?.charAt(0).toUpperCase() +
@@ -141,7 +141,7 @@ const EndgamePage = () => {
                 id="comment"
                 placeholder="Enter any additional observations or notes about the match..."
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
+                onChange={e => setComment(e.target.value)}
                 className="min-h-24"
               />
             </div>
@@ -150,19 +150,15 @@ const EndgamePage = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-4 w-full pb-8">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            className="flex-1 h-12 text-lg"
-          >
+          <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-lg">
             Back
           </Button>
           <Button
             onClick={handleSubmit}
             className="flex-2 h-12 text-lg font-semibold"
             style={{
-              backgroundColor: "#16a34a",
-              color: "white",
+              backgroundColor: '#16a34a',
+              color: 'white',
             }}
           >
             Submit Match Data

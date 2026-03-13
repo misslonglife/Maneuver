@@ -2,7 +2,7 @@
  * useOnlineStatus Hook
  * Detect online/offline network status
  * Framework hook - game-agnostic
- * 
+ *
  * Critical for offline-first PWA applications.
  * Detects when device loses/regains internet connection.
  */
@@ -33,7 +33,7 @@ export function useOnlineStatus(): boolean {
 /**
  * useOnlineStatusWithCallback Hook
  * Like useOnlineStatus but with callbacks for status changes
- * 
+ *
  * @param onOnline - Callback when connection is restored
  * @param onOffline - Callback when connection is lost
  * @returns Current online status

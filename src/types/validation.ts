@@ -1,6 +1,6 @@
 /**
  * Validation-related types
- * 
+ *
  * Types for match validation system that compares scouted data with TBA.
  * Framework provides generic validation infrastructure; game implementations
  * provide specific field mappings and scoring calculations.
@@ -19,10 +19,10 @@ export type DiscrepancySeverity = 'critical' | 'warning' | 'minor' | 'none';
  * Overall validation status for a match
  */
 export type ValidationStatus =
-  | 'pending'      // Not yet validated
-  | 'passed'       // No significant discrepancies
-  | 'flagged'      // Discrepancies detected, review recommended
-  | 'failed'       // Major discrepancies, re-scouting required
+  | 'pending' // Not yet validated
+  | 'passed' // No significant discrepancies
+  | 'flagged' // Discrepancies detected, review recommended
+  | 'failed' // Major discrepancies, re-scouting required
   | 'no-tba-data'; // TBA data not available
 
 /**
@@ -44,20 +44,20 @@ export type DataCategory = string; // e.g., 'auto-coral', 'teleop-coral', 'algae
  */
 export interface Discrepancy {
   category: DataCategory;
-  field: string;           // Specific field name (e.g., "autoCoralL4Count")
+  field: string; // Specific field name (e.g., "autoCoralL4Count")
   scoutedValue: number;
   tbaValue: number;
-  difference: number;      // Absolute difference
-  percentDiff: number;     // Percentage difference (0-100)
+  difference: number; // Absolute difference
+  percentDiff: number; // Percentage difference (0-100)
   severity: DiscrepancySeverity;
-  message: string;         // Human-readable description
+  message: string; // Human-readable description
 }
 
 /**
  * Alliance-level validation result
  */
 export interface AllianceValidation {
-  teams: string[];         // Team keys (e.g., ["frc3314", "frc10143", "frc1234"])
+  teams: string[]; // Team keys (e.g., ["frc3314", "frc10143", "frc1234"])
   status: 'complete' | 'incomplete';
   confidence: ConfidenceLevel;
   discrepancies: Discrepancy[];
@@ -75,7 +75,7 @@ export interface TeamValidation {
   confidence: ConfidenceLevel;
   flagForReview: boolean;
   notes: string[];
-  
+
   // Correction metadata
   isCorrected?: boolean;
   correctionCount?: number;
@@ -83,7 +83,7 @@ export interface TeamValidation {
   lastCorrectedBy?: string;
   correctionNotes?: string;
   originalScoutName?: string;
-  
+
   // Scoring breakdown (game-specific structure)
   scoringBreakdown?: Record<string, unknown>;
 }
@@ -92,11 +92,11 @@ export interface TeamValidation {
  * Complete match validation result
  */
 export interface MatchValidationResult {
-  id: string;              // Unique ID for storage: `${eventKey}_${matchKey}`
+  id: string; // Unique ID for storage: `${eventKey}_${matchKey}`
   eventKey: string;
-  matchKey: string;        // TBA match key (e.g., "2025mrcmp_qm1")
+  matchKey: string; // TBA match key (e.g., "2025mrcmp_qm1")
   matchNumber: string;
-  compLevel: string;       // "qm", "qf", "sf", "f"
+  compLevel: string; // "qm", "qf", "sf", "f"
 
   // Overall status
   status: ValidationStatus;
@@ -117,8 +117,8 @@ export interface MatchValidationResult {
   requiresReScout: boolean;
 
   // Metadata
-  validatedAt: number;     // Unix timestamp
-  validatedBy?: string;    // Optional validator name
+  validatedAt: number; // Unix timestamp
+  validatedBy?: string; // Optional validator name
   notes?: string;
 }
 
@@ -131,15 +131,15 @@ export interface MatchValidationResult {
  */
 export interface ValidationThresholds {
   // Percentage difference thresholds
-  critical: number;        // > this % = critical (e.g., 25%)
-  warning: number;         // > this % = warning (e.g., 15%)
-  minor: number;           // > this % = minor (e.g., 5%)
+  critical: number; // > this % = critical (e.g., 25%)
+  warning: number; // > this % = warning (e.g., 15%)
+  minor: number; // > this % = minor (e.g., 5%)
   // Below minor = none
 
   // Absolute difference thresholds (for low-count items)
   criticalAbsolute: number; // > this count = critical (e.g., 5)
-  warningAbsolute: number;  // > this count = warning (e.g., 3)
-  minorAbsolute: number;    // > this count = minor (e.g., 1)
+  warningAbsolute: number; // > this count = warning (e.g., 3)
+  minorAbsolute: number; // > this count = minor (e.g., 1)
 }
 
 /**
@@ -154,8 +154,8 @@ export interface CategoryThresholds {
  * Configuration for validation behavior
  */
 export interface ValidationConfig {
-  thresholds: ValidationThresholds;          // Default thresholds
-  categoryThresholds?: CategoryThresholds;   // Per-category overrides
+  thresholds: ValidationThresholds; // Default thresholds
+  categoryThresholds?: CategoryThresholds; // Per-category overrides
 
   // Flags for enabling/disabling specific checks
   checkAutoScoring: boolean;
@@ -165,12 +165,12 @@ export interface ValidationConfig {
   checkTotalScore: boolean;
 
   // Confidence calculation settings
-  minMatchesForHighConfidence: number;       // Scout needs this many matches
+  minMatchesForHighConfidence: number; // Scout needs this many matches
   maxDiscrepanciesForHighConfidence: number;
 
   // Re-scouting recommendations
-  autoFlagThreshold: number;                 // Auto-flag if this many critical discrepancies
-  requireReScoutThreshold: number;           // Require re-scout if severity exceeds this
+  autoFlagThreshold: number; // Auto-flag if this many critical discrepancies
+  requireReScoutThreshold: number; // Require re-scout if severity exceeds this
 }
 
 // ============================================================================
@@ -203,12 +203,12 @@ export interface ValidationSummary {
 
 /**
  * Database entry for validation result (for IndexedDB storage)
- * 
+ *
  * Stored in TBACacheDB.validationResults table (see database.ts)
  * This is the canonical definition - use this import in application code.
  */
 export interface ValidationResultDB {
-  id: string;              // Primary key: `${eventKey}_${matchKey}`
+  id: string; // Primary key: `${eventKey}_${matchKey}`
   eventKey: string;
   matchKey: string;
   matchNumber: string;

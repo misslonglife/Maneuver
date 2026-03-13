@@ -1,6 +1,6 @@
 /**
  * Match Validation Types
- * 
+ *
  * Generic type definitions for match validation.
  * Uses dynamic action/toggle keys from game-schema instead of hardcoded fields.
  */
@@ -18,12 +18,12 @@ export type DiscrepancySeverity = 'critical' | 'warning' | 'minor' | 'none';
  * Overall validation status for a match
  */
 export type ValidationStatus =
-  | 'pending'        // Not yet validated
-  | 'passed'         // No significant discrepancies
-  | 'flagged'        // Discrepancies detected, review recommended
-  | 'failed'         // Major discrepancies, re-scouting required
-  | 'no-tba-data'    // TBA data not available
-  | 'no-scouting';   // No scouting data for this match
+  | 'pending' // Not yet validated
+  | 'passed' // No significant discrepancies
+  | 'flagged' // Discrepancies detected, review recommended
+  | 'failed' // Major discrepancies, re-scouting required
+  | 'no-tba-data' // TBA data not available
+  | 'no-scouting'; // No scouting data for this match
 
 /**
  * Confidence level in the scouted data
@@ -33,7 +33,7 @@ export type ConfidenceLevel = 'high' | 'medium' | 'low';
 /**
  * Category of data being compared (derived from game-schema)
  */
-export type DataCategory = string;  // Dynamic, comes from game-schema.tbaValidation.categories
+export type DataCategory = string; // Dynamic, comes from game-schema.tbaValidation.categories
 
 // ============================================================================
 // Discrepancy Reporting
@@ -44,14 +44,14 @@ export type DataCategory = string;  // Dynamic, comes from game-schema.tbaValida
  */
 export interface Discrepancy {
   category: DataCategory;
-  field: string;  // Action/toggle key from game-schema
-  fieldLabel: string;  // Human-readable label
+  field: string; // Action/toggle key from game-schema
+  fieldLabel: string; // Human-readable label
   scoutedValue: number;
   tbaValue: number;
-  difference: number;  // Absolute difference
-  percentDiff: number;  // Percentage difference (0-100)
+  difference: number; // Absolute difference
+  percentDiff: number; // Percentage difference (0-100)
   severity: DiscrepancySeverity;
-  message: string;  // Human-readable description
+  message: string; // Human-readable description
 }
 
 /**
@@ -73,8 +73,8 @@ export interface AllianceValidation {
 
   // Generic calculation breakdown
   calculationBreakdown?: {
-    scouted: Record<string, number>;  // Points by category
-    tba: Record<string, number>;  // Points by category
+    scouted: Record<string, number>; // Points by category
+    tba: Record<string, number>; // Points by category
   };
 }
 
@@ -101,8 +101,8 @@ export interface TeamValidation {
 
   // Generic scoring breakdown - keys are action/toggle names from schema
   scoringBreakdown?: {
-    auto: Record<string, number>;     // Auto phase actions
-    teleop: Record<string, number>;   // Teleop phase actions
+    auto: Record<string, number>; // Auto phase actions
+    teleop: Record<string, number>; // Teleop phase actions
     endgame: Record<string, boolean>; // Endgame toggles
   };
 }
@@ -111,11 +111,11 @@ export interface TeamValidation {
  * Complete match validation result
  */
 export interface MatchValidationResult {
-  id: string;  // Unique ID for storage
+  id: string; // Unique ID for storage
   eventKey: string;
-  matchKey: string;  // TBA match key (e.g., "2025mrcmp_qm1")
+  matchKey: string; // TBA match key (e.g., "2025mrcmp_qm1")
   matchNumber: string;
-  compLevel: string;  // "qm", "qf", "sf", "f"
+  compLevel: string; // "qm", "qf", "sf", "f"
   setNumber?: number; // For elim matches
 
   // Overall status
@@ -137,8 +137,8 @@ export interface MatchValidationResult {
   requiresReScout: boolean;
 
   // Metadata
-  validatedAt: number;  // Unix timestamp
-  validatedBy?: string;  // Optional validator name
+  validatedAt: number; // Unix timestamp
+  validatedBy?: string; // Optional validator name
   notes?: string;
 }
 
@@ -151,15 +151,15 @@ export interface MatchValidationResult {
  */
 export interface ValidationThresholds {
   // Percentage difference thresholds
-  critical: number;  // > this % = critical (e.g., 25%)
-  warning: number;   // > this % = warning (e.g., 15%)
-  minor: number;     // > this % = minor (e.g., 5%)
+  critical: number; // > this % = critical (e.g., 25%)
+  warning: number; // > this % = warning (e.g., 15%)
+  minor: number; // > this % = minor (e.g., 5%)
   // Below minor = none
 
   // Absolute difference thresholds (for low-count items)
-  criticalAbsolute: number;  // > this count = critical (e.g., 5)
-  warningAbsolute: number;   // > this count = warning (e.g., 3)
-  minorAbsolute: number;     // > this count = minor (e.g., 1)
+  criticalAbsolute: number; // > this count = critical (e.g., 5)
+  warningAbsolute: number; // > this count = warning (e.g., 3)
+  minorAbsolute: number; // > this count = minor (e.g., 1)
 }
 
 /**
@@ -172,8 +172,8 @@ export type CategoryThresholds = Record<string, ValidationThresholds | undefined
  * Configuration for validation behavior
  */
 export interface ValidationConfig {
-  thresholds: ValidationThresholds;  // Default thresholds
-  categoryThresholds?: CategoryThresholds;  // Per-category overrides
+  thresholds: ValidationThresholds; // Default thresholds
+  categoryThresholds?: CategoryThresholds; // Per-category overrides
 
   // Flags for enabling/disabling validation by phase
   checkAutoScoring: boolean;
@@ -183,12 +183,12 @@ export interface ValidationConfig {
   checkTotalScore: boolean;
 
   // Confidence calculation settings
-  minMatchesForHighConfidence: number;  // Scout needs this many matches
+  minMatchesForHighConfidence: number; // Scout needs this many matches
   maxDiscrepanciesForHighConfidence: number;
 
   // Re-scouting recommendations
-  autoFlagThreshold: number;  // Auto-flag if this many critical discrepancies
-  requireReScoutThreshold: number;  // Require re-scout if severity exceeds this
+  autoFlagThreshold: number; // Auto-flag if this many critical discrepancies
+  requireReScoutThreshold: number; // Require re-scout if severity exceeds this
 }
 
 /**
@@ -196,12 +196,12 @@ export interface ValidationConfig {
  */
 export const DEFAULT_VALIDATION_CONFIG: ValidationConfig = {
   thresholds: {
-    critical: 25,  // 25% difference
-    warning: 15,   // 15% difference
-    minor: 5,      // 5% difference
+    critical: 25, // 25% difference
+    warning: 15, // 15% difference
+    minor: 5, // 5% difference
     criticalAbsolute: 5,
     warningAbsolute: 3,
-    minorAbsolute: 1
+    minorAbsolute: 1,
   },
   categoryThresholds: {},
   checkAutoScoring: true,
@@ -211,8 +211,8 @@ export const DEFAULT_VALIDATION_CONFIG: ValidationConfig = {
   checkTotalScore: true,
   minMatchesForHighConfidence: 10,
   maxDiscrepanciesForHighConfidence: 2,
-  autoFlagThreshold: 2,  // 2+ critical = auto-flag
-  requireReScoutThreshold: 3  // 3+ critical = require re-scout
+  autoFlagThreshold: 2, // 2+ critical = auto-flag
+  requireReScoutThreshold: 3, // 3+ critical = require re-scout
 };
 
 // ============================================================================
@@ -228,17 +228,17 @@ export interface ScoutedAllianceData {
   matchKey: string;
   matchNumber: string;
   eventKey: string;
-  teams: string[];  // Team numbers
+  teams: string[]; // Team numbers
   scoutNames: string[];
 
   // Generic action aggregation - keys come from game-schema
-  actions: Record<string, number>;  // e.g., { 'action1': 5, 'action2': 3 }
+  actions: Record<string, number>; // e.g., { 'action1': 5, 'action2': 3 }
 
   // Generic toggle aggregation - count of robots with toggle true
-  toggles: Record<string, number>;  // e.g., { 'autoToggle': 2, 'option1': 1 }
+  toggles: Record<string, number>; // e.g., { 'autoToggle': 2, 'option1': 1 }
 
   // Missing data tracking
-  missingTeams: string[];  // Teams in match but not scouted
+  missingTeams: string[]; // Teams in match but not scouted
   scoutedTeamsCount: number;
 }
 
@@ -248,7 +248,7 @@ export interface ScoutedAllianceData {
  */
 export interface TBAAllianceData {
   alliance: 'red' | 'blue';
-  teams: string[];  // Team numbers (without "frc" prefix)
+  teams: string[]; // Team numbers (without "frc" prefix)
 
   // Scores from TBA
   totalPoints: number;
@@ -257,7 +257,7 @@ export interface TBAAllianceData {
   foulPoints: number;
 
   // Generic breakdown - keys derived from TBA mappings in game-schema
-  breakdown: Record<string, number>;  // e.g., { 'action1': 5, 'option1': 2 }
+  breakdown: Record<string, number>; // e.g., { 'action1': 5, 'option1': 2 }
 
   // Penalties (always present in TBA data)
   foulCount: number;
@@ -277,23 +277,23 @@ export interface MatchListItem {
   matchNumber: number;
   compLevel: string;
   setNumber: number;
-  displayName: string;  // e.g., "Qual 15", "SF 1-1", "Final 2"
+  displayName: string; // e.g., "Qual 15", "SF 1-1", "Final 2"
 
   // Teams
   redTeams: string[];
   blueTeams: string[];
 
   // Status
-  hasScouting: boolean;  // Whether any scouting data exists
-  scoutingComplete: boolean;  // All 6 teams scouted
-  redTeamsScouted: number;  // 0-3
+  hasScouting: boolean; // Whether any scouting data exists
+  scoutingComplete: boolean; // All 6 teams scouted
+  redTeamsScouted: number; // 0-3
   blueTeamsScouted: number; // 0-3
 
   // Validation (only present if validated)
   validationResult?: MatchValidationResult;
 
   // TBA data availability
-  hasTBAResults: boolean;  // Whether TBA has score breakdown
+  hasTBAResults: boolean; // Whether TBA has score breakdown
 
   // TBA scores (optional, only if hasTBAResults is true)
   redScore?: number;
@@ -316,7 +316,7 @@ export interface MatchListItem {
  * Database entry for validation result (for IndexedDB)
  */
 export interface ValidationResultDB {
-  id: string;  // Primary key: `${eventKey}_${matchKey}`
+  id: string; // Primary key: `${eventKey}_${matchKey}`
   eventKey: string;
   matchKey: string;
   matchNumber: string;
@@ -329,10 +329,10 @@ export interface ValidationResultDB {
  */
 export interface ValidationSummary {
   eventKey: string;
-  totalMatches: number;  // Total matches from TBA
-  scoutedMatches: number;  // Matches with any scouting data
-  validatedMatches: number;  // Matches that have been validated
-  pendingMatches: number;  // Matches with scouting but not validated
+  totalMatches: number; // Total matches from TBA
+  scoutedMatches: number; // Matches with any scouting data
+  validatedMatches: number; // Matches that have been validated
+  pendingMatches: number; // Matches with scouting but not validated
   passedMatches: number;
   flaggedMatches: number;
   failedMatches: number;

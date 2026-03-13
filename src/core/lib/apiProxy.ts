@@ -26,13 +26,16 @@ export async function proxyGetJson<T>(
     endpoint,
   });
 
-  const response = await fetch(`${getProxyBaseUrl()}/.netlify/functions/api-proxy?${query.toString()}`, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      ...(options.apiKeyOverride ? { 'X-Client-Api-Key': options.apiKeyOverride } : {}),
-    },
-  });
+  const response = await fetch(
+    `${getProxyBaseUrl()}/.netlify/functions/api-proxy?${query.toString()}`,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        ...(options.apiKeyOverride ? { 'X-Client-Api-Key': options.apiKeyOverride } : {}),
+      },
+    }
+  );
 
   const text = await response.text();
   let payload: unknown = null;
@@ -45,7 +48,10 @@ export async function proxyGetJson<T>(
 
   if (!response.ok) {
     const message =
-      (typeof payload === 'object' && payload !== null && 'error' in payload && typeof (payload as { error?: unknown }).error === 'string')
+      typeof payload === 'object' &&
+      payload !== null &&
+      'error' in payload &&
+      typeof (payload as { error?: unknown }).error === 'string'
         ? (payload as { error: string }).error
         : `Proxy request failed (${response.status})`;
     throw new Error(message);

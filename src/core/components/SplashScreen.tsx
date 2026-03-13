@@ -15,10 +15,12 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div className={cn(
-      "fixed inset-0 z-50 bg-background flex items-center justify-center transition-opacity duration-300",
-      isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
-    )}>
+    <div
+      className={cn(
+        'fixed inset-0 z-50 bg-background flex items-center justify-center transition-opacity duration-300',
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      )}
+    >
       <div className="flex flex-col items-center gap-4 animate-pulse">
         <img
           src={ManeuverVerticalLogo}

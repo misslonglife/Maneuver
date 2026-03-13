@@ -1,7 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
-import { CANVAS_CONSTANTS } from "../lib/canvasConstants";
-import { drawSelectedAutoRoutines, drawTeamNumbersAndSpots } from "../lib/canvasUtils";
-import type { StrategyAutoRoutine, StrategyStageId, TeamStageSpots } from "@/core/hooks/useMatchStrategy";
+import { useCallback, useEffect, useRef } from 'react';
+import { CANVAS_CONSTANTS } from '../lib/canvasConstants';
+import { drawSelectedAutoRoutines, drawTeamNumbersAndSpots } from '../lib/canvasUtils';
+import type {
+  StrategyAutoRoutine,
+  StrategyStageId,
+  TeamStageSpots,
+} from '@/core/hooks/useMatchStrategy';
 
 interface TeamSlotSpotVisibility {
   showShooting: boolean;
@@ -56,7 +60,7 @@ export const useCanvasSetup = ({
   isolatedAutoSlot = null,
   autoReplayProgress,
   onCanvasReady,
-  onDimensionsChange
+  onDimensionsChange,
 }: UseCanvasSetupProps) => {
   const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const setupTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -91,7 +95,6 @@ export const useCanvasSetup = ({
         if (isFullscreen) {
           const viewportHeight = window.innerHeight;
           const viewportWidth = window.innerWidth;
-
 
           const isControlsVisible = !hideControls;
 
@@ -169,7 +172,7 @@ export const useCanvasSetup = ({
           currentStageId as StrategyStageId,
           selectedAutoRoutinesBySlot,
           isolatedAutoSlot,
-          autoReplayProgress,
+          autoReplayProgress
         );
 
         // LAYER 3: Load saved drawings or start fresh
@@ -192,7 +195,21 @@ export const useCanvasSetup = ({
       };
       img.src = fieldImagePath;
     }, delay);
-  }, [fieldImagePath, currentStageId, isFullscreen, hideControls, isMobile, backgroundCanvasRef, overlayCanvasRef, drawingCanvasRef, containerRef, fullscreenRef, onCanvasReady, onDimensionsChange, selectedTeams]);
+  }, [
+    fieldImagePath,
+    currentStageId,
+    isFullscreen,
+    hideControls,
+    isMobile,
+    backgroundCanvasRef,
+    overlayCanvasRef,
+    drawingCanvasRef,
+    containerRef,
+    fullscreenRef,
+    onCanvasReady,
+    onDimensionsChange,
+    selectedTeams,
+  ]);
 
   // Re-draw overlay when teams change
   useEffect(() => {
@@ -219,13 +236,22 @@ export const useCanvasSetup = ({
       currentStageId as StrategyStageId,
       selectedAutoRoutinesBySlot,
       isolatedAutoSlot,
-      autoReplayProgress,
+      autoReplayProgress
     );
-  }, [selectedTeams, currentStageId, teamSlotSpotVisibility, getTeamSpots, selectedAutoRoutinesBySlot, isolatedAutoSlot, autoReplayProgress, overlayCanvasRef]);
+  }, [
+    selectedTeams,
+    currentStageId,
+    teamSlotSpotVisibility,
+    getTeamSpots,
+    selectedAutoRoutinesBySlot,
+    isolatedAutoSlot,
+    autoReplayProgress,
+    overlayCanvasRef,
+  ]);
 
   useEffect(() => {
     setupCanvas();
-    
+
     // Extra recalculation after exiting fullscreen to ensure container dimensions are correct
     if (!isFullscreen) {
       const timer = setTimeout(() => setupCanvas(), 200);
@@ -263,6 +289,6 @@ export const useCanvasSetup = ({
   return {
     backgroundImageRef,
     setupCanvas,
-    clearCanvas
+    clearCanvas,
   };
 };

@@ -1,13 +1,24 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, LineChart, Line, Legend, ResponsiveContainer } from "recharts";
-import { ChartContainer, ChartTooltip } from "@/core/components/ui/chart";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Cell,
+  LineChart,
+  Line,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import { ChartContainer, ChartTooltip } from '@/core/components/ui/chart';
 import { calculateAccuracy } from '@/core/lib/scoutGamificationUtils';
 import type { ScoutChartData, ScoutMetric } from '@/core/hooks/useScoutDashboard';
 import type { Scout } from '@/game-template/gamification';
 
 interface ScoutChartProps {
-  chartType: "bar" | "line";
+  chartType: 'bar' | 'line';
   chartData: ScoutChartData[];
-  lineChartData: Array<{ matchNumber: number;[scoutName: string]: number }>;
+  lineChartData: Array<{ matchNumber: number; [scoutName: string]: number }>;
   scouts: Scout[];
   chartMetric: ScoutMetric;
   selectedMetricLabel: string;
@@ -19,16 +30,16 @@ export function ScoutChart({
   lineChartData,
   scouts,
   chartMetric,
-  selectedMetricLabel
+  selectedMetricLabel,
 }: ScoutChartProps) {
   const chartConfig = {
     value: {
       label: selectedMetricLabel,
-      color: "hsl(210, 70%, 50%)",
+      color: 'hsl(210, 70%, 50%)',
     },
   };
 
-  if (chartType === "bar") {
+  if (chartType === 'bar') {
     return (
       <ChartContainer config={chartConfig} className="h-[400px] w-full aspect-auto!">
         <div className="relative h-full w-full min-h-0 min-w-0">
@@ -55,7 +66,8 @@ export function ScoutChart({
                         <div className="bg-white dark:bg-gray-800 p-3 border rounded shadow-lg">
                           <p className="font-semibold">{scout.name}</p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {selectedMetricLabel}: {data.value}{chartMetric === "accuracy" ? "%" : ""}
+                            {selectedMetricLabel}: {data.value}
+                            {chartMetric === 'accuracy' ? '%' : ''}
                           </p>
                           <div className="mt-2 text-xs space-y-1">
                             <p>Stakes: {scout.stakes}</p>
@@ -72,10 +84,7 @@ export function ScoutChart({
                 />
                 <Bar dataKey="value" fill="var(--color-value)" radius={[4, 4, 0, 0]}>
                   {chartData.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={`hsl(${210 + index * 15}, 70%, 50%)`}
-                    />
+                    <Cell key={`cell-${index}`} fill={`hsl(${210 + index * 15}, 70%, 50%)`} />
                   ))}
                 </Bar>
               </BarChart>
@@ -107,7 +116,8 @@ export function ScoutChart({
                         <p className="font-semibold">Match {label}</p>
                         {payload.map((entry, index) => (
                           <p key={index} className="text-sm" style={{ color: entry.color }}>
-                            {entry.dataKey}: {entry.value}{chartMetric === "accuracy" ? "%" : ""}
+                            {entry.dataKey}: {entry.value}
+                            {chartMetric === 'accuracy' ? '%' : ''}
                           </p>
                         ))}
                       </div>
@@ -116,11 +126,7 @@ export function ScoutChart({
                   return null;
                 }}
               />
-              <Legend
-                verticalAlign="top"
-                height={36}
-                wrapperStyle={{ paddingBottom: '10px' }}
-              />
+              <Legend verticalAlign="top" height={36} wrapperStyle={{ paddingBottom: '10px' }} />
               {scouts.slice(0, 6).map((scout, index) => (
                 <Line
                   key={scout.name}

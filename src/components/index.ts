@@ -1,6 +1,6 @@
 /**
  * Components exports
- * 
+ *
  * This exports all reusable React components.
  */
 
@@ -46,7 +46,14 @@ export type { SidebarContextProps } from '../core/components/ui/sidebar';
 export { Button } from '../core/components/ui/button';
 export { Input } from '../core/components/ui/input';
 export { Label } from '../core/components/ui/label';
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../core/components/ui/card';
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../core/components/ui/card';
 export { Badge } from '../core/components/ui/badge';
 export { Alert, AlertDescription, AlertTitle } from '../core/components/ui/alert';
 export { Progress } from '../core/components/ui/progress';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from "@/core/components/ui/button";
+import { Button } from '@/core/components/ui/button';
 import { CheckCircle, Users } from 'lucide-react';
 
 interface AssignmentActionButtonsProps {
@@ -17,15 +17,13 @@ export const AssignmentActionButtons: React.FC<AssignmentActionButtonsProps> = (
   assignmentsLength,
   onClearAllAssignments,
   onConfirmAssignments,
-  isMobile = false
+  isMobile = false,
 }) => {
-  const containerClass = isMobile 
-    ? "flex flex-col items-center justify-center gap-4"
-    : "flex items-center justify-center gap-2";
+  const containerClass = isMobile
+    ? 'flex flex-col items-center justify-center gap-4'
+    : 'flex items-center justify-center gap-2';
 
-  const buttonClass = isMobile 
-    ? "text-sm w-full p-4 max-w-sm"
-    : "text-sm w-full p-4";
+  const buttonClass = isMobile ? 'text-sm w-full p-4 max-w-sm' : 'text-sm w-full p-4';
 
   return (
     <div className={containerClass}>
@@ -41,7 +39,11 @@ export const AssignmentActionButtons: React.FC<AssignmentActionButtonsProps> = (
           disabled={assignmentsLength === 0 && !assignmentsConfirmed}
           className={buttonClass}
         >
-          {assignmentsLength > 0 ? 'Clear All Assignments' : assignmentsConfirmed ? 'Reset Assignments' : 'Clear Selection'}
+          {assignmentsLength > 0
+            ? 'Clear All Assignments'
+            : assignmentsConfirmed
+              ? 'Reset Assignments'
+              : 'Clear Selection'}
         </Button>
       </div>
 

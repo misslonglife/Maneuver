@@ -1,18 +1,15 @@
-import { useState, useRef } from "react";
-import { Button } from "@/core/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Camera, Upload, X, Image } from "lucide-react";
-import { toast } from "sonner";
+import { useState, useRef } from 'react';
+import { Button } from '@/core/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Camera, Upload, X, Image } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface RobotPhotoSectionProps {
   robotPhoto?: string;
   onRobotPhotoChange: (photo: string | undefined) => void;
 }
 
-export function RobotPhotoSection({
-  robotPhoto,
-  onRobotPhotoChange,
-}: RobotPhotoSectionProps) {
+export function RobotPhotoSection({ robotPhoto, onRobotPhotoChange }: RobotPhotoSectionProps) {
   const [isCapturing, setIsCapturing] = useState(false);
   const [isStreamReady, setIsStreamReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,58 +21,61 @@ export function RobotPhotoSection({
     // Show the video element first
     setIsCapturing(true);
     setIsStreamReady(false);
-    
+
     try {
       let stream: MediaStream | null = null;
-      
+
       // First, try to get the back camera (environment-facing)
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            facingMode: { exact: "environment" },
+          video: {
+            facingMode: { exact: 'environment' },
             width: { ideal: 1920 },
-            height: { ideal: 1080 }
+            height: { ideal: 1080 },
           },
         });
       } catch {
         // If exact back camera fails, try with ideal preference (allows fallback)
-        console.log("Back camera not available, trying with ideal preference...");
+        console.log('Back camera not available, trying with ideal preference...');
         stream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            facingMode: { ideal: "environment" },
+          video: {
+            facingMode: { ideal: 'environment' },
             width: { ideal: 1920 },
-            height: { ideal: 1080 }
+            height: { ideal: 1080 },
           },
         });
       }
-      
+
       if (videoRef.current && stream) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
-        
+
         // Wait for the video metadata to load before showing
         videoRef.current.onloadedmetadata = () => {
           if (videoRef.current) {
-            videoRef.current.play().then(() => {
-              setIsStreamReady(true);
-            }).catch((err) => {
-              console.error("Error playing video:", err);
-              toast.error("Failed to start video preview");
-              stopCamera();
-            });
+            videoRef.current
+              .play()
+              .then(() => {
+                setIsStreamReady(true);
+              })
+              .catch(err => {
+                console.error('Error playing video:', err);
+                toast.error('Failed to start video preview');
+                stopCamera();
+              });
           }
         };
       }
     } catch (error) {
-      console.error("Error accessing camera:", error);
-      toast.error("Failed to access camera. Please check permissions.");
+      console.error('Error accessing camera:', error);
+      toast.error('Failed to access camera. Please check permissions.');
       setIsCapturing(false);
     }
   };
 
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
     if (videoRef.current) {
@@ -91,13 +91,13 @@ export function RobotPhotoSection({
       const canvas = canvasRef.current;
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      const context = canvas.getContext("2d");
+      const context = canvas.getContext('2d');
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const photoDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        const photoDataUrl = canvas.toDataURL('image/jpeg', 0.8);
         onRobotPhotoChange(photoDataUrl);
         stopCamera();
-        toast.success("Photo captured!");
+        toast.success('Photo captured!');
       }
     }
   };
@@ -106,15 +106,15 @@ export function RobotPhotoSection({
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5MB");
+        toast.error('File size must be less than 5MB');
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const result = e.target?.result as string;
         onRobotPhotoChange(result);
-        toast.success("Photo uploaded!");
+        toast.success('Photo uploaded!');
       };
       reader.readAsDataURL(file);
     }
@@ -123,9 +123,9 @@ export function RobotPhotoSection({
   const clearPhoto = () => {
     onRobotPhotoChange(undefined);
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
-    toast.success("Photo removed");
+    toast.success('Photo removed');
   };
 
   return (
@@ -154,7 +154,10 @@ export function RobotPhotoSection({
           <div className="space-y-2">
             <div className="relative w-full rounded-lg border bg-black overflow-hidden">
               {!isStreamReady && (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ minHeight: '300px' }}>
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{ minHeight: '300px' }}
+                >
                   <div className="text-white text-center">
                     <Camera className="h-12 w-12 mx-auto mb-2 animate-pulse" />
                     <p>Loading camera...</p>
@@ -185,11 +188,7 @@ export function RobotPhotoSection({
         {/* Photo preview (shown when photo exists) */}
         {robotPhoto && !isCapturing && (
           <div className="space-y-2">
-            <img
-              src={robotPhoto}
-              alt="Robot"
-              className="w-full rounded-lg border"
-            />
+            <img src={robotPhoto} alt="Robot" className="w-full rounded-lg border" />
             <div className="flex gap-2">
               <Button onClick={startCamera} variant="outline" className="flex-1">
                 <Camera className="mr-2 h-4 w-4" />

@@ -13,7 +13,10 @@ interface CategoryThresholdsTabProps {
   onToggleCategory: (category: DataCategory) => void;
   getCategoryThresholds: (category: DataCategory) => ValidationThresholds;
   hasCategoryOverride: (category: DataCategory) => boolean;
-  onUpdateCategoryThresholds: (category: DataCategory, thresholds: ValidationThresholds | undefined) => void;
+  onUpdateCategoryThresholds: (
+    category: DataCategory,
+    thresholds: ValidationThresholds | undefined
+  ) => void;
 }
 
 export const CategoryThresholdsTab: React.FC<CategoryThresholdsTabProps> = ({
@@ -30,14 +33,14 @@ export const CategoryThresholdsTab: React.FC<CategoryThresholdsTabProps> = ({
         Click a category to customize its thresholds. Leave empty to use defaults.
       </div>
 
-      {categories.map((cat) => {
+      {categories.map(cat => {
         const isExpanded = expandedCategories.has(cat.key);
         const hasOverride = hasCategoryOverride(cat.key);
         const thresholds = getCategoryThresholds(cat.key);
 
         return (
           <Card key={cat.key}>
-            <CardHeader 
+            <CardHeader
               className="cursor-pointer hover:bg-muted/50 transition-colors p-4"
               onClick={() => onToggleCategory(cat.key)}
             >
@@ -46,12 +49,18 @@ export const CategoryThresholdsTab: React.FC<CategoryThresholdsTabProps> = ({
                   <div className="flex items-center gap-2">
                     <CardTitle className="text-sm">{cat.label}</CardTitle>
                     {hasOverride && (
-                      <Badge variant="outline" className="text-xs">Custom</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Custom
+                      </Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">{cat.description}</p>
                 </div>
-                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
               </div>
             </CardHeader>
 
@@ -60,7 +69,7 @@ export const CategoryThresholdsTab: React.FC<CategoryThresholdsTabProps> = ({
                 <div className="space-y-3">
                   <ThresholdInputs
                     thresholds={thresholds}
-                    onChange={(newThresholds) => {
+                    onChange={newThresholds => {
                       onUpdateCategoryThresholds(cat.key, newThresholds);
                     }}
                     compact

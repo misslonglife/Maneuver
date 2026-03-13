@@ -18,16 +18,34 @@ import {
   EventConfigurationCard,
   EventSwitchConfirmDialog,
   EventTeamsDisplay,
-  type TBADataType
+  type TBADataType,
 } from '@/core/components/tba/EventConfiguration';
 // GAME-SPECIFIC: ValidationTesting requires game-specific validation logic
 // import { ValidationTesting } from '@/core/components/tba/ValidationTesting';
 import { DataAttribution } from '@/core/components/DataAttribution';
-import { getNexusPitData, storePitData, getStoredPitData, getNexusEvents, extractAndStoreTeamsFromPitAddresses, type NexusPitAddresses, type NexusPitMap } from '@/core/lib/tba';
-import { clearEventData, hasStoredEventData, setCurrentEvent, getCurrentEvent, isDifferentEvent } from '@/core/lib/tba';
+import {
+  getNexusPitData,
+  storePitData,
+  getStoredPitData,
+  getNexusEvents,
+  extractAndStoreTeamsFromPitAddresses,
+  type NexusPitAddresses,
+  type NexusPitMap,
+} from '@/core/lib/tba';
+import {
+  clearEventData,
+  hasStoredEventData,
+  setCurrentEvent,
+  getCurrentEvent,
+  isDifferentEvent,
+} from '@/core/lib/tba';
 import { processPredictionRewardsForMatches } from '@/core/lib/predictionRewards';
 import { fetchAndCacheEventCOPRs } from '@/core/lib/tba/coprUtils';
-import { extractTeamsFromMatches, fetchAndCacheEventStatboticsEPA, fetchEventTeamNumbersFromTBA } from '@/core/lib/statbotics/epaUtils';
+import {
+  extractTeamsFromMatches,
+  fetchAndCacheEventStatboticsEPA,
+  fetchEventTeamNumbersFromTBA,
+} from '@/core/lib/statbotics/epaUtils';
 import {
   correctClimbDataWithValidation,
   previewClimbCorrectionsWithValidation,
@@ -61,7 +79,7 @@ const APIDataPage: React.FC = () => {
 
   // Event switch confirmation
   const [showEventSwitchDialog, setShowEventSwitchDialog] = useState(false);
-  const [pendingAction, setPendingAction] = useState<() => void>(() => { });
+  const [pendingAction, setPendingAction] = useState<() => void>(() => {});
 
   // Processing results state
   const [processedResults, setProcessedResults] = useState<ProcessingResult[]>([]);
@@ -80,7 +98,8 @@ const APIDataPage: React.FC = () => {
   const [statboticsRefreshKey, setStatboticsRefreshKey] = useState(0);
   const [correctingClimbData, setCorrectingClimbData] = useState(false);
   const [previewingClimbCorrections, setPreviewingClimbCorrections] = useState(false);
-  const [climbCorrectionPreview, setClimbCorrectionPreview] = useState<ClimbCorrectionPreview | null>(null);
+  const [climbCorrectionPreview, setClimbCorrectionPreview] =
+    useState<ClimbCorrectionPreview | null>(null);
 
   // Use the TBA data hook
   const {
@@ -110,7 +129,7 @@ const APIDataPage: React.FC = () => {
 
   // Load event from localStorage on mount
   useEffect(() => {
-    const sessionEventKey = localStorage.getItem("eventKey");
+    const sessionEventKey = localStorage.getItem('eventKey');
     if (sessionEventKey) {
       setEventKey(sessionEventKey);
     }
@@ -138,13 +157,13 @@ const APIDataPage: React.FC = () => {
     setShowEventSwitchDialog(false);
     if (pendingAction) {
       pendingAction();
-      setPendingAction(() => { });
+      setPendingAction(() => {});
     }
   };
 
   const handleCancelEventSwitch = () => {
     setShowEventSwitchDialog(false);
-    setPendingAction(() => { });
+    setPendingAction(() => {});
   };
 
   const handleEventKeyChange = (key: string) => {
@@ -183,7 +202,7 @@ const APIDataPage: React.FC = () => {
     }
 
     executeWithConfirmation(async () => {
-      await fetchMatchDataFromTBA(apiKey, eventKey, false, () => { });
+      await fetchMatchDataFromTBA(apiKey, eventKey, false, () => {});
 
       // Update current event in localStorage after successful load
       setCurrentEvent(eventKey.trim());
@@ -197,7 +216,7 @@ const APIDataPage: React.FC = () => {
       return;
     }
 
-    await loadMatchResults(apiKey, eventKey, false, () => { });
+    await loadMatchResults(apiKey, eventKey, false, () => {});
   };
 
   const handleLoadValidationData = async () => {
@@ -223,7 +242,10 @@ const APIDataPage: React.FC = () => {
         await fetchAndCacheEventStatboticsEPA(eventKey, eventTeams);
         setStatboticsRefreshKey(Date.now());
       } catch (statboticsError) {
-        console.warn(`[API Data] Failed to refresh Statbotics EPA for ${eventKey}:`, statboticsError);
+        console.warn(
+          `[API Data] Failed to refresh Statbotics EPA for ${eventKey}:`,
+          statboticsError
+        );
       }
 
       // Update current event in localStorage after successful load
@@ -250,7 +272,10 @@ const APIDataPage: React.FC = () => {
         setStatboticsRefreshKey(Date.now());
         toast.success(`Loaded Statbotics EPA for ${eventTeams.length} teams`);
       } catch (statboticsError) {
-        console.warn(`[API Data] Failed to refresh Statbotics EPA for ${eventKey}:`, statboticsError);
+        console.warn(
+          `[API Data] Failed to refresh Statbotics EPA for ${eventKey}:`,
+          statboticsError
+        );
         toast.error('Failed to load Statbotics EPA data');
       }
 
@@ -264,7 +289,7 @@ const APIDataPage: React.FC = () => {
       return;
     }
 
-    await loadEventTeams(apiKey, eventKey, false, () => { });
+    await loadEventTeams(apiKey, eventKey, false, () => {});
   };
 
   const handleLoadPitData = async () => {
@@ -303,9 +328,14 @@ const APIDataPage: React.FC = () => {
         let extractedTeamCount = 0;
         if (fetchedData.addresses && Object.keys(fetchedData.addresses).length > 0) {
           try {
-            const extractedTeams = extractAndStoreTeamsFromPitAddresses(eventKey, fetchedData.addresses);
+            const extractedTeams = extractAndStoreTeamsFromPitAddresses(
+              eventKey,
+              fetchedData.addresses
+            );
             extractedTeamCount = extractedTeams.length;
-            console.log(`Extracted ${extractedTeamCount} teams from pit addresses for pit assignments`);
+            console.log(
+              `Extracted ${extractedTeamCount} teams from pit addresses for pit assignments`
+            );
           } catch (error) {
             console.warn('Failed to extract teams from pit addresses:', error);
           }
@@ -315,14 +345,16 @@ const APIDataPage: React.FC = () => {
         const hasMap = fetchedData.map !== null;
 
         if (addressCount > 0 && hasMap) {
-          const message = extractedTeamCount > 0
-            ? `Loaded pit data: ${addressCount} addresses, pit map, and extracted ${extractedTeamCount} teams for pit assignments`
-            : `Loaded pit data: ${addressCount} addresses and pit map`;
+          const message =
+            extractedTeamCount > 0
+              ? `Loaded pit data: ${addressCount} addresses, pit map, and extracted ${extractedTeamCount} teams for pit assignments`
+              : `Loaded pit data: ${addressCount} addresses and pit map`;
           toast.success(message);
         } else if (addressCount > 0) {
-          const message = extractedTeamCount > 0
-            ? `Loaded ${addressCount} pit addresses and extracted ${extractedTeamCount} teams for pit assignments (no map available)`
-            : `Loaded ${addressCount} pit addresses (no map available)`;
+          const message =
+            extractedTeamCount > 0
+              ? `Loaded ${addressCount} pit addresses and extracted ${extractedTeamCount} teams for pit assignments (no map available)`
+              : `Loaded ${addressCount} pit addresses (no map available)`;
           toast.success(message);
         } else if (hasMap) {
           toast.warning('Loaded pit map but no team addresses found');
@@ -367,7 +399,11 @@ const APIDataPage: React.FC = () => {
 
     setCorrectingClimbData(true);
     try {
-      const summary = await correctClimbDataWithValidation(eventKey, validationMatches, 'api-data-climb-correction');
+      const summary = await correctClimbDataWithValidation(
+        eventKey,
+        validationMatches,
+        'api-data-climb-correction'
+      );
       setClimbCorrectionPreview(null);
 
       if (summary.correctedEntries > 0) {
@@ -484,7 +520,8 @@ const APIDataPage: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold">API Data</h1>
             <p className="text-muted-foreground">
-              Import match schedules, results, team lists, and validation metrics from TBA/Statbotics, plus pit information from Nexus.
+              Import match schedules, results, team lists, and validation metrics from
+              TBA/Statbotics, plus pit information from Nexus.
             </p>
           </div>
           {/* Attribution for TBA and Nexus APIs */}
@@ -512,10 +549,7 @@ const APIDataPage: React.FC = () => {
 
         {/* Data Type Selection */}
         <div className="lg:col-span-1">
-          <DataTypeSelector
-            dataType={dataType}
-            setDataType={setDataType}
-          />
+          <DataTypeSelector dataType={dataType} setDataType={setDataType} />
         </div>
       </div>
 
@@ -544,17 +578,11 @@ const APIDataPage: React.FC = () => {
       />
 
       {/* Match Data Loader */}
-      {dataType === 'match-data' && (
-        <MatchDataLoader />
-      )}
+      {dataType === 'match-data' && <MatchDataLoader />}
 
       {/* Match Results Section */}
       {dataType === 'match-results' && (
-        <>
-          {processedResults.length > 0 && (
-            <ProcessingResults results={processedResults} />
-          )}
-        </>
+        <>{processedResults.length > 0 && <ProcessingResults results={processedResults} />}</>
       )}
 
       {/* Match Validation Data Display */}
@@ -594,11 +622,7 @@ const APIDataPage: React.FC = () => {
 
       {/* Pit Data Display */}
       {dataType === 'pit-data' && (
-        <PitDataDisplay
-          addresses={pitData.addresses}
-          map={pitData.map}
-          eventKey={eventKey}
-        />
+        <PitDataDisplay addresses={pitData.addresses} map={pitData.map} eventKey={eventKey} />
       )}
 
       {/* Debug Nexus Events Display */}

@@ -43,19 +43,21 @@ function Tabs({ className, enableSwipe = false, value, onValueChange, ...props }
       if (!tabsList) return;
 
       const triggers = Array.from(tabsList.querySelectorAll('[data-slot="tabs-trigger"]'));
-      const tabValues = triggers.map(trigger => {
-        const value = trigger.getAttribute('value');
-        const dataValue = trigger.getAttribute('data-value');
-        const id = trigger.getAttribute('id');
+      const tabValues = triggers
+        .map(trigger => {
+          const value = trigger.getAttribute('value');
+          const dataValue = trigger.getAttribute('data-value');
+          const id = trigger.getAttribute('id');
 
-        // Try to extract value from ID if value attribute is not available
-        if (value) return value;
-        if (dataValue) return dataValue;
-        if (id && id.includes('trigger-')) {
-          return id.split('trigger-')[1];
-        }
-        return null;
-      }).filter(Boolean);
+          // Try to extract value from ID if value attribute is not available
+          if (value) return value;
+          if (dataValue) return dataValue;
+          if (id && id.includes('trigger-')) {
+            return id.split('trigger-')[1];
+          }
+          return null;
+        })
+        .filter(Boolean);
 
       const currentIndex = tabValues.indexOf(value);
       if (currentIndex === -1) return;
@@ -111,15 +113,11 @@ function TabsList({
   const localRef = React.useRef<HTMLDivElement | null>(null);
   React.useImperativeHandle(ref as any, () => localRef.current as HTMLDivElement);
 
-  const [activeValue, setActiveValue] = React.useState<string | undefined>(
-    undefined,
-  );
+  const [activeValue, setActiveValue] = React.useState<string | undefined>(undefined);
 
   const getActiveValue = React.useCallback(() => {
     if (!localRef.current) return;
-    const activeTab = localRef.current.querySelector<HTMLElement>(
-      '[data-state="active"]',
-    );
+    const activeTab = localRef.current.querySelector<HTMLElement>('[data-state="active"]');
     if (!activeTab) return;
     setActiveValue(activeTab.getAttribute('data-value') ?? undefined);
   }, []);
@@ -154,7 +152,7 @@ function TabsList({
         data-slot="tabs-list"
         className={cn(
           'bg-muted text-muted-foreground inline-flex h-10 w-fit items-center justify-center rounded-lg p-[4px]',
-          className,
+          className
         )}
         {...props}
       >
@@ -173,7 +171,7 @@ function TabsTrigger({ className, value, ...props }: TabsTriggerProps) {
         data-slot="tabs-trigger"
         className={cn(
           'inline-flex cursor-pointer items-center size-full justify-center whitespace-nowrap rounded-sm px-2 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:text-foreground z-[1]',
-          className,
+          className
         )}
         value={value}
         {...props}
@@ -187,11 +185,7 @@ type TabsContentProps = React.ComponentProps<typeof TabsPrimitive.Content> &
     transition?: Transition;
   };
 
-function TabsContent({
-  className,
-  children,
-  ...props
-}: TabsContentProps) {
+function TabsContent({ className, children, ...props }: TabsContentProps) {
   return (
     <TabsPrimitive.Content asChild {...props}>
       <motion.div
@@ -225,7 +219,7 @@ function TabsContents({
   React.useEffect(() => {
     if (!containerRef.current) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
+    const resizeObserver = new ResizeObserver(entries => {
       const newHeight = entries?.[0]?.contentRect.height;
       if (!newHeight) return;
       requestAnimationFrame(() => {

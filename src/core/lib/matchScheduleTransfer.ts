@@ -67,7 +67,10 @@ export const normalizeStoredMatchSchedule = (rawMatches: unknown): MatchSchedule
   return normalized;
 };
 
-export const createMatchSchedulePayload = (rawMatches: unknown, eventKey: string): MatchScheduleTransferPayload | null => {
+export const createMatchSchedulePayload = (
+  rawMatches: unknown,
+  eventKey: string
+): MatchScheduleTransferPayload | null => {
   const trimmedEventKey = eventKey.trim();
   if (!trimmedEventKey) return null;
 
@@ -87,7 +90,9 @@ const isStringArray = (value: unknown): value is string[] => {
   return Array.isArray(value) && value.every(item => typeof item === 'string');
 };
 
-export const isMatchSchedulePayload = (jsonData: unknown): jsonData is MatchScheduleTransferPayload => {
+export const isMatchSchedulePayload = (
+  jsonData: unknown
+): jsonData is MatchScheduleTransferPayload => {
   if (!jsonData || typeof jsonData !== 'object') return false;
 
   const data = jsonData as Record<string, unknown>;

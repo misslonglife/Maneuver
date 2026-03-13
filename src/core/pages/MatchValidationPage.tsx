@@ -11,7 +11,13 @@ import {
   type FuelOPRDisplayMode,
 } from '@/core/components/match-validation';
 import { EventNameSelector } from '@/core/components/GameStartComponents/EventNameSelector';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/core/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
 import { Button } from '@/core/components/ui/button';
 import { Checkbox } from '@/core/components/ui/checkbox';
 import { RefreshCw, Settings, CheckCircle, Wrench } from 'lucide-react';
@@ -46,7 +52,9 @@ export const MatchValidationPage: React.FC = () => {
   const [eventKey, setEventKey] = useState('');
   const [selectedMatch, setSelectedMatch] = useState<MatchListItem | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [validationConfig, setValidationConfig] = useState<ValidationConfig>(GAME_VALIDATION_DEFAULT_CONFIG);
+  const [validationConfig, setValidationConfig] = useState<ValidationConfig>(
+    GAME_VALIDATION_DEFAULT_CONFIG
+  );
   const [demoAutoValidated, setDemoAutoValidated] = useState(false);
   const [impactFuelOprRows, setImpactFuelOprRows] = useState<FuelOPRDisplayRow[]>([]);
   const [productionFuelOprRows, setProductionFuelOprRows] = useState<FuelOPRDisplayRow[]>([]);
@@ -57,7 +65,8 @@ export const MatchValidationPage: React.FC = () => {
   const [fuelOprIncludePlayoffs, setFuelOprIncludePlayoffs] = useState(true);
   const [previewingClimbCorrections, setPreviewingClimbCorrections] = useState(false);
   const [correctingClimbData, setCorrectingClimbData] = useState(false);
-  const [climbCorrectionPreview, setClimbCorrectionPreview] = useState<ClimbCorrectionPreview | null>(null);
+  const [climbCorrectionPreview, setClimbCorrectionPreview] =
+    useState<ClimbCorrectionPreview | null>(null);
 
   // Load current event and validation config from localStorage on mount
   useEffect(() => {
@@ -149,7 +158,9 @@ export const MatchValidationPage: React.FC = () => {
 
     let cancelled = false;
 
-    const parseFuelCounts = (gameData: Record<string, unknown>): { auto: number; teleop: number } => {
+    const parseFuelCounts = (
+      gameData: Record<string, unknown>
+    ): { auto: number; teleop: number } => {
       const auto = gameData.auto as Record<string, unknown> | undefined;
       const teleop = gameData.teleop as Record<string, unknown> | undefined;
 
@@ -192,12 +203,18 @@ export const MatchValidationPage: React.FC = () => {
         const productionOpr = productionHybrid.opr;
 
         if (import.meta.env.DEV && eventKey.startsWith('demo')) {
-          console.log(`[Fuel OPR] Impact lambda for ${eventKey}: ${impactHybrid.selectedLambda.toFixed(3)} (${impactHybrid.mode})`);
-          console.log(`[Fuel OPR] Production lambda for ${eventKey}: ${productionHybrid.selectedLambda.toFixed(3)} (${productionHybrid.mode})`);
+          console.log(
+            `[Fuel OPR] Impact lambda for ${eventKey}: ${impactHybrid.selectedLambda.toFixed(3)} (${impactHybrid.mode})`
+          );
+          console.log(
+            `[Fuel OPR] Production lambda for ${eventKey}: ${productionHybrid.selectedLambda.toFixed(3)} (${productionHybrid.mode})`
+          );
 
           const latestSweep = impactHybrid.latestSweep;
           if (latestSweep && latestSweep.rows.length > 0) {
-            console.log(`[Fuel OPR] Impact sweep (train ${latestSweep.trainMatchCount}, holdout ${latestSweep.holdoutMatchCount})`);
+            console.log(
+              `[Fuel OPR] Impact sweep (train ${latestSweep.trainMatchCount}, holdout ${latestSweep.holdoutMatchCount})`
+            );
             console.table(
               latestSweep.rows.map(row => ({
                 lambda: row.lambda,
@@ -207,17 +224,23 @@ export const MatchValidationPage: React.FC = () => {
           }
         }
 
-        const scaledByTeam = new Map<number, {
-          matches: number;
-          autoSum: number;
-          teleopSum: number;
-          fuelDataMatches: number;
-        }>();
+        const scaledByTeam = new Map<
+          number,
+          {
+            matches: number;
+            autoSum: number;
+            teleopSum: number;
+            fuelDataMatches: number;
+          }
+        >();
 
-        const passingByTeam = new Map<number, {
-          passSum: number;
-          passDataMatches: number;
-        }>();
+        const passingByTeam = new Map<
+          number,
+          {
+            passSum: number;
+            passDataMatches: number;
+          }
+        >();
 
         const sosByTeam = new Map<number, { sum: number; count: number }>();
 
@@ -246,9 +269,7 @@ export const MatchValidationPage: React.FC = () => {
           }
 
           return toFiniteNumber(
-            statbotics.strengthOfSchedule
-            ?? statbotics.sos
-            ?? statbotics.scheduleStrength
+            statbotics.strengthOfSchedule ?? statbotics.sos ?? statbotics.scheduleStrength
           );
         };
 
@@ -279,7 +300,9 @@ export const MatchValidationPage: React.FC = () => {
           return hasPass ? sum : null;
         };
 
-        const extractPassingValue = (gameData: Record<string, unknown>): { value: number; hasData: boolean } => {
+        const extractPassingValue = (
+          gameData: Record<string, unknown>
+        ): { value: number; hasData: boolean } => {
           const auto = gameData.auto as Record<string, unknown> | undefined;
           const teleop = gameData.teleop as Record<string, unknown> | undefined;
 
@@ -331,10 +354,12 @@ export const MatchValidationPage: React.FC = () => {
           const gameData = (entry.gameData ?? {}) as Record<string, unknown>;
           const auto = gameData.auto as Record<string, unknown> | undefined;
           const teleop = gameData.teleop as Record<string, unknown> | undefined;
-          const scaledMetrics = gameData.scaledMetrics as {
-            scaledAutoFuel?: number;
-            scaledTeleopFuel?: number;
-          } | undefined;
+          const scaledMetrics = gameData.scaledMetrics as
+            | {
+                scaledAutoFuel?: number;
+                scaledTeleopFuel?: number;
+              }
+            | undefined;
 
           const rawFuel = parseFuelCounts(gameData);
           const hasScaledAuto = typeof scaledMetrics?.scaledAutoFuel === 'number';
@@ -357,7 +382,12 @@ export const MatchValidationPage: React.FC = () => {
             ? (scaledMetrics?.scaledTeleopFuel ?? rawFuel.teleop)
             : rawFuel.teleop;
 
-          const current = scaledByTeam.get(team) ?? { matches: 0, autoSum: 0, teleopSum: 0, fuelDataMatches: 0 };
+          const current = scaledByTeam.get(team) ?? {
+            matches: 0,
+            autoSum: 0,
+            teleopSum: 0,
+            fuelDataMatches: 0,
+          };
           current.matches += 1;
           if (hasFuelData) {
             current.autoSum += scaledAuto;
@@ -387,9 +417,14 @@ export const MatchValidationPage: React.FC = () => {
           const oprByTeam = new Map(oprRows.map(team => [team.teamNumber, team]));
 
           const defenseByTeam = new Map<number, { suppressionSum: number; samples: number }>();
-          const eligibleMatches = cachedMatches.filter(match => fuelOprIncludePlayoffs || match.comp_level === 'qm');
+          const eligibleMatches = cachedMatches.filter(
+            match => fuelOprIncludePlayoffs || match.comp_level === 'qm'
+          );
 
-          const getObservedTotal = (match: typeof eligibleMatches[number], alliance: 'red' | 'blue'): number => {
+          const getObservedTotal = (
+            match: (typeof eligibleMatches)[number],
+            alliance: 'red' | 'blue'
+          ): number => {
             const scoreBreakdown = match.score_breakdown as {
               red?: { hubScore?: Record<string, unknown> };
               blue?: { hubScore?: Record<string, unknown> };
@@ -397,7 +432,10 @@ export const MatchValidationPage: React.FC = () => {
             return toFiniteNumber(scoreBreakdown?.[alliance]?.hubScore?.totalCount) ?? 0;
           };
 
-          const getAllianceTeams = (match: typeof eligibleMatches[number], alliance: 'red' | 'blue'): number[] => {
+          const getAllianceTeams = (
+            match: (typeof eligibleMatches)[number],
+            alliance: 'red' | 'blue'
+          ): number[] => {
             return match.alliances[alliance].team_keys
               .map(key => Number.parseInt(key.replace('frc', ''), 10))
               .filter(Number.isFinite);
@@ -415,7 +453,8 @@ export const MatchValidationPage: React.FC = () => {
               }, 0);
 
               const suppression = expectedOpponentFuel - observedOpponentFuel;
-              const perTeamSuppression = defendingTeams.length > 0 ? suppression / defendingTeams.length : 0;
+              const perTeamSuppression =
+                defendingTeams.length > 0 ? suppression / defendingTeams.length : 0;
 
               for (const teamNumber of defendingTeams) {
                 const current = defenseByTeam.get(teamNumber) ?? { suppressionSum: 0, samples: 0 };
@@ -441,8 +480,12 @@ export const MatchValidationPage: React.FC = () => {
 
               const fuelDataMatches = scaledTeam?.fuelDataMatches ?? 0;
               const hasScaledFuelData = fuelDataMatches > 0;
-              const scaledAutoAvg = hasScaledFuelData ? (scaledTeam?.autoSum ?? 0) / fuelDataMatches : 0;
-              const scaledTeleopAvg = hasScaledFuelData ? (scaledTeam?.teleopSum ?? 0) / fuelDataMatches : 0;
+              const scaledAutoAvg = hasScaledFuelData
+                ? (scaledTeam?.autoSum ?? 0) / fuelDataMatches
+                : 0;
+              const scaledTeleopAvg = hasScaledFuelData
+                ? (scaledTeam?.teleopSum ?? 0) / fuelDataMatches
+                : 0;
               const scaledTotalAvg = scaledAutoAvg + scaledTeleopAvg;
               const totalFuelOPR = oprTeam?.totalFuelOPR ?? 0;
               const passingAggregate = passingByTeam.get(teamNumber);
@@ -452,34 +495,38 @@ export const MatchValidationPage: React.FC = () => {
                 : 0;
 
               const defenseAggregate = defenseByTeam.get(teamNumber);
-              const defenseImpact = defenseAggregate && defenseAggregate.samples > 0
-                ? defenseAggregate.suppressionSum / defenseAggregate.samples
-                : 0;
+              const defenseImpact =
+                defenseAggregate && defenseAggregate.samples > 0
+                  ? defenseAggregate.suppressionSum / defenseAggregate.samples
+                  : 0;
               const assistImpact = passingAvg;
 
               const sosAggregate = sosByTeam.get(teamNumber);
-              const avgSos = sosAggregate && sosAggregate.count > 0 ? sosAggregate.sum / sosAggregate.count : null;
-              const sosPenalty = avgSos !== null
-                ? Math.max(0, Math.min(1, avgSos / 6))
-                : 0;
+              const avgSos =
+                sosAggregate && sosAggregate.count > 0
+                  ? sosAggregate.sum / sosAggregate.count
+                  : null;
+              const sosPenalty = avgSos !== null ? Math.max(0, Math.min(1, avgSos / 6)) : 0;
 
               const targetMatches = 6;
               const matchPenalty = Math.max(0, (targetMatches - matchesPlayed) / targetMatches);
 
               const gap = Math.abs(totalFuelOPR - scaledTotalAvg);
               const scaleBase = Math.max(1, Math.abs(totalFuelOPR), Math.abs(scaledTotalAvg));
-              const gapPenalty = hasScaledFuelData
-                ? Math.max(0, Math.min(1, gap / scaleBase))
-                : 0;
+              const gapPenalty = hasScaledFuelData ? Math.max(0, Math.min(1, gap / scaleBase)) : 0;
 
               const missingScaledPenalty = hasScaledFuelData ? 0 : 0.6;
 
-              const confidencePenalty = Math.max(0, Math.min(1,
-                0.35 * matchPenalty +
-                0.25 * gapPenalty +
-                0.15 * sosPenalty +
-                0.25 * missingScaledPenalty
-              ));
+              const confidencePenalty = Math.max(
+                0,
+                Math.min(
+                  1,
+                  0.35 * matchPenalty +
+                    0.25 * gapPenalty +
+                    0.15 * sosPenalty +
+                    0.25 * missingScaledPenalty
+                )
+              );
 
               const confidenceScore = 1 - confidencePenalty;
               const hybridBase = hasScaledFuelData
@@ -508,7 +555,12 @@ export const MatchValidationPage: React.FC = () => {
                 totalContributionIndex,
               };
             })
-            .sort((a, b) => b.totalContributionIndex - a.totalContributionIndex || b.hybridScorerIndex - a.hybridScorerIndex || a.teamNumber - b.teamNumber);
+            .sort(
+              (a, b) =>
+                b.totalContributionIndex - a.totalContributionIndex ||
+                b.hybridScorerIndex - a.hybridScorerIndex ||
+                a.teamNumber - b.teamNumber
+            );
         };
 
         const impactRows = buildRows(impactOpr.teams);
@@ -669,7 +721,11 @@ export const MatchValidationPage: React.FC = () => {
         return;
       }
 
-      const summary = await correctClimbDataWithValidation(eventKey, cachedMatches, 'match-validation-climb-correction');
+      const summary = await correctClimbDataWithValidation(
+        eventKey,
+        cachedMatches,
+        'match-validation-climb-correction'
+      );
       setClimbCorrectionPreview(null);
 
       if (summary.correctedEntries > 0) {
@@ -716,33 +772,25 @@ export const MatchValidationPage: React.FC = () => {
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button
-              onClick={() => refreshResults()}
-              disabled={isValidating}
-              variant="outline"
-            >
+            <Button onClick={() => refreshResults()} disabled={isValidating} variant="outline">
               <RefreshCw className={`h-4 w-4 mr-2 ${isValidating ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
             <Button
               onClick={() => validateEvent()}
               disabled={isValidating || !eventKey}
-              className='p-4'
+              className="p-4"
             >
               {isValidating ? 'Validating...' : 'Validate Event'}
             </Button>
           </div>
         </div>
 
-
         {/* Event Selector */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <div className="flex items-center gap-2">
             <label className="font-medium shrink-0">Event:</label>
-            <EventNameSelector
-              currentEventKey={eventKey}
-              onEventKeyChange={handleEventChange}
-            />
+            <EventNameSelector currentEventKey={eventKey} onEventKeyChange={handleEventChange} />
           </div>
           {!eventKey && (
             <p className="text-sm text-muted-foreground wrap-break-word">
@@ -767,9 +815,7 @@ export const MatchValidationPage: React.FC = () => {
       )}
 
       {/* Summary Card */}
-      {matchList.length > 0 && (
-        <ValidationSummaryCard results={matchList} />
-      )}
+      {matchList.length > 0 && <ValidationSummaryCard results={matchList} />}
 
       {/* Fuel OPR + Scaled Fuel */}
       {eventKey && (
@@ -778,7 +824,7 @@ export const MatchValidationPage: React.FC = () => {
             <Checkbox
               id="fuel-opr-include-playoffs"
               checked={fuelOprIncludePlayoffs}
-              onCheckedChange={(checked) => {
+              onCheckedChange={checked => {
                 const next = checked === true;
                 setFuelOprIncludePlayoffs(next);
                 localStorage.setItem(FUEL_OPR_INCLUDE_PLAYOFFS_KEY, String(next));
@@ -812,7 +858,9 @@ export const MatchValidationPage: React.FC = () => {
                   onClick={handlePreviewClimbCorrections}
                   disabled={previewingClimbCorrections || correctingClimbData || !eventKey}
                 >
-                  <CheckCircle className={`h-4 w-4 mr-2 ${previewingClimbCorrections ? 'animate-spin' : ''}`} />
+                  <CheckCircle
+                    className={`h-4 w-4 mr-2 ${previewingClimbCorrections ? 'animate-spin' : ''}`}
+                  />
                   {previewingClimbCorrections ? 'Scanning...' : 'Preview Climb Corrections'}
                 </Button>
                 <Button
@@ -829,21 +877,32 @@ export const MatchValidationPage: React.FC = () => {
                 <div className="rounded-md border p-3 space-y-2">
                   <div className="text-sm font-medium">Climb Correction Preview</div>
                   <div className="text-xs text-muted-foreground">
-                    {climbCorrectionPreview.candidates.length} fixable entries • {climbCorrectionPreview.summary.skippedMissingEntries} missing entries • {climbCorrectionPreview.summary.skippedNoTBAClimbData} no TBA climb data
+                    {climbCorrectionPreview.candidates.length} fixable entries •{' '}
+                    {climbCorrectionPreview.summary.skippedMissingEntries} missing entries •{' '}
+                    {climbCorrectionPreview.summary.skippedNoTBAClimbData} no TBA climb data
                   </div>
                   {climbCorrectionPreview.candidates.length > 0 ? (
                     <div className="max-h-56 overflow-y-auto space-y-1">
-                      {climbCorrectionPreview.candidates.map((candidate) => {
+                      {climbCorrectionPreview.candidates.map(candidate => {
                         const currentLabel = candidate.currentFailed
                           ? 'Failed'
-                          : candidate.currentLevel ? `Level ${candidate.currentLevel}` : 'No climb';
+                          : candidate.currentLevel
+                            ? `Level ${candidate.currentLevel}`
+                            : 'No climb';
                         const tbaLabel = candidate.tbaFailed
                           ? 'Failed'
-                          : candidate.tbaLevel ? `Level ${candidate.tbaLevel}` : 'No climb';
+                          : candidate.tbaLevel
+                            ? `Level ${candidate.tbaLevel}`
+                            : 'No climb';
 
                         return (
-                          <div key={`${candidate.matchKey}-${candidate.teamNumber}-${candidate.alliance}`} className="text-xs rounded border px-2 py-1">
-                            {candidate.phase.toUpperCase()} • Match {candidate.matchNumber} • {candidate.alliance.toUpperCase()} • Team {candidate.teamNumber}: {currentLabel} → {tbaLabel}
+                          <div
+                            key={`${candidate.matchKey}-${candidate.teamNumber}-${candidate.alliance}`}
+                            className="text-xs rounded border px-2 py-1"
+                          >
+                            {candidate.phase.toUpperCase()} • Match {candidate.matchNumber} •{' '}
+                            {candidate.alliance.toUpperCase()} • Team {candidate.teamNumber}:{' '}
+                            {currentLabel} → {tbaLabel}
                           </div>
                         );
                       })}

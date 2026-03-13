@@ -1,21 +1,21 @@
 /**
  * Game-Specific Data Transformation - 2026 REBUILT
- * 
+ *
  * Transforms PathWaypoint data from AutoFieldMap into counter fields.
  * Full path is stored for visualization replay.
- * 
+ *
  * 2026 Path-Based Tracking:
  * - score: Fuel deposited at hub -> fuelScoredCount
  * - collect: Fuel collected -> fuelCollectedCount
  * - pass: Fuel passed to alliance zone -> fuelPassedCount
  * - traversal: Trench/bump usage -> trenchUsedCount, bumpUsedCount
  * - foul: Mid-line violation -> foulCommittedCount
- * 
+ *
  * DERIVED FROM: game-schema.ts
  */
 
-import type { DataTransformation } from "@/types/game-interfaces";
-import { toggles, getActionKeys } from "./game-schema";
+import type { DataTransformation } from '@/types/game-interfaces';
+import { toggles, getActionKeys } from './game-schema';
 
 /**
  * Generate default values for action counters
@@ -25,7 +25,15 @@ function generateActionDefaults(phase: 'auto' | 'teleop'): Record<string, number
   const defaults: Record<string, number> = {};
 
   // Actions tracked in both phases
-  const commonActions = ['fuelScored', 'fuelPassed', 'shotOnTheMove', 'shotStationary', 'trenchStuck', 'bumpStuck', 'brokenDown'];
+  const commonActions = [
+    'fuelScored',
+    'fuelPassed',
+    'shotOnTheMove',
+    'shotStationary',
+    'trenchStuck',
+    'bumpStuck',
+    'brokenDown',
+  ];
 
   // Auto-only actions
   const autoOnlyActions = ['depotCollect', 'outpostCollect', 'foulCommitted'];
@@ -33,9 +41,10 @@ function generateActionDefaults(phase: 'auto' | 'teleop'): Record<string, number
   // Teleop-only actions
   const teleopOnlyActions: string[] = ['steal'];
 
-  const actionsToInclude = phase === 'auto'
-    ? [...commonActions, ...autoOnlyActions]
-    : [...commonActions, ...teleopOnlyActions];
+  const actionsToInclude =
+    phase === 'auto'
+      ? [...commonActions, ...autoOnlyActions]
+      : [...commonActions, ...teleopOnlyActions];
 
   actionsToInclude.forEach(key => {
     defaults[`${key}Count`] = 0;
@@ -82,11 +91,11 @@ export const gameDataTransformation: DataTransformation = {
         // Map field element keys to position indices
         // Order matches field layout from top to bottom
         const startPositionMap: Record<string, number> = {
-          'trench1': 0,     // Upper trench
-          'bump1': 1,       // Upper bump  
-          'hub': 2,         // Center at hub
-          'bump2': 3,       // Lower bump
-          'trench2': 4,     // Lower trench
+          trench1: 0, // Upper trench
+          bump1: 1, // Upper bump
+          hub: 2, // Center at hub
+          bump2: 3, // Lower bump
+          trench2: 4, // Lower trench
         };
 
         const mappedPosition = startPositionMap[startWaypoint.action];
@@ -158,7 +167,8 @@ export const gameDataTransformation: DataTransformation = {
         switch (wp.type) {
           case 'score':
             // fuelDelta is negative for deposits (robot loses fuel)
-            result.auto.fuelScoredCount = (result.auto.fuelScoredCount || 0) + Math.abs(wp.fuelDelta || 0);
+            result.auto.fuelScoredCount =
+              (result.auto.fuelScoredCount || 0) + Math.abs(wp.fuelDelta || 0);
             if (wp.shotType === 'onTheMove') {
               result.auto.shotOnTheMoveCount = (result.auto.shotOnTheMoveCount || 0) + 1;
             } else if (wp.shotType === 'stationary') {
@@ -175,7 +185,8 @@ export const gameDataTransformation: DataTransformation = {
             break;
           case 'pass':
             // fuelDelta is negative for passing (robot loses fuel)
-            result.auto.fuelPassedCount = (result.auto.fuelPassedCount || 0) + Math.abs(wp.fuelDelta || 0);
+            result.auto.fuelPassedCount =
+              (result.auto.fuelPassedCount || 0) + Math.abs(wp.fuelDelta || 0);
             break;
           case 'traversal':
             // Boolean flags for trench/bump usage in auto
@@ -210,16 +221,19 @@ export const gameDataTransformation: DataTransformation = {
             // Track stuck count and duration by obstacle type (new persistent stuck flow)
             if (wp.obstacleType === 'trench') {
               result.auto.trenchStuckCount = (result.auto.trenchStuckCount || 0) + 1;
-              result.auto.trenchStuckDuration = (result.auto.trenchStuckDuration || 0) + (wp.duration || 0);
+              result.auto.trenchStuckDuration =
+                (result.auto.trenchStuckDuration || 0) + (wp.duration || 0);
             } else if (wp.obstacleType === 'bump') {
               result.auto.bumpStuckCount = (result.auto.bumpStuckCount || 0) + 1;
-              result.auto.bumpStuckDuration = (result.auto.bumpStuckDuration || 0) + (wp.duration || 0);
+              result.auto.bumpStuckDuration =
+                (result.auto.bumpStuckDuration || 0) + (wp.duration || 0);
             }
             break;
           case 'broken-down':
             // Track broken down incidents
             result.auto.brokenDownCount = (result.auto.brokenDownCount || 0) + 1;
-            result.auto.brokenDownDuration = (result.auto.brokenDownDuration || 0) + (wp.duration || 0);
+            result.auto.brokenDownDuration =
+              (result.auto.brokenDownDuration || 0) + (wp.duration || 0);
             break;
           // 'start' and 'stuck' types don't increment counters here
         }
@@ -234,7 +248,8 @@ export const gameDataTransformation: DataTransformation = {
       matchData.teleopActions.forEach((wp: any) => {
         switch (wp.type) {
           case 'score':
-            result.teleop.fuelScoredCount = (result.teleop.fuelScoredCount || 0) + Math.abs(wp.fuelDelta || 0);
+            result.teleop.fuelScoredCount =
+              (result.teleop.fuelScoredCount || 0) + Math.abs(wp.fuelDelta || 0);
             if (wp.shotType === 'onTheMove') {
               result.teleop.shotOnTheMoveCount = (result.teleop.shotOnTheMoveCount || 0) + 1;
             } else if (wp.shotType === 'stationary') {
@@ -242,7 +257,8 @@ export const gameDataTransformation: DataTransformation = {
             }
             break;
           case 'pass':
-            result.teleop.fuelPassedCount = (result.teleop.fuelPassedCount || 0) + Math.abs(wp.fuelDelta || 0);
+            result.teleop.fuelPassedCount =
+              (result.teleop.fuelPassedCount || 0) + Math.abs(wp.fuelDelta || 0);
             break;
           case 'climb': {
             // Track climb level, location, and outcome in endgame section
@@ -273,11 +289,14 @@ export const gameDataTransformation: DataTransformation = {
               result.teleop.defenseOpponentCount = (result.teleop.defenseOpponentCount || 0) + 1;
             }
             if (wp.defenseEffectiveness === 'very') {
-              result.teleop.defenseVeryEffectiveCount = (result.teleop.defenseVeryEffectiveCount || 0) + 1;
+              result.teleop.defenseVeryEffectiveCount =
+                (result.teleop.defenseVeryEffectiveCount || 0) + 1;
             } else if (wp.defenseEffectiveness === 'somewhat') {
-              result.teleop.defenseSomewhatEffectiveCount = (result.teleop.defenseSomewhatEffectiveCount || 0) + 1;
+              result.teleop.defenseSomewhatEffectiveCount =
+                (result.teleop.defenseSomewhatEffectiveCount || 0) + 1;
             } else if (wp.defenseEffectiveness === 'not') {
-              result.teleop.defenseNotEffectiveCount = (result.teleop.defenseNotEffectiveCount || 0) + 1;
+              result.teleop.defenseNotEffectiveCount =
+                (result.teleop.defenseNotEffectiveCount || 0) + 1;
             }
             break;
           case 'steal':
@@ -287,16 +306,19 @@ export const gameDataTransformation: DataTransformation = {
             // Track stuck count and duration by obstacle type
             if (wp.obstacleType === 'trench') {
               result.teleop.trenchStuckCount = (result.teleop.trenchStuckCount || 0) + 1;
-              result.teleop.trenchStuckDuration = (result.teleop.trenchStuckDuration || 0) + (wp.duration || 0);
+              result.teleop.trenchStuckDuration =
+                (result.teleop.trenchStuckDuration || 0) + (wp.duration || 0);
             } else if (wp.obstacleType === 'bump') {
               result.teleop.bumpStuckCount = (result.teleop.bumpStuckCount || 0) + 1;
-              result.teleop.bumpStuckDuration = (result.teleop.bumpStuckDuration || 0) + (wp.duration || 0);
+              result.teleop.bumpStuckDuration =
+                (result.teleop.bumpStuckDuration || 0) + (wp.duration || 0);
             }
             break;
           case 'broken-down':
             // Track broken down incidents
             result.teleop.brokenDownCount = (result.teleop.brokenDownCount || 0) + 1;
-            result.teleop.brokenDownDuration = (result.teleop.brokenDownDuration || 0) + (wp.duration || 0);
+            result.teleop.brokenDownDuration =
+              (result.teleop.brokenDownDuration || 0) + (wp.duration || 0);
             break;
           // 'stuck' type is the start marker - we only count on 'unstuck' which has the duration
         }
@@ -347,7 +369,7 @@ export const gameDataTransformation: DataTransformation = {
     Object.assign(result, additionalFields);
 
     return result;
-  }
+  },
 };
 
 export default gameDataTransformation;

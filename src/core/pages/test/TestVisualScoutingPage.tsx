@@ -14,9 +14,10 @@ const TEST_VISUAL_SCOUT_OPTIONS: Record<string, boolean> = {
   [GAME_SCOUT_OPTION_KEYS.disableDefensePopup]: true,
 };
 
-const generateId = () => (typeof crypto !== 'undefined' && 'randomUUID' in crypto
-  ? crypto.randomUUID()
-  : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+const generateId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const TestVisualScoutingPage = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const TestVisualScoutingPage = () => {
       return;
     }
 
-    getExperimentSession(sessionId).then((result) => {
+    getExperimentSession(sessionId).then(result => {
       if (!result) {
         navigate('/test');
         return;
@@ -55,17 +56,17 @@ const TestVisualScoutingPage = () => {
   const handleAddAction = (action: any) => {
     const timestamped = { ...action, timestamp: action.timestamp ?? Date.now() };
     if (phase === 'auto') {
-      setAutoActions((prev) => [...prev, timestamped]);
+      setAutoActions(prev => [...prev, timestamped]);
     } else {
-      setTeleopActions((prev) => [...prev, timestamped]);
+      setTeleopActions(prev => [...prev, timestamped]);
     }
   };
 
   const handleUndo = () => {
     if (phase === 'auto') {
-      setAutoActions((prev) => prev.slice(0, -1));
+      setAutoActions(prev => prev.slice(0, -1));
     } else {
-      setTeleopActions((prev) => prev.slice(0, -1));
+      setTeleopActions(prev => prev.slice(0, -1));
     }
   };
 
@@ -114,7 +115,9 @@ const TestVisualScoutingPage = () => {
           Back
         </Button>
         <h1 className="text-2xl font-bold">Visual Interface (Block {block})</h1>
-        <p className="text-sm text-muted-foreground">Participant {session.participantCode} • Clip {clipId}</p>
+        <p className="text-sm text-muted-foreground">
+          Participant {session.participantCode} • Clip {clipId}
+        </p>
       </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
@@ -148,7 +151,9 @@ const TestVisualScoutingPage = () => {
             <CardTitle className="text-lg">Progress</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div>Current phase: <strong className="capitalize">{phase}</strong></div>
+            <div>
+              Current phase: <strong className="capitalize">{phase}</strong>
+            </div>
             <div>Auto actions: {autoActions.length}</div>
             <div>Teleop actions: {teleopActions.length}</div>
             <Button className="w-full p-2" onClick={handleProceed}>

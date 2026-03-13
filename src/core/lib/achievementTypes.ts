@@ -4,7 +4,7 @@ import {
   Achievement,
   AchievementTierStyles,
   AchievementRequirement,
-  AchievementCategory
+  AchievementCategory,
 } from '@/core/types/achievements';
 
 // Helper functions for achievement checking
@@ -28,7 +28,7 @@ export const checkAchievement = (achievement: Achievement, scout: Scout): boolea
       if (requirements.property && requirements.property in scout) {
         const value = scout[requirements.property as keyof Scout] as number;
         const total = scout.totalPredictions;
-        return total > 0 && (value / total * 100) >= requirements.value;
+        return total > 0 && (value / total) * 100 >= requirements.value;
       }
       return false;
 
@@ -78,7 +78,9 @@ export const getAchievementProgress = (achievement: Achievement, scout: Scout): 
 };
 
 // Get achievements grouped by category
-export const getAchievementsByCategory = (definitions: Achievement[]): { [key: string]: Achievement[] } => {
+export const getAchievementsByCategory = (
+  definitions: Achievement[]
+): { [key: string]: Achievement[] } => {
   const categories: { [key: string]: Achievement[] } = {};
 
   for (const achievement of definitions) {

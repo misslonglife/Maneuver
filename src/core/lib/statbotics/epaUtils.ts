@@ -50,7 +50,9 @@ const numberOrZero = (value: unknown): number => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const parseBreakdownMetrics = (breakdown: Record<string, unknown> | undefined): StatboticsEPAMetrics => {
+const parseBreakdownMetrics = (
+  breakdown: Record<string, unknown> | undefined
+): StatboticsEPAMetrics => {
   const totalTower = numberOrZero(breakdown?.total_tower);
   const autoTower = numberOrZero(breakdown?.auto_tower);
   const endgameTower = numberOrZero(breakdown?.endgame_tower);
@@ -86,7 +88,10 @@ const normalizeMetrics = (
   };
 };
 
-const fetchTeamEventEPA = async (teamNumber: number, eventKey: string): Promise<StatboticsEPAMetrics | null> => {
+const fetchTeamEventEPA = async (
+  teamNumber: number,
+  eventKey: string
+): Promise<StatboticsEPAMetrics | null> => {
   try {
     const response = await proxyGetJson<StatboticsTeamEventResponse>(
       'statbotics',
@@ -125,7 +130,9 @@ export const clearCachedEventStatboticsEPA = (eventKey: string): void => {
   }
 };
 
-export const getCachedEventStatboticsEPA = (eventKey: string): Map<number, StatboticsEPAMetrics> => {
+export const getCachedEventStatboticsEPA = (
+  eventKey: string
+): Map<number, StatboticsEPAMetrics> => {
   try {
     const raw = localStorage.getItem(getStorageKey(eventKey));
     if (!raw) return new Map();
@@ -139,7 +146,9 @@ export const getCachedEventStatboticsEPA = (eventKey: string): Map<number, Statb
       Object.entries(parsed.metricsByTeam)
         .map(([teamNumber, metrics]) => {
           const parsedTeam = parseTeamNumber(teamNumber);
-          return parsedTeam ? [parsedTeam, normalizeMetrics(metrics, parsed.schemaVersion)] as const : null;
+          return parsedTeam
+            ? ([parsedTeam, normalizeMetrics(metrics, parsed.schemaVersion)] as const)
+            : null;
         })
         .filter((entry): entry is readonly [number, StatboticsEPAMetrics] => entry !== null)
     );
@@ -183,15 +192,11 @@ export const fetchEventTeamNumbersFromTBA = async (
   eventKey: string,
   apiKey: string = ''
 ): Promise<number[]> => {
-  const teamKeys = await proxyGetJson<string[]>(
-    'tba',
-    `/event/${eventKey}/teams/keys`,
-    { apiKeyOverride: apiKey || undefined }
-  );
+  const teamKeys = await proxyGetJson<string[]>('tba', `/event/${eventKey}/teams/keys`, {
+    apiKeyOverride: apiKey || undefined,
+  });
 
-  const teams = teamKeys
-    .map(parseTbaTeamKey)
-    .filter((team): team is number => team !== null);
+  const teams = teamKeys.map(parseTbaTeamKey).filter((team): team is number => team !== null);
 
   return [...new Set(teams)].sort((a, b) => a - b);
 };
@@ -200,7 +205,7 @@ export const fetchAndCacheEventStatboticsEPA = async (
   eventKey: string,
   teamNumbers: number[]
 ): Promise<Map<number, StatboticsEPAMetrics>> => {
-  const uniqueTeams = [...new Set(teamNumbers.filter((team) => Number.isFinite(team) && team > 0))];
+  const uniqueTeams = [...new Set(teamNumbers.filter(team => Number.isFinite(team) && team > 0))];
   const metricsByTeam = new Map<number, StatboticsEPAMetrics>();
 
   if (uniqueTeams.length === 0) {
@@ -210,7 +215,7 @@ export const fetchAndCacheEventStatboticsEPA = async (
         schemaVersion: STATBOTICS_SCHEMA_VERSION,
         eventKey,
         fetchedAt: Date.now(),
-        metricsByTeam: {}
+        metricsByTeam: {},
       } satisfies CachedStatboticsEventPayload)
     );
     return metricsByTeam;

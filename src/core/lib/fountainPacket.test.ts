@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildCompactPacketJson, buildLegacyPacketJson, parseScannedFountainPacket } from './fountainPacket';
+import {
+  buildCompactPacketJson,
+  buildLegacyPacketJson,
+  parseScannedFountainPacket,
+} from './fountainPacket';
 
 describe('fountainPacket compatibility', () => {
   it('parses compact packet format used by generator', () => {
@@ -8,7 +12,7 @@ describe('fountainPacket compatibility', () => {
       sessionId: 'session_123',
       packetId: 7,
       profile: 'fast',
-      data: 'abcd'
+      data: 'abcd',
     });
 
     const parsed = parseScannedFountainPacket(json);
@@ -30,7 +34,7 @@ describe('fountainPacket compatibility', () => {
       k: 10,
       bytes: 200,
       checksum: '1234',
-      indices: [1, 2]
+      indices: [1, 2],
     });
 
     const parsed = parseScannedFountainPacket(json);
@@ -52,7 +56,7 @@ describe('fountainPacket compatibility', () => {
       k: 44,
       bytes: 520,
       checksum: '9999',
-      indices: [2, 8, 11]
+      indices: [2, 8, 11],
     });
 
     const raw = JSON.parse(json) as Record<string, unknown>;

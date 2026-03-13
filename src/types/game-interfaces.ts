@@ -1,10 +1,10 @@
 /**
  * Game-Specific Interface Contracts
- * 
+ *
  * These interfaces define the contract between the core framework
  * and game-specific implementations. Each year's game must implement
  * these interfaces to work with the framework.
- * 
+ *
  * See FRAMEWORK_DESIGN.md for detailed documentation.
  */
 
@@ -15,7 +15,7 @@ export type { TeamStats };
 
 /**
  * Interface 1: GameConfig
- * 
+ *
  * Defines the game's basic configuration and metadata.
  */
 export interface GameConfig {
@@ -39,7 +39,7 @@ export interface GameConfig {
 
 /**
  * Interface 3: ScoringCalculations
- * 
+ *
  * Game-specific logic for calculating points from scouted data.
  */
 export interface ScoringCalculations<T extends ScoutingEntryBase> {
@@ -51,26 +51,26 @@ export interface ScoringCalculations<T extends ScoutingEntryBase> {
 
 /**
  * Interface 3.5: DataTransformation
- * 
+ *
  * Game-specific logic for transforming action arrays into counter fields.
- * 
+ *
  * During match scouting, actions are recorded as timestamped objects in arrays:
  * - autoActions: [{ type: 'score', pieceType: 'coral', level: 'l1', timestamp: 123 }]
  * - teleopActions: [{ type: 'pickup', pieceType: 'algae', location: 'reef', timestamp: 456 }]
- * 
+ *
  * Before saving to the database, these arrays are transformed into counter fields:
  * - autoCoralPlaceL1Count: 3
  * - teleopAlgaePickReefCount: 2
- * 
+ *
  * This interface defines how that transformation happens for a specific game.
  */
 export interface DataTransformation {
   /**
    * Transform action arrays and status objects into counter fields for database storage.
-   * 
+   *
    * @param matchData - Raw match data containing action arrays and status objects
    * @returns Object with counter fields ready for database storage
-   * 
+   *
    * @example
    * // Input:
    * {
@@ -86,7 +86,7 @@ export interface DataTransformation {
    *     climbFailed: false
    *   }
    * }
-   * 
+   *
    * // Output:
    * {
    *   autoCoralPlaceL1Count: 2,
@@ -108,17 +108,17 @@ export interface DataTransformation {
 
 /**
  * Interface 4: ValidationRules
- * 
+ *
  * Game-specific validation logic for comparing scouted data with TBA.
- * 
+ *
  * IMPORTANT: This interface is more complex than others because match validation
  * requires sophisticated threshold management, severity levels, and confidence scoring.
  */
 export interface ValidationRules<T extends ScoutingEntryBase> {
   /**
    * Returns the data categories used for validation.
-   * 
-   * Example categories for 2025: 
+   *
+   * Example categories for 2025:
    * ['auto-coral', 'teleop-coral', 'algae', 'endgame', 'mobility', 'fouls', 'total-score']
    */
   getDataCategories(): string[];
@@ -126,7 +126,7 @@ export interface ValidationRules<T extends ScoutingEntryBase> {
   /**
    * Calculate aggregated statistics for an alliance from individual team entries.
    * This sums up data from 3 robots into alliance-level totals.
-   * 
+   *
    * @param entries - Array of 3 scouting entries (one per robot on alliance)
    * @returns Aggregated statistics for the alliance
    */
@@ -145,7 +145,7 @@ export interface ValidationRules<T extends ScoutingEntryBase> {
 
   /**
    * Validate a complete match by comparing scouted data with TBA data.
-   * 
+   *
    * @param scoutedAlliances - Object with 'red' and 'blue' arrays of scouting entries
    * @param tbaMatchData - TBA API match data (includes score breakdown)
    * @param config - Validation configuration (thresholds, feature flags)
@@ -169,7 +169,7 @@ export interface ValidationRules<T extends ScoutingEntryBase> {
 
 /**
  * Alliance statistics - game-specific aggregated data
- * 
+ *
  * Each game year will have different fields here.
  * This is a placeholder showing common patterns.
  */
@@ -190,12 +190,12 @@ export interface ValidationConfig {
  * Validation thresholds (percentage and absolute)
  */
 export interface ValidationThresholds {
-  critical: number;          // % difference for critical severity (default: 25%)
-  warning: number;           // % difference for warning severity (default: 15%)
-  minor: number;             // % difference for minor severity (default: 5%)
-  criticalAbsolute: number;  // Absolute difference for critical (default: 5)
-  warningAbsolute: number;   // Absolute difference for warning (default: 3)
-  minorAbsolute: number;     // Absolute difference for minor (default: 1)
+  critical: number; // % difference for critical severity (default: 25%)
+  warning: number; // % difference for warning severity (default: 15%)
+  minor: number; // % difference for minor severity (default: 5%)
+  criticalAbsolute: number; // Absolute difference for critical (default: 5)
+  warningAbsolute: number; // Absolute difference for warning (default: 3)
+  minorAbsolute: number; // Absolute difference for minor (default: 1)
 }
 
 /**
@@ -271,16 +271,16 @@ export interface Discrepancy {
 
 /**
  * Interface 5: StrategyAnalysis
- * 
+ *
  * Game-specific strategy calculations.
- * 
+ *
  * Each game year will calculate different statistics based on that year's
  * game pieces, scoring zones, and strategic elements.
  */
 export interface StrategyAnalysis<T extends ScoutingEntryBase> {
   /**
    * Calculate basic statistics for a team.
-   * 
+   *
    * Returns game-specific statistics. The exact fields depend on the game year.
    * Common fields include:
    * - matchesPlayed
@@ -288,7 +288,7 @@ export interface StrategyAnalysis<T extends ScoutingEntryBase> {
    * - Game-specific breakdowns (e.g., avgCoralL1, avgAlgae, etc.)
    * - Rates (e.g., mobilityRate, climbRate, defenseRate)
    * - Positional data (e.g., starting positions)
-   * 
+   *
    * @param entries - Array of scouting entries for the team
    * @returns Team statistics object (game-specific structure)
    */
@@ -307,7 +307,7 @@ export interface StrategyAnalysis<T extends ScoutingEntryBase> {
   /**
    * Get stat sections to display on the Team Statistics page.
    * Each section appears as a card with stat values.
-   * 
+   *
    * @returns Array of stat section definitions
    */
   getStatSections(): import('./team-stats-display').StatSectionDefinition[];
@@ -315,7 +315,7 @@ export interface StrategyAnalysis<T extends ScoutingEntryBase> {
   /**
    * Get rate sections to display (progress bars).
    * Used for Key Rates, Climb Breakdown, etc.
-   * 
+   *
    * @returns Array of rate section definitions
    */
   getRateSections(): import('./team-stats-display').RateSectionDefinition[];
@@ -323,7 +323,7 @@ export interface StrategyAnalysis<T extends ScoutingEntryBase> {
   /**
    * Get match badges to show in match-by-match performance list.
    * These are game-specific indicators like "Climbed", "Broke Down".
-   * 
+   *
    * @returns Array of match badge definitions
    */
   getMatchBadges(): import('./team-stats-display').MatchBadgeDefinition[];
@@ -331,7 +331,7 @@ export interface StrategyAnalysis<T extends ScoutingEntryBase> {
   /**
    * Get start position configuration for the Auto tab.
    * Defines number of positions and optional field image.
-   * 
+   *
    * @returns Start position configuration
    */
   getStartPositionConfig(): import('./team-stats-display').StartPositionConfig;
@@ -341,9 +341,9 @@ export interface StrategyAnalysis<T extends ScoutingEntryBase> {
 
 /**
  * OPTIONAL: Advanced team statistics
- * 
+ *
  * Teams can define their own advanced stats structure.
- * 
+ *
  * Example advanced stats:
  * - Consistency scores (standard deviation)
  * - Trend analysis (improving/declining/stable)
@@ -356,7 +356,7 @@ export interface AdvancedTeamStats {
 
 /**
  * Interface 6: PredictionSystem (OPTIONAL)
- * 
+ *
  * Scout gamification system for match predictions.
  * Teams can choose to implement this for fun/engagement.
  */
@@ -381,13 +381,15 @@ export interface PredictionSystem {
    * @param limit - Number of top scouts to return
    * @returns Array of scouts with their stakes
    */
-  getStakesLeaderboard(limit?: number): Promise<Array<{
-    scoutName: string;
-    totalStakes: number;
-    correctPredictions: number;
-    totalPredictions: number;
-    accuracy: number;
-  }>>;
+  getStakesLeaderboard(limit?: number): Promise<
+    Array<{
+      scoutName: string;
+      totalStakes: number;
+      correctPredictions: number;
+      totalPredictions: number;
+      accuracy: number;
+    }>
+  >;
 }
 
 export type ScoutOptionValue = boolean;
@@ -439,7 +441,7 @@ export interface GameStartScreenProps {
 
 /**
  * Props for AutoStartScreen component (starting position selection)
- * 
+ *
  * This screen allows the scout to select the robot's starting position
  * on the field (e.g., position 0-4 in 2025).
  */
@@ -469,7 +471,7 @@ export interface ScoringScreenProps<T extends ScoutingEntryBase> {
 
 /**
  * Props for PitScoutingQuestions component
- * 
+ *
  * Game-specific pit scouting questions receive gameData and onGameDataChange
  * to manage their custom fields within the pit scouting form.
  */
@@ -480,7 +482,7 @@ export interface PitScoutingQuestionsProps {
 
 /**
  * Interface 6: PitScoutingRules
- * 
+ *
  * Game-specific pit scouting questions and form elements.
  * Framework provides universal fields (photo, weight, drivetrain, language, notes).
  * Game implementations provide additional questions that get stored in gameData.
@@ -489,7 +491,7 @@ export interface PitScoutingRules {
   /**
    * Get game-specific pit scouting questions
    * These will be rendered after universal fields
-   * 
+   *
    * @returns Array of question definitions
    */
   getGameSpecificQuestions(): PitScoutingQuestion[];
@@ -499,11 +501,11 @@ export interface PitScoutingRules {
  * Definition for a game-specific pit scouting question
  */
 export interface PitScoutingQuestion {
-  id: string;                    // Unique identifier (used as key in gameData)
-  label: string;                 // Display label for the question
+  id: string; // Unique identifier (used as key in gameData)
+  label: string; // Display label for the question
   type: 'boolean' | 'text' | 'number' | 'select' | 'multiselect';
-  options?: string[];            // For select/multiselect types
-  required?: boolean;            // Whether this field is required
-  placeholder?: string;          // Placeholder text for text/number inputs
-  helperText?: string;           // Additional help text displayed below the input
+  options?: string[]; // For select/multiselect types
+  required?: boolean; // Whether this field is required
+  placeholder?: string; // Placeholder text for text/number inputs
+  helperText?: string; // Additional help text displayed below the input
 }

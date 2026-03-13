@@ -62,31 +62,33 @@ const TestResultsPage = () => {
     ]);
 
     const filteredResponses = selectedSessionId
-      ? allResponses.filter((response) => response.sessionId === selectedSessionId)
+      ? allResponses.filter(response => response.sessionId === selectedSessionId)
       : allResponses;
 
     const filteredPreferences = selectedSessionId
-      ? allPreferences.filter((preference) => preference.sessionId === selectedSessionId)
+      ? allPreferences.filter(preference => preference.sessionId === selectedSessionId)
       : allPreferences;
 
     const filteredSessions = selectedSessionId
-      ? allSessions.filter((session) => session.id === selectedSessionId)
+      ? allSessions.filter(session => session.id === selectedSessionId)
       : allSessions;
 
     const rows: ComparisonSummary[] = [];
     for (const response of filteredResponses) {
-      const key = keys.find((item) => item.clipId === response.clipId);
+      const key = keys.find(item => item.clipId === response.clipId);
       if (!key) continue;
 
-      rows.push(compareMetrics({
-        responseId: response.id,
-        sessionId: response.sessionId,
-        clipId: response.clipId,
-        block: response.block,
-        interfaceType: response.interfaceType,
-        scout: response.metrics,
-        answer: key.metrics,
-      }));
+      rows.push(
+        compareMetrics({
+          responseId: response.id,
+          sessionId: response.sessionId,
+          clipId: response.clipId,
+          block: response.block,
+          interfaceType: response.interfaceType,
+          scout: response.metrics,
+          answer: key.metrics,
+        })
+      );
     }
 
     setSessions(filteredSessions);
@@ -100,51 +102,55 @@ const TestResultsPage = () => {
   }, [reloadData]);
 
   const sessionGroupById = useMemo(
-    () => new Map(sessions.map((session) => [session.id, session.group] as const)),
-    [sessions],
+    () => new Map(sessions.map(session => [session.id, session.group] as const)),
+    [sessions]
   );
 
   const availableClipIds = useMemo(() => {
-    const clipIds = Array.from(new Set(responses.map((response) => response.clipId)));
+    const clipIds = Array.from(new Set(responses.map(response => response.clipId)));
     return clipIds.sort((left, right) => left.localeCompare(right));
   }, [responses]);
 
   const filteredResponses = useMemo(
-    () => responses.filter((response) => {
-      if (groupFilter !== 'all' && sessionGroupById.get(response.sessionId) !== groupFilter) return false;
-      if (clipFilter !== 'all' && response.clipId !== clipFilter) return false;
-      return true;
-    }),
-    [responses, groupFilter, clipFilter, sessionGroupById],
+    () =>
+      responses.filter(response => {
+        if (groupFilter !== 'all' && sessionGroupById.get(response.sessionId) !== groupFilter)
+          return false;
+        if (clipFilter !== 'all' && response.clipId !== clipFilter) return false;
+        return true;
+      }),
+    [responses, groupFilter, clipFilter, sessionGroupById]
   );
 
   const filteredComparisons = useMemo(
-    () => comparisons.filter((comparison) => {
-      if (groupFilter !== 'all' && sessionGroupById.get(comparison.sessionId) !== groupFilter) return false;
-      if (clipFilter !== 'all' && comparison.clipId !== clipFilter) return false;
-      return true;
-    }),
-    [comparisons, groupFilter, clipFilter, sessionGroupById],
+    () =>
+      comparisons.filter(comparison => {
+        if (groupFilter !== 'all' && sessionGroupById.get(comparison.sessionId) !== groupFilter)
+          return false;
+        if (clipFilter !== 'all' && comparison.clipId !== clipFilter) return false;
+        return true;
+      }),
+    [comparisons, groupFilter, clipFilter, sessionGroupById]
   );
 
   const filteredSessionIds = useMemo(
-    () => new Set(filteredResponses.map((response) => response.sessionId)),
-    [filteredResponses],
+    () => new Set(filteredResponses.map(response => response.sessionId)),
+    [filteredResponses]
   );
 
   const filteredSessions = useMemo(
-    () => sessions.filter((session) => filteredSessionIds.has(session.id)),
-    [sessions, filteredSessionIds],
+    () => sessions.filter(session => filteredSessionIds.has(session.id)),
+    [sessions, filteredSessionIds]
   );
 
   const filteredPreferences = useMemo(
-    () => preferences.filter((preference) => filteredSessionIds.has(preference.sessionId)),
-    [preferences, filteredSessionIds],
+    () => preferences.filter(preference => filteredSessionIds.has(preference.sessionId)),
+    [preferences, filteredSessionIds]
   );
 
   const averageByInterface = useMemo(() => {
     const buckets: Record<'visual' | 'form', number[]> = { visual: [], form: [] };
-    filteredComparisons.forEach((row) => {
+    filteredComparisons.forEach(row => {
       buckets[row.interfaceType].push(row.accuracyPercent);
     });
 
@@ -160,7 +166,7 @@ const TestResultsPage = () => {
 
   const durationByInterface = useMemo(() => {
     const buckets: Record<'visual' | 'form', number[]> = { visual: [], form: [] };
-    filteredResponses.forEach((response) => {
+    filteredResponses.forEach(response => {
       buckets[response.interfaceType].push(response.durationMs / 1000);
     });
 
@@ -199,7 +205,7 @@ const TestResultsPage = () => {
       },
     };
 
-    filteredResponses.forEach((response) => {
+    filteredResponses.forEach(response => {
       if (!response.tlxRaw) return;
       const bucket = perDimensionBuckets[response.interfaceType];
       TLX_DIMENSIONS.forEach(({ key }) => {
@@ -207,9 +213,8 @@ const TestResultsPage = () => {
       });
     });
 
-    const avg = (values: number[]) => values.length
-      ? values.reduce((acc, value) => acc + value, 0) / values.length
-      : null;
+    const avg = (values: number[]) =>
+      values.length ? values.reduce((acc, value) => acc + value, 0) / values.length : null;
 
     const dimensionAverages = TLX_DIMENSIONS.map(({ key, label }) => ({
       key,
@@ -218,8 +223,12 @@ const TestResultsPage = () => {
       form: avg(perDimensionBuckets.form[key]),
     }));
 
-    const overallVisual = avg(dimensionAverages.map((row) => row.visual).filter((value): value is number => value !== null));
-    const overallForm = avg(dimensionAverages.map((row) => row.form).filter((value): value is number => value !== null));
+    const overallVisual = avg(
+      dimensionAverages.map(row => row.visual).filter((value): value is number => value !== null)
+    );
+    const overallForm = avg(
+      dimensionAverages.map(row => row.form).filter((value): value is number => value !== null)
+    );
 
     return {
       overallVisual,
@@ -241,8 +250,8 @@ const TestResultsPage = () => {
 
     const buckets = new Map<string, Bucket>();
 
-    filteredComparisons.forEach((comparison) => {
-      comparison.lineItems.forEach((lineItem) => {
+    filteredComparisons.forEach(comparison => {
+      comparison.lineItems.forEach(lineItem => {
         const existing = buckets.get(lineItem.key) ?? {
           key: lineItem.key,
           total: 0,
@@ -268,7 +277,7 @@ const TestResultsPage = () => {
       });
     });
 
-    const rows = Array.from(buckets.values()).map((bucket) => ({
+    const rows = Array.from(buckets.values()).map(bucket => ({
       key: bucket.key,
       overallAvg: bucket.count ? bucket.total / bucket.count : 0,
       visualAvg: bucket.visualCount ? bucket.visualTotal / bucket.visualCount : null,
@@ -277,11 +286,11 @@ const TestResultsPage = () => {
     }));
 
     const nonCellRows = rows
-      .filter((row) => !row.isCellMetric)
+      .filter(row => !row.isCellMetric)
       .sort((left, right) => right.overallAvg - left.overallAvg);
 
     const cellRows = rows
-      .filter((row) => row.isCellMetric)
+      .filter(row => row.isCellMetric)
       .sort((left, right) => right.overallAvg - left.overallAvg);
 
     return {
@@ -292,21 +301,20 @@ const TestResultsPage = () => {
 
   const preferenceSummary = useMemo(() => {
     const preferredCounts = {
-      visual: filteredPreferences.filter((item) => item.preferredInterface === 'visual').length,
-      form: filteredPreferences.filter((item) => item.preferredInterface === 'form').length,
-      none: filteredPreferences.filter((item) => item.preferredInterface === 'no-preference').length,
+      visual: filteredPreferences.filter(item => item.preferredInterface === 'visual').length,
+      form: filteredPreferences.filter(item => item.preferredInterface === 'form').length,
+      none: filteredPreferences.filter(item => item.preferredInterface === 'no-preference').length,
     };
 
-    const avg = (values: number[]) => values.length
-      ? values.reduce((acc, value) => acc + value, 0) / values.length
-      : null;
+    const avg = (values: number[]) =>
+      values.length ? values.reduce((acc, value) => acc + value, 0) / values.length : null;
 
     return {
       preferredCounts,
-      visualSatisfaction: avg(filteredPreferences.map((item) => item.visualSatisfaction)),
-      formSatisfaction: avg(filteredPreferences.map((item) => item.formSatisfaction)),
-      visualEase: avg(filteredPreferences.map((item) => item.visualEase)),
-      formEase: avg(filteredPreferences.map((item) => item.formEase)),
+      visualSatisfaction: avg(filteredPreferences.map(item => item.visualSatisfaction)),
+      formSatisfaction: avg(filteredPreferences.map(item => item.formSatisfaction)),
+      visualEase: avg(filteredPreferences.map(item => item.visualEase)),
+      formEase: avg(filteredPreferences.map(item => item.formEase)),
     };
   }, [filteredPreferences]);
 
@@ -340,7 +348,7 @@ const TestResultsPage = () => {
       await reloadData();
       if (successCount > 0) {
         toast.success(
-          `Imported ${successCount}/${files.length} files • ${totalSessions} sessions, ${totalResponses} responses, ${totalAnswerKeys} answer keys, ${totalPreferences} preferences`,
+          `Imported ${successCount}/${files.length} files • ${totalSessions} sessions, ${totalResponses} responses, ${totalAnswerKeys} answer keys, ${totalPreferences} preferences`
         );
       }
 
@@ -361,7 +369,7 @@ const TestResultsPage = () => {
       const counts = await seedExperimentDemoData();
       await reloadData();
       toast.success(
-        `Demo seeded: ${counts.answerKeys} answer keys, ${counts.sessions} sessions, ${counts.responses} responses, ${counts.preferences} preferences`,
+        `Demo seeded: ${counts.answerKeys} answer keys, ${counts.sessions} sessions, ${counts.responses} responses, ${counts.preferences} preferences`
       );
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to seed demo data');
@@ -371,7 +379,11 @@ const TestResultsPage = () => {
   };
 
   const handleClearData = async () => {
-    if (!window.confirm('Clear all experiment data (sessions, responses, answer keys, preferences)? This cannot be undone.')) {
+    if (
+      !window.confirm(
+        'Clear all experiment data (sessions, responses, answer keys, preferences)? This cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -434,7 +446,10 @@ const TestResultsPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <div className="text-sm font-medium">Filter by group</div>
-              <Select value={groupFilter} onValueChange={(value) => setGroupFilter(value as 'all' | 'A' | 'B')}>
+              <Select
+                value={groupFilter}
+                onValueChange={value => setGroupFilter(value as 'all' | 'A' | 'B')}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -454,8 +469,10 @@ const TestResultsPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All clips</SelectItem>
-                  {availableClipIds.map((clipId) => (
-                    <SelectItem key={clipId} value={clipId}>{clipId}</SelectItem>
+                  {availableClipIds.map(clipId => (
+                    <SelectItem key={clipId} value={clipId}>
+                      {clipId}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -466,27 +483,39 @@ const TestResultsPage = () => {
             <div className="rounded border p-3">Sessions: {filteredSessions.length}</div>
             <div className="rounded border p-3">Responses: {filteredResponses.length}</div>
             <div className="rounded border p-3">
-              Visual avg accuracy: {averageByInterface.visual === null ? 'N/A' : `${averageByInterface.visual.toFixed(1)}%`}
+              Visual avg accuracy:{' '}
+              {averageByInterface.visual === null
+                ? 'N/A'
+                : `${averageByInterface.visual.toFixed(1)}%`}
             </div>
             <div className="rounded border p-3">
-              Form avg accuracy: {averageByInterface.form === null ? 'N/A' : `${averageByInterface.form.toFixed(1)}%`}
+              Form avg accuracy:{' '}
+              {averageByInterface.form === null ? 'N/A' : `${averageByInterface.form.toFixed(1)}%`}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
             <div className="rounded border p-3">
-              Visual avg time: {durationByInterface.visual === null ? 'N/A' : `${durationByInterface.visual.toFixed(1)}s`}
+              Visual avg time:{' '}
+              {durationByInterface.visual === null
+                ? 'N/A'
+                : `${durationByInterface.visual.toFixed(1)}s`}
             </div>
             <div className="rounded border p-3">
-              Form avg time: {durationByInterface.form === null ? 'N/A' : `${durationByInterface.form.toFixed(1)}s`}
+              Form avg time:{' '}
+              {durationByInterface.form === null
+                ? 'N/A'
+                : `${durationByInterface.form.toFixed(1)}s`}
             </div>
             <div className="rounded border p-3">
-              Form vs Visual time: {durationDeltaSeconds === null
+              Form vs Visual time:{' '}
+              {durationDeltaSeconds === null
                 ? 'N/A'
                 : `${durationDeltaSeconds >= 0 ? '+' : ''}${durationDeltaSeconds.toFixed(1)}s`}
             </div>
             <div className="rounded border p-3">
-              Avg TLX (Visual/Form): {tlxSummary.overallVisual === null || tlxSummary.overallForm === null
+              Avg TLX (Visual/Form):{' '}
+              {tlxSummary.overallVisual === null || tlxSummary.overallForm === null
                 ? 'N/A'
                 : `${tlxSummary.overallVisual.toFixed(1)} / ${tlxSummary.overallForm.toFixed(1)}`}
             </div>
@@ -495,7 +524,7 @@ const TestResultsPage = () => {
           <div className="space-y-2">
             <div className="font-medium text-sm">NASA-TLX averages by dimension</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-              {tlxSummary.dimensions.map((row) => (
+              {tlxSummary.dimensions.map(row => (
                 <div key={row.key} className="rounded border p-3">
                   <div className="font-medium">{row.label}</div>
                   <div>Visual: {row.visual === null ? 'N/A' : row.visual.toFixed(2)}</div>
@@ -507,18 +536,34 @@ const TestResultsPage = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
             <div className="rounded border p-3">
-              Preference counts: Visual {preferenceSummary.preferredCounts.visual}, Form {preferenceSummary.preferredCounts.form}, None {preferenceSummary.preferredCounts.none}
+              Preference counts: Visual {preferenceSummary.preferredCounts.visual}, Form{' '}
+              {preferenceSummary.preferredCounts.form}, None{' '}
+              {preferenceSummary.preferredCounts.none}
             </div>
             <div className="rounded border p-3">
-              Satisfaction (1-10): Visual {preferenceSummary.visualSatisfaction === null ? 'N/A' : preferenceSummary.visualSatisfaction.toFixed(2)}, Form {preferenceSummary.formSatisfaction === null ? 'N/A' : preferenceSummary.formSatisfaction.toFixed(2)}
+              Satisfaction (1-10): Visual{' '}
+              {preferenceSummary.visualSatisfaction === null
+                ? 'N/A'
+                : preferenceSummary.visualSatisfaction.toFixed(2)}
+              , Form{' '}
+              {preferenceSummary.formSatisfaction === null
+                ? 'N/A'
+                : preferenceSummary.formSatisfaction.toFixed(2)}
             </div>
             <div className="rounded border p-3">
-              Ease (1-10): Visual {preferenceSummary.visualEase === null ? 'N/A' : preferenceSummary.visualEase.toFixed(2)}, Form {preferenceSummary.formEase === null ? 'N/A' : preferenceSummary.formEase.toFixed(2)}
+              Ease (1-10): Visual{' '}
+              {preferenceSummary.visualEase === null
+                ? 'N/A'
+                : preferenceSummary.visualEase.toFixed(2)}
+              , Form{' '}
+              {preferenceSummary.formEase === null ? 'N/A' : preferenceSummary.formEase.toFixed(2)}
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="font-medium text-sm">Average absolute differences (non-cell fields)</div>
+            <div className="font-medium text-sm">
+              Average absolute differences (non-cell fields)
+            </div>
             {fieldDifferenceSummary.nonCellRows.length === 0 ? (
               <div className="text-sm text-muted-foreground">No comparison rows available yet.</div>
             ) : (
@@ -530,8 +575,11 @@ const TestResultsPage = () => {
                   <div>Form</div>
                 </div>
                 <div className="max-h-72 overflow-auto">
-                  {fieldDifferenceSummary.nonCellRows.map((row) => (
-                    <div key={row.key} className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-2 p-2 text-xs border-b last:border-b-0">
+                  {fieldDifferenceSummary.nonCellRows.map(row => (
+                    <div
+                      key={row.key}
+                      className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-2 p-2 text-xs border-b last:border-b-0"
+                    >
                       <div>{row.key}</div>
                       <div>{row.overallAvg.toFixed(3)}</div>
                       <div>{row.visualAvg === null ? 'N/A' : row.visualAvg.toFixed(3)}</div>
@@ -544,9 +592,13 @@ const TestResultsPage = () => {
           </div>
 
           <div className="space-y-2">
-            <div className="font-medium text-sm">Average absolute differences (location cell fields)</div>
+            <div className="font-medium text-sm">
+              Average absolute differences (location cell fields)
+            </div>
             {fieldDifferenceSummary.cellRows.length === 0 ? (
-              <div className="text-sm text-muted-foreground">No cell-level comparison rows available yet.</div>
+              <div className="text-sm text-muted-foreground">
+                No cell-level comparison rows available yet.
+              </div>
             ) : (
               <div className="rounded border overflow-hidden">
                 <div className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-2 p-2 text-xs font-medium border-b bg-muted/30">
@@ -556,8 +608,11 @@ const TestResultsPage = () => {
                   <div>Form</div>
                 </div>
                 <div className="max-h-72 overflow-auto">
-                  {fieldDifferenceSummary.cellRows.map((row) => (
-                    <div key={row.key} className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-2 p-2 text-xs border-b last:border-b-0">
+                  {fieldDifferenceSummary.cellRows.map(row => (
+                    <div
+                      key={row.key}
+                      className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-2 p-2 text-xs border-b last:border-b-0"
+                    >
                       <div>{row.key}</div>
                       <div>{row.overallAvg.toFixed(3)}</div>
                       <div>{row.visualAvg === null ? 'N/A' : row.visualAvg.toFixed(3)}</div>
@@ -572,18 +627,21 @@ const TestResultsPage = () => {
           <div className="space-y-2">
             {filteredComparisons.length === 0 ? (
               <div className="text-sm text-muted-foreground">
-                No comparisons available yet. Add answer keys and complete at least one test session.
+                No comparisons available yet. Add answer keys and complete at least one test
+                session.
               </div>
-            ) : filteredComparisons.map((row) => (
-              <div key={row.responseId} className="rounded border p-3 text-sm space-y-1">
-                <div className="font-medium">
-                  Session {row.sessionId.slice(0, 8)} • Block {row.block} • {row.interfaceType}
+            ) : (
+              filteredComparisons.map(row => (
+                <div key={row.responseId} className="rounded border p-3 text-sm space-y-1">
+                  <div className="font-medium">
+                    Session {row.sessionId.slice(0, 8)} • Block {row.block} • {row.interfaceType}
+                  </div>
+                  <div>Clip: {row.clipId}</div>
+                  <div>Accuracy: {row.accuracyPercent.toFixed(1)}%</div>
+                  <div>Total absolute diff: {row.totalAbsoluteDiff}</div>
                 </div>
-                <div>Clip: {row.clipId}</div>
-                <div>Accuracy: {row.accuracyPercent.toFixed(1)}%</div>
-                <div>Total absolute diff: {row.totalAbsoluteDiff}</div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </CardContent>
       </Card>

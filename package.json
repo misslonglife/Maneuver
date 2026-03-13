@@ -4,7 +4,6 @@
     "description": "",
     "scripts": {
         "prepare": "husky init",
-        "lint": "eslint . --ext .ts,.tsx",
         "prettier": "prettier --check \"src/**/*.{ts,tsx,css}\"",
         "prettier:write": "prettier --write \"src/**/*.{ts,tsx,css}\"",
         "test": "echo \"Error: no test specified\" && exit 1"

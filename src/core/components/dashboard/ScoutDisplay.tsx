@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback } from "@/core/components/ui/avatar"
-import { User, Trophy } from "lucide-react"
+import { Avatar, AvatarFallback } from '@/core/components/ui/avatar';
+import { User, Trophy } from 'lucide-react';
 
 interface ScoutDisplayProps {
-  currentScout: string
-  currentScoutStakes: number
+  currentScout: string;
+  currentScoutStakes: number;
 }
 
 export function ScoutDisplay({ currentScout, currentScoutStakes }: ScoutDisplayProps) {
@@ -12,8 +12,8 @@ export function ScoutDisplay({ currentScout, currentScoutStakes }: ScoutDisplayP
       .split(' ')
       .map(word => word.charAt(0).toUpperCase())
       .join('')
-      .slice(0, 3) // Limit to 3 characters
-  }
+      .slice(0, 3); // Limit to 3 characters
+  };
 
   return (
     <>
@@ -23,9 +23,7 @@ export function ScoutDisplay({ currentScout, currentScoutStakes }: ScoutDisplayP
         </AvatarFallback>
       </Avatar>
       <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate font-medium">
-          {currentScout || "Select Scout"}
-        </span>
+        <span className="truncate font-medium">{currentScout || 'Select Scout'}</span>
         <span className="text-muted-foreground truncate text-xs">
           {currentScout ? (
             <div className="flex items-center gap-1">
@@ -37,10 +35,10 @@ export function ScoutDisplay({ currentScout, currentScoutStakes }: ScoutDisplayP
               </div>
             </div>
           ) : (
-            "No scout selected"
+            'No scout selected'
           )}
         </span>
       </div>
     </>
-  )
+  );
 }

@@ -1,5 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/core/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
 import { Badge } from '@/core/components/ui/badge';
 import { BarChart3 } from 'lucide-react';
 import {
@@ -28,7 +34,9 @@ export const StatboticsEPADataDisplay: React.FC<StatboticsEPADataDisplayProps> =
   eventKey,
   refreshKey = 0,
 }) => {
-  const [metricsByTeam, setMetricsByTeam] = React.useState<Map<number, StatboticsEPAMetrics>>(new Map());
+  const [metricsByTeam, setMetricsByTeam] = React.useState<Map<number, StatboticsEPAMetrics>>(
+    new Map()
+  );
   const [fetchedAt, setFetchedAt] = React.useState<number | null>(null);
 
   React.useEffect(() => {
@@ -42,7 +50,9 @@ export const StatboticsEPADataDisplay: React.FC<StatboticsEPADataDisplayProps> =
     setFetchedAt(getCachedStatboticsFetchedAt(eventKey));
   }, [eventKey, refreshKey]);
 
-  const sortedTeams = [...metricsByTeam.entries()].sort((a, b) => b[1].totalPoints - a[1].totalPoints);
+  const sortedTeams = [...metricsByTeam.entries()].sort(
+    (a, b) => b[1].totalPoints - a[1].totalPoints
+  );
 
   return (
     <Card>
@@ -50,7 +60,9 @@ export const StatboticsEPADataDisplay: React.FC<StatboticsEPADataDisplayProps> =
         <CardTitle className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5" />
           Statbotics EPA Breakdown
-          <Badge variant="outline" className="ml-auto">{eventKey || 'No Event'}</Badge>
+          <Badge variant="outline" className="ml-auto">
+            {eventKey || 'No Event'}
+          </Badge>
         </CardTitle>
         <CardDescription>
           Team-event EPA breakdown cache used by Team Stats (similar to TBA COPRs)
@@ -59,7 +71,8 @@ export const StatboticsEPADataDisplay: React.FC<StatboticsEPADataDisplayProps> =
       <CardContent className="space-y-4">
         {sortedTeams.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No Statbotics EPA data cached yet. Load Match Validation Data to fetch team-event EPA breakdowns.
+            No Statbotics EPA data cached yet. Load Match Validation Data to fetch team-event EPA
+            breakdowns.
           </p>
         ) : (
           <>
@@ -72,7 +85,8 @@ export const StatboticsEPADataDisplay: React.FC<StatboticsEPADataDisplayProps> =
                 <p className="text-xs text-muted-foreground">Avg Total EPA</p>
                 <p className="text-2xl font-bold">
                   {(
-                    sortedTeams.reduce((sum, [, metrics]) => sum + metrics.totalPoints, 0) / sortedTeams.length
+                    sortedTeams.reduce((sum, [, metrics]) => sum + metrics.totalPoints, 0) /
+                    sortedTeams.length
                   ).toFixed(1)}
                 </p>
               </div>
@@ -80,13 +94,16 @@ export const StatboticsEPADataDisplay: React.FC<StatboticsEPADataDisplayProps> =
                 <p className="text-xs text-muted-foreground">Avg Auto EPA</p>
                 <p className="text-2xl font-bold">
                   {(
-                    sortedTeams.reduce((sum, [, metrics]) => sum + metrics.autoPoints, 0) / sortedTeams.length
+                    sortedTeams.reduce((sum, [, metrics]) => sum + metrics.autoPoints, 0) /
+                    sortedTeams.length
                   ).toFixed(1)}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Last Updated</p>
-                <p className="text-sm font-medium">{fetchedAt ? formatAge(fetchedAt) : 'Unknown'}</p>
+                <p className="text-sm font-medium">
+                  {fetchedAt ? formatAge(fetchedAt) : 'Unknown'}
+                </p>
               </div>
             </div>
 

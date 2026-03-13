@@ -8,7 +8,7 @@ import {
   storeEventTeams,
   getStoredEventTeams,
   clearStoredEventTeams,
-  setCurrentEvent
+  setCurrentEvent,
 } from '@/core/lib/tba';
 
 export const useTBAData = () => {
@@ -24,9 +24,14 @@ export const useTBAData = () => {
   const [teams, setTeams] = useState<TBATeam[]>([]);
   const [isStored, setIsStored] = useState(false);
 
-  const fetchMatchDataFromTBA = async (tbaApiKey: string, tbaEventKey: string, rememberForSession: boolean, setApiKey: (key: string) => void) => {
+  const fetchMatchDataFromTBA = async (
+    tbaApiKey: string,
+    tbaEventKey: string,
+    rememberForSession: boolean,
+    setApiKey: (key: string) => void
+  ) => {
     if (!tbaEventKey.trim()) {
-      toast.error("Please enter an event key");
+      toast.error('Please enter an event key');
       return;
     }
 
@@ -34,7 +39,7 @@ export const useTBAData = () => {
 
     try {
       const headers = {
-        ...(tbaApiKey.trim() ? { "X-Client-Api-Key": tbaApiKey } : {}),
+        ...(tbaApiKey.trim() ? { 'X-Client-Api-Key': tbaApiKey } : {}),
       };
 
       const res = await fetch(
@@ -44,9 +49,9 @@ export const useTBAData = () => {
 
       if (!res.ok) {
         if (res.status === 401) {
-          throw new Error("Invalid API key. Please check your TBA API key.");
+          throw new Error('Invalid API key. Please check your TBA API key.');
         } else if (res.status === 404) {
-          throw new Error("Event not found. Please check the event key.");
+          throw new Error('Event not found. Please check the event key.');
         } else {
           throw new Error(`API request failed with status ${res.status}`);
         }
@@ -57,14 +62,14 @@ export const useTBAData = () => {
       const qualMatchesCleaned = [];
 
       for (const match of fullData) {
-        if (match.comp_level == "qm") {
+        if (match.comp_level == 'qm') {
           qualMatchesCleaned.push({
-            matchNum: match["match_number"],
+            matchNum: match['match_number'],
             redAlliance: match.alliances.red.team_keys.map((team: string) =>
-              team.replace("frc", "")
+              team.replace('frc', '')
             ),
             blueAlliance: match.alliances.blue.team_keys.map((team: string) =>
-              team.replace("frc", "")
+              team.replace('frc', '')
             ),
           });
         }
@@ -72,11 +77,11 @@ export const useTBAData = () => {
 
       qualMatchesCleaned.sort((a, b) => a.matchNum - b.matchNum);
 
-      localStorage.setItem("matchData", JSON.stringify(qualMatchesCleaned));
-      localStorage.setItem("eventKey", tbaEventKey);
+      localStorage.setItem('matchData', JSON.stringify(qualMatchesCleaned));
+      localStorage.setItem('eventKey', tbaEventKey);
 
       // Update events list
-      const savedEvents = localStorage.getItem("eventsList");
+      const savedEvents = localStorage.getItem('eventsList');
       let eventsList: string[] = [];
 
       if (savedEvents) {
@@ -90,7 +95,7 @@ export const useTBAData = () => {
       if (!eventsList.includes(tbaEventKey)) {
         eventsList.push(tbaEventKey);
         eventsList.sort();
-        localStorage.setItem("eventsList", JSON.stringify(eventsList));
+        localStorage.setItem('eventsList', JSON.stringify(eventsList));
       }
 
       const successMessage = `Match data loaded: ${qualMatchesCleaned.length} matches for ${tbaEventKey}`;
@@ -101,18 +106,23 @@ export const useTBAData = () => {
 
       // Clear API key from memory after successful fetch if not remembering
       if (!rememberForSession) {
-        setApiKey("");
-        sessionStorage.removeItem("tbaApiKey");
+        setApiKey('');
+        sessionStorage.removeItem('tbaApiKey');
       }
     } catch (err) {
-      toast.error("Failed to fetch match data from TBA");
+      toast.error('Failed to fetch match data from TBA');
       console.error(err);
     } finally {
       setMatchDataLoading(false);
     }
   };
 
-  const loadMatchResults = async (tbaApiKey: string, tbaEventKey: string, rememberForSession: boolean, setApiKey: (key: string) => void) => {
+  const loadMatchResults = async (
+    tbaApiKey: string,
+    tbaEventKey: string,
+    rememberForSession: boolean,
+    setApiKey: (key: string) => void
+  ) => {
     if (!tbaEventKey.trim()) {
       toast.error('Please enter an event key');
       return;
@@ -121,7 +131,7 @@ export const useTBAData = () => {
     setMatchResultsLoading(true);
     try {
       const headers = {
-        ...(tbaApiKey.trim() ? { "X-Client-Api-Key": tbaApiKey } : {}),
+        ...(tbaApiKey.trim() ? { 'X-Client-Api-Key': tbaApiKey } : {}),
       };
       const response = await fetch(
         `/.netlify/functions/api-proxy?provider=tba&endpoint=${encodeURIComponent(`/event/${tbaEventKey.trim()}/matches/simple`)}`,
@@ -135,7 +145,7 @@ export const useTBAData = () => {
       const fullData = await response.json();
 
       // Filter for qualification matches
-      const qualMatches = fullData.filter((match: TBAMatch) => match.comp_level === "qm");
+      const qualMatches = fullData.filter((match: TBAMatch) => match.comp_level === 'qm');
       qualMatches.sort((a: TBAMatch, b: TBAMatch) => a.match_number - b.match_number);
 
       setMatches(qualMatches);
@@ -150,7 +160,7 @@ export const useTBAData = () => {
         matchNumber: match.match_number,
         winner: getMatchResult(match).winner,
         redScore: getMatchResult(match).redScore,
-        blueScore: getMatchResult(match).blueScore
+        blueScore: getMatchResult(match).blueScore,
       }));
 
       localStorage.setItem('matchResults', JSON.stringify(matchResults));
@@ -158,8 +168,8 @@ export const useTBAData = () => {
 
       // Clear API key from memory if not remembering for session
       if (!rememberForSession) {
-        setApiKey("");
-        sessionStorage.removeItem("tbaApiKey");
+        setApiKey('');
+        sessionStorage.removeItem('tbaApiKey');
       }
     } catch (error) {
       console.error('Error loading matches:', error);
@@ -170,7 +180,12 @@ export const useTBAData = () => {
     }
   };
 
-  const loadEventTeams = async (tbaApiKey: string, tbaEventKey: string, rememberForSession: boolean, setApiKey: (key: string) => void) => {
+  const loadEventTeams = async (
+    tbaApiKey: string,
+    tbaEventKey: string,
+    rememberForSession: boolean,
+    setApiKey: (key: string) => void
+  ) => {
     if (!tbaEventKey.trim()) {
       toast.error('Please enter an event key');
       return;
@@ -217,8 +232,8 @@ export const useTBAData = () => {
 
       // Clear API key from memory if not remembering for session
       if (!rememberForSession) {
-        setApiKey("");
-        sessionStorage.removeItem("tbaApiKey");
+        setApiKey('');
+        sessionStorage.removeItem('tbaApiKey');
       }
     } catch (error) {
       console.error('Error loading teams:', error);

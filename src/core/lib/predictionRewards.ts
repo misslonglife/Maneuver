@@ -28,7 +28,10 @@ export interface ProcessPredictionRewardsOptions {
   includeZeroResultMatches?: boolean;
 }
 
-type MatchLike = Pick<TBAMatchData, 'key' | 'event_key' | 'match_number' | 'winning_alliance' | 'post_result_time'> & {
+type MatchLike = Pick<
+  TBAMatchData,
+  'key' | 'event_key' | 'match_number' | 'winning_alliance' | 'post_result_time'
+> & {
   alliances?: {
     red?: { score?: number };
     blue?: { score?: number };
@@ -39,8 +42,10 @@ const getMatchWinner = (match: MatchLike): 'red' | 'blue' | 'tie' => {
   if (match.winning_alliance === 'red') return 'red';
   if (match.winning_alliance === 'blue') return 'blue';
 
-  const redScore = typeof match.alliances?.red?.score === 'number' ? match.alliances.red.score : null;
-  const blueScore = typeof match.alliances?.blue?.score === 'number' ? match.alliances.blue.score : null;
+  const redScore =
+    typeof match.alliances?.red?.score === 'number' ? match.alliances.red.score : null;
+  const blueScore =
+    typeof match.alliances?.blue?.score === 'number' ? match.alliances.blue.score : null;
 
   if (redScore === null || blueScore === null) return 'tie';
   if (redScore > blueScore) return 'red';
@@ -52,7 +57,8 @@ const hasFinalResult = (match: MatchLike): boolean => {
   if (match.winning_alliance === 'red' || match.winning_alliance === 'blue') return true;
 
   const redScore = typeof match.alliances?.red?.score === 'number' ? match.alliances.red.score : -1;
-  const blueScore = typeof match.alliances?.blue?.score === 'number' ? match.alliances.blue.score : -1;
+  const blueScore =
+    typeof match.alliances?.blue?.score === 'number' ? match.alliances.blue.score : -1;
   if (redScore >= 0 && blueScore >= 0) return true;
 
   return typeof match.post_result_time === 'number' && match.post_result_time > 0;
@@ -62,11 +68,7 @@ export async function processPredictionRewardsForMatches(
   matches: Array<TBAMatch | TBAMatchData>,
   options: ProcessPredictionRewardsOptions = {}
 ): Promise<{ results: PredictionRewardResult[]; summary: PredictionRewardSummary }> {
-  const {
-    eventKey,
-    onlyFinalResults = true,
-    includeZeroResultMatches = false,
-  } = options;
+  const { eventKey, onlyFinalResults = true, includeZeroResultMatches = false } = options;
 
   const normalizedMatches: MatchLike[] = [];
   const seenMatchNumbers = new Set<number>();
@@ -91,7 +93,7 @@ export async function processPredictionRewardsForMatches(
 
     const winner = getMatchWinner(match);
     const predictions = await getAllPredictionsForMatch(effectiveEventKey, match.match_number);
-    const unverifiedPredictions = predictions.filter((prediction) => !prediction.verified);
+    const unverifiedPredictions = predictions.filter(prediction => !prediction.verified);
 
     let matchCorrectPredictions = 0;
     let matchStakesAwarded = 0;

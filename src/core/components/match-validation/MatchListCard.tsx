@@ -1,6 +1,6 @@
 /**
  * Match List Card Component
- * 
+ *
  * Displays a list of matches with their validation status.
  * Works with MatchListItem which includes TBA data + optional validation results.
  * Shows scouting status for matches without validation.
@@ -22,7 +22,7 @@ interface MatchListCardProps {
 export const MatchListCard: React.FC<MatchListCardProps> = ({
   results,
   filteredResults,
-  onMatchClick
+  onMatchClick,
 }) => {
   return (
     <Card>
@@ -45,7 +45,7 @@ export const MatchListCard: React.FC<MatchListCardProps> = ({
           </div>
         ) : (
           <div className="space-y-2">
-            {filteredResults.map((match) => {
+            {filteredResults.map(match => {
               const result = match.validationResult;
               const status = result?.status ?? (match.hasScouting ? 'pending' : 'no-scouting');
 
@@ -57,9 +57,7 @@ export const MatchListCard: React.FC<MatchListCardProps> = ({
                 >
                   {/* Match Info */}
                   <div className="flex items-center gap-3 justify-between lg:justify-normal">
-                    <span className="font-medium text-lg min-w-[100px]">
-                      {match.displayName}
-                    </span>
+                    <span className="font-medium text-lg min-w-[100px]">{match.displayName}</span>
                     <StatusBadge status={status} />
                   </div>
 
@@ -79,20 +77,24 @@ export const MatchListCard: React.FC<MatchListCardProps> = ({
                               {result.warningDiscrepancies} warnings
                             </Badge>
                           )}
-                          {result.criticalDiscrepancies === 0 && result.warningDiscrepancies === 0 && (
-                            <span className="text-sm text-muted-foreground">
-                              No issues
-                            </span>
-                          )}
+                          {result.criticalDiscrepancies === 0 &&
+                            result.warningDiscrepancies === 0 && (
+                              <span className="text-sm text-muted-foreground">No issues</span>
+                            )}
                         </div>
 
                         {/* Confidence */}
                         <div className="flex items-center gap-2 sm:text-right">
                           <span className="text-sm text-muted-foreground">Confidence:</span>
-                          <span className={`font-medium ${result.confidence === 'high' ? 'text-green-600 dark:text-green-400' :
-                            result.confidence === 'medium' ? 'text-yellow-600 dark:text-yellow-400' :
-                              'text-red-600 dark:text-red-400'
-                            }`}>
+                          <span
+                            className={`font-medium ${
+                              result.confidence === 'high'
+                                ? 'text-green-600 dark:text-green-400'
+                                : result.confidence === 'medium'
+                                  ? 'text-yellow-600 dark:text-yellow-400'
+                                  : 'text-red-600 dark:text-red-400'
+                            }`}
+                          >
                             {result.confidence.charAt(0).toUpperCase() + result.confidence.slice(1)}
                           </span>
                         </div>

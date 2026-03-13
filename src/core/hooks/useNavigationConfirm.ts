@@ -23,21 +23,24 @@ export function useNavigationConfirm(options: UseNavigationConfirmOptions = {}) 
     return options.shouldBlock || (() => hasUnsavedData);
   }, [options.shouldBlock, hasUnsavedData]);
 
-  const confirmNavigation = useCallback((destination: string, label?: string) => {
-    if (shouldBlock()) {
-      setPendingNavigation({ destination, label });
-      return false; // Block navigation
-    } else {
-      navigate(destination);
-      return true; // Allow navigation
-    }
-  }, [shouldBlock, navigate]);
+  const confirmNavigation = useCallback(
+    (destination: string, label?: string) => {
+      if (shouldBlock()) {
+        setPendingNavigation({ destination, label });
+        return false; // Block navigation
+      } else {
+        navigate(destination);
+        return true; // Allow navigation
+      }
+    },
+    [shouldBlock, navigate]
+  );
 
   const handleConfirm = useCallback(() => {
     if (pendingNavigation) {
       // Clear all scouting data from localStorage before navigating away
       clearScoutingLocalStorage();
-      
+
       navigate(pendingNavigation.destination);
       setPendingNavigation(null);
     }
@@ -52,6 +55,6 @@ export function useNavigationConfirm(options: UseNavigationConfirmOptions = {}) 
     handleConfirm,
     handleCancel,
     isConfirmDialogOpen: pendingNavigation !== null,
-    pendingDestinationLabel: pendingNavigation?.label || 'this page'
+    pendingDestinationLabel: pendingNavigation?.label || 'this page',
   };
 }

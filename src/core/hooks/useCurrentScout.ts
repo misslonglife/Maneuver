@@ -56,6 +56,6 @@ export const useCurrentScout = () => {
   return {
     currentScout,
     isLoading,
-    refreshScout
+    refreshScout,
   };
 };

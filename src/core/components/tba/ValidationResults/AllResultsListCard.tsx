@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * All Results List Card Component
- * 
+ *
  * Displays a scrollable list of all validation results.
  * Each result is clickable to view details.
  */
@@ -19,7 +19,7 @@ interface AllResultsListCardProps {
 
 export const AllResultsListCard: React.FC<AllResultsListCardProps> = ({
   results,
-  onMatchClick
+  onMatchClick,
 }) => {
   if (results.length === 0) {
     return null;
@@ -32,7 +32,7 @@ export const AllResultsListCard: React.FC<AllResultsListCardProps> = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-1 max-h-96 overflow-y-auto">
-          {results.map((result) => (
+          {results.map(result => (
             <div
               key={result.matchKey}
               className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
@@ -50,9 +50,7 @@ export const AllResultsListCard: React.FC<AllResultsListCardProps> = ({
                     {result.totalDiscrepancies} issues
                   </Badge>
                 )}
-                <Badge className={getStatusColor(result.status)}>
-                  {result.status}
-                </Badge>
+                <Badge className={getStatusColor(result.status)}>{result.status}</Badge>
               </div>
             </div>
           ))}

@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Input } from "@/core/components/ui/input";
-import { toast } from "sonner";
-import { ArrowRight } from "lucide-react";
-import { ScoringSections, StatusToggles } from "@/game-template/components";
-import { FIELD_ELEMENTS } from "@/game-template/components/field-map";
-import { formatDurationSecondsLabel } from "@/game-template/duration";
-import { AUTO_PHASE_DURATION_MS } from "@/game-template/constants";
-import { useWorkflowNavigation } from "@/core/hooks/useWorkflowNavigation";
-import { submitMatchData } from "@/core/lib/submitMatch";
-import { useGame } from "@/core/contexts/GameContext";
-import { workflowConfig } from "@/game-template/game-schema";
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { Input } from '@/core/components/ui/input';
+import { toast } from 'sonner';
+import { ArrowRight } from 'lucide-react';
+import { ScoringSections, StatusToggles } from '@/game-template/components';
+import { FIELD_ELEMENTS } from '@/game-template/components/field-map';
+import { formatDurationSecondsLabel } from '@/game-template/duration';
+import { AUTO_PHASE_DURATION_MS } from '@/game-template/constants';
+import { useWorkflowNavigation } from '@/core/hooks/useWorkflowNavigation';
+import { submitMatchData } from '@/core/lib/submitMatch';
+import { useGame } from '@/core/contexts/GameContext';
+import { workflowConfig } from '@/game-template/game-schema';
 
 const AUTO_CLIMB_START_PRESETS = [20, 15, 10, 5] as const;
 
@@ -26,42 +26,43 @@ const AutoScoringPage = () => {
   const isSubmitPage = isLastPage('autoScoring');
 
   const getSavedState = () => {
-    const saved = localStorage.getItem("autoStateStack");
+    const saved = localStorage.getItem('autoStateStack');
     if (!saved) return [];
     const parsed = JSON.parse(saved);
     return Array.isArray(parsed) ? parsed : [];
   };
 
   const getSavedStatus = () => {
-    const saved = localStorage.getItem("autoRobotStatus");
+    const saved = localStorage.getItem('autoRobotStatus');
     return saved ? JSON.parse(saved) : {};
   };
 
   const getSavedHistory = () => {
-    const saved = localStorage.getItem("autoUndoHistory");
+    const saved = localStorage.getItem('autoUndoHistory');
     return saved ? JSON.parse(saved) : [];
   };
 
   const [scoringActions, setScoringActions] = useState(getSavedState());
   const [robotStatus, setRobotStatus] = useState(getSavedStatus());
   const [undoHistory, setUndoHistory] = useState(getSavedHistory());
-  const autoClimbStartTimeSecRemaining = typeof robotStatus?.autoClimbStartTimeSecRemaining === 'number'
-    ? robotStatus.autoClimbStartTimeSecRemaining
-    : null;
+  const autoClimbStartTimeSecRemaining =
+    typeof robotStatus?.autoClimbStartTimeSecRemaining === 'number'
+      ? robotStatus.autoClimbStartTimeSecRemaining
+      : null;
 
   // Save state to localStorage whenever actions change
   useEffect(() => {
-    localStorage.setItem("autoStateStack", JSON.stringify(scoringActions));
+    localStorage.setItem('autoStateStack', JSON.stringify(scoringActions));
   }, [scoringActions]);
 
   // Save robot status to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("autoRobotStatus", JSON.stringify(robotStatus));
+    localStorage.setItem('autoRobotStatus', JSON.stringify(robotStatus));
   }, [robotStatus]);
 
   // Save undo history to localStorage
   useEffect(() => {
-    localStorage.setItem("autoUndoHistory", JSON.stringify(undoHistory));
+    localStorage.setItem('autoUndoHistory', JSON.stringify(undoHistory));
   }, [undoHistory]);
 
   const addScoringAction = (action: any) => {
@@ -80,7 +81,7 @@ const AutoScoringPage = () => {
 
   const undoLastAction = () => {
     if (undoHistory.length === 0) {
-      toast.error("No actions to undo");
+      toast.error('No actions to undo');
       return;
     }
 
@@ -110,8 +111,7 @@ const AutoScoringPage = () => {
 
   const handleAutoClimbStartPreset = (seconds: number) => {
     updateRobotStatus({
-      autoClimbStartTimeSecRemaining:
-        autoClimbStartTimeSecRemaining === seconds ? null : seconds,
+      autoClimbStartTimeSecRemaining: autoClimbStartTimeSecRemaining === seconds ? null : seconds,
     });
   };
 
@@ -156,7 +156,7 @@ const AutoScoringPage = () => {
               timestamp: now,
               duration,
               obstacleType,
-              amountLabel: formatDurationSecondsLabel(duration)
+              amountLabel: formatDurationSecondsLabel(duration),
             };
             nextActions.push(unstuckWaypoint);
             // Persistent stuck: reset start time to 'now' for Teleop tracking
@@ -187,7 +187,7 @@ const AutoScoringPage = () => {
     if (Array.isArray(finalActions)) {
       setScoringActions(actionsToUse);
     }
-    localStorage.setItem("autoStateStack", JSON.stringify(actionsToUse));
+    localStorage.setItem('autoStateStack', JSON.stringify(actionsToUse));
 
     if (isSubmitPage) {
       // This is the last page - submit match data
@@ -216,10 +216,8 @@ const AutoScoringPage = () => {
         <h1 className="text-2xl font-bold pb-4">Autonomous</h1>
       </div>
       <div className="flex flex-col-reverse lg:flex-row items-start gap-0 lg:gap-6 max-w-7xl w-full h-full min-h-0">
-
         {/* Main Scoring Section */}
         <div className="w-full lg:flex-1 space-y-4 min-h-0 overflow-y-auto">
-
           {/* Game-Specific Scoring Sections */}
           <ScoringSections
             phase="auto"
@@ -237,11 +235,7 @@ const AutoScoringPage = () => {
 
           {/* Action Buttons - Mobile Only */}
           <div className="flex lg:hidden gap-4 w-full">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-12 text-lg"
-            >
+            <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-lg">
               Back
             </Button>
             <Button
@@ -258,7 +252,6 @@ const AutoScoringPage = () => {
         <div className="flex flex-col gap-4 w-full lg:w-80 pb-4 lg:pb-0 min-h-0">
           {/* Info and Controls Sidebar */}
           <div className="flex flex-col gap-4 w-full lg:w-80 pb-4 lg:pb-0 min-h-0">
-
             {/* Match Info Card */}
             {states?.inputs && (
               <Card>
@@ -289,25 +282,28 @@ const AutoScoringPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 h-40 overflow-y-auto pb-2">
-                  {undoHistory.slice(-8).reverse().map((change: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {change.type === 'action' ? (
-                          <>
-                            {change.data.actionType || change.data.type || 'Action'}
-                            {change.data.pieceType && ` - ${change.data.pieceType}`}
-                            {change.data.location && ` @ ${change.data.location}`}
-                            {change.data.level && ` (${change.data.level})`}
-                          </>
-                        ) : (
-                          <span className="text-blue-600 dark:text-blue-400">Status Change</span>
-                        )}
-                      </span>
-                      <Badge variant="outline" className="text-xs">
-                        #{undoHistory.length - index}
-                      </Badge>
-                    </div>
-                  ))}
+                  {undoHistory
+                    .slice(-8)
+                    .reverse()
+                    .map((change: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {change.type === 'action' ? (
+                            <>
+                              {change.data.actionType || change.data.type || 'Action'}
+                              {change.data.pieceType && ` - ${change.data.pieceType}`}
+                              {change.data.location && ` @ ${change.data.location}`}
+                              {change.data.level && ` (${change.data.level})`}
+                            </>
+                          ) : (
+                            <span className="text-blue-600 dark:text-blue-400">Status Change</span>
+                          )}
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          #{undoHistory.length - index}
+                        </Badge>
+                      </div>
+                    ))}
                   {undoHistory.length === 0 && (
                     <p className="text-sm text-muted-foreground text-center py-2">
                       No actions recorded yet
@@ -339,11 +335,11 @@ const AutoScoringPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-4 gap-2">
-                  {AUTO_CLIMB_START_PRESETS.map((seconds) => (
+                  {AUTO_CLIMB_START_PRESETS.map(seconds => (
                     <Button
                       key={seconds}
                       type="button"
-                      variant={autoClimbStartTimeSecRemaining === seconds ? "default" : "outline"}
+                      variant={autoClimbStartTimeSecRemaining === seconds ? 'default' : 'outline'}
                       onClick={() => handleAutoClimbStartPreset(seconds)}
                       className="h-9"
                     >
@@ -362,7 +358,7 @@ const AutoScoringPage = () => {
                     min={0}
                     max={20}
                     value={autoClimbStartTimeSecRemaining ?? ''}
-                    onChange={(e) => handleAutoClimbStartInput(e.target.value)}
+                    onChange={e => handleAutoClimbStartInput(e.target.value)}
                     placeholder="Type exact time"
                   />
                 </div>
@@ -381,11 +377,7 @@ const AutoScoringPage = () => {
 
             {/* Action Buttons - Desktop Only */}
             <div className="hidden lg:flex gap-4 w-full">
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                className="flex-1 h-12 text-lg"
-              >
+              <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-lg">
                 Back
               </Button>
               <Button
@@ -397,7 +389,6 @@ const AutoScoringPage = () => {
               </Button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

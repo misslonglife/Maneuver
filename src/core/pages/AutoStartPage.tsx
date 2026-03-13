@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { toast } from "sonner";
-import { AlertTriangle } from "lucide-react";
-import { AutoStartFieldSelector } from "@/game-template/components";
-import { useWorkflowNavigation } from "@/core/hooks/useWorkflowNavigation";
-import { submitMatchData } from "@/core/lib/submitMatch";
-import { useGame } from "@/core/contexts/GameContext";
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { toast } from 'sonner';
+import { AlertTriangle } from 'lucide-react';
+import { AutoStartFieldSelector } from '@/game-template/components';
+import { useWorkflowNavigation } from '@/core/hooks/useWorkflowNavigation';
+import { submitMatchData } from '@/core/lib/submitMatch';
+import { useGame } from '@/core/contexts/GameContext';
 
 const AutoStartPage = () => {
   const { transformation } = useGame();
@@ -18,33 +18,14 @@ const AutoStartPage = () => {
   const { getNextRoute, getPrevRoute, isLastPage } = useWorkflowNavigation();
   const isSubmitPage = isLastPage('autoStart');
 
-  const [startPos1, setStartPos1] = useState(
-    states?.inputs?.startPoses?.[0] || null
-  );
-  const [startPos2, setStartPos2] = useState(
-    states?.inputs?.startPoses?.[1] || null
-  );
-  const [startPos3, setStartPos3] = useState(
-    states?.inputs?.startPoses?.[2] || null
-  );
-  const [startPos4, setStartPos4] = useState(
-    states?.inputs?.startPoses?.[3] || null
-  );
-  const [startPos5, setStartPos5] = useState(
-    states?.inputs?.startPoses?.[4] || null
-  );
-  const [startPos6, setStartPos6] = useState(
-    states?.inputs?.startPoses?.[5] || null
-  );
+  const [startPos1, setStartPos1] = useState(states?.inputs?.startPoses?.[0] || null);
+  const [startPos2, setStartPos2] = useState(states?.inputs?.startPoses?.[1] || null);
+  const [startPos3, setStartPos3] = useState(states?.inputs?.startPoses?.[2] || null);
+  const [startPos4, setStartPos4] = useState(states?.inputs?.startPoses?.[3] || null);
+  const [startPos5, setStartPos5] = useState(states?.inputs?.startPoses?.[4] || null);
+  const [startPos6, setStartPos6] = useState(states?.inputs?.startPoses?.[5] || null);
 
-  const startPosition = [
-    startPos1,
-    startPos2,
-    startPos3,
-    startPos4,
-    startPos5,
-    startPos6,
-  ];
+  const startPosition = [startPos1, startPos2, startPos3, startPos4, startPos5, startPos6];
   const setStartPosition = [
     setStartPos1,
     setStartPos2,
@@ -57,7 +38,7 @@ const AutoStartPage = () => {
   const validateInputs = () => {
     const hasSelection = startPosition.some(pos => pos === true);
     if (!hasSelection) {
-      toast.error("Please select a starting position on the field");
+      toast.error('Please select a starting position on the field');
       return false;
     }
     return true;
@@ -69,7 +50,7 @@ const AutoStartPage = () => {
       state: {
         inputs: {
           ...(states?.inputs || {}),
-          startPosition: startPosition.every((pos) => pos === false)
+          startPosition: startPosition.every(pos => pos === false)
             ? [null, null, null, null, null, null]
             : startPosition,
         },
@@ -83,7 +64,7 @@ const AutoStartPage = () => {
     // Update inputs with start position
     const updatedInputs = {
       ...(states?.inputs || {}),
-      startPosition: startPosition.every((pos) => pos === false)
+      startPosition: startPosition.every(pos => pos === false)
         ? [null, null, null, null, null, null]
         : startPosition,
     };
@@ -118,7 +99,6 @@ const AutoStartPage = () => {
         <h1 className="text-2xl font-bold pb-4 xl:text-3xl 2xl:text-4xl xl:pb-6">Auto Start</h1>
       </div>
       <div className="flex flex-col lg:flex-row items-start gap-6 xl:gap-8 2xl:gap-10 max-w-7xl xl:max-w-360 2xl:max-w-400 w-full flex-1">
-
         {/* Field Map Section - Game-Specific Component */}
         <div className="w-full lg:flex-1">
           <AutoStartFieldSelector
@@ -130,7 +110,6 @@ const AutoStartPage = () => {
 
         {/* Instructions and Controls */}
         <div className="flex flex-col gap-4 lg:gap-6 w-full lg:w-80 xl:w-96 2xl:w-104 lg:h-full pb-4 lg:pb-0">
-
           {/* Match Info Card */}
           {states?.inputs && (
             <Card>
@@ -145,10 +124,15 @@ const AutoStartPage = () => {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Alliance:</span>
                   <Badge
-                    variant={states.inputs.alliance === "red" ? "destructive" : "default"}
-                    className={states.inputs.alliance === "blue" ? "bg-blue-500 text-white" : "bg-red-500 text-white"}
+                    variant={states.inputs.alliance === 'red' ? 'destructive' : 'default'}
+                    className={
+                      states.inputs.alliance === 'blue'
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-red-500 text-white'
+                    }
                   >
-                    {states.inputs.alliance?.charAt(0).toUpperCase() + states.inputs.alliance?.slice(1)}
+                    {states.inputs.alliance?.charAt(0).toUpperCase() +
+                      states.inputs.alliance?.slice(1)}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
@@ -205,11 +189,7 @@ const AutoStartPage = () => {
 
           {/* Action Buttons */}
           <div className="flex gap-4 w-full lg:mt-auto">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-12 text-lg"
-            >
+            <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-lg">
               Back
             </Button>
             <Button
@@ -221,7 +201,6 @@ const AutoStartPage = () => {
             </Button>
           </div>
         </div>
-
       </div>
     </div>
   );

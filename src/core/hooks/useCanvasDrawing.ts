@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from 'react';
 
 // Maximum number of undo states to keep in history
 const MAX_UNDO_HISTORY_LENGTH = 20;
@@ -40,19 +40,22 @@ export const useCanvasDrawing = ({
   const startPointRef = useRef<Point | null>(null);
   const hasMovedRef = useRef(false);
 
-  const getPointFromEvent = useCallback((e: React.MouseEvent | React.PointerEvent): Point => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
+  const getPointFromEvent = useCallback(
+    (e: React.MouseEvent | React.PointerEvent): Point => {
+      const canvas = canvasRef.current;
+      if (!canvas) return { x: 0, y: 0 };
 
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
 
-    return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY
-    };
-  }, [canvasRef]);
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY,
+      };
+    },
+    [canvasRef]
+  );
 
   // Initialize history with current canvas state (call once after canvas is set up)
   const initializeHistory = useCallback(() => {
@@ -78,7 +81,12 @@ export const useCanvasDrawing = ({
       const dataURL = canvas.toDataURL();
       historyRef.current = [dataURL];
       historyIndexRef.current = 0;
-      console.log('[SaveToHistory] Auto-initialized with first state, canvas size:', canvas.width, 'x', canvas.height);
+      console.log(
+        '[SaveToHistory] Auto-initialized with first state, canvas size:',
+        canvas.width,
+        'x',
+        canvas.height
+      );
     }
 
     const dataURL = canvas.toDataURL();
@@ -87,7 +95,14 @@ export const useCanvasDrawing = ({
     const ctx = canvas.getContext('2d', READBACK_CONTEXT_OPTIONS);
     const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
     const hasContent = imageData?.data.some((val, i) => i % 4 === 3 && val > 0) ?? false;
-    console.log('[SaveToHistory] Saving state - has visible content:', hasContent, 'canvas size:', canvas.width, 'x', canvas.height);
+    console.log(
+      '[SaveToHistory] Saving state - has visible content:',
+      hasContent,
+      'canvas size:',
+      canvas.width,
+      'x',
+      canvas.height
+    );
 
     // Truncate any redo states (future states after current index)
     historyRef.current = historyRef.current.slice(0, historyIndexRef.current + 1);
@@ -96,7 +111,12 @@ export const useCanvasDrawing = ({
     historyRef.current.push(dataURL);
     historyIndexRef.current = historyRef.current.length - 1;
 
-    console.log('[SaveToHistory] History now has', historyRef.current.length, 'states, currentIndex:', historyIndexRef.current);
+    console.log(
+      '[SaveToHistory] History now has',
+      historyRef.current.length,
+      'states, currentIndex:',
+      historyIndexRef.current
+    );
 
     // Limit history size
     if (historyRef.current.length > MAX_UNDO_HISTORY_LENGTH) {
@@ -110,7 +130,12 @@ export const useCanvasDrawing = ({
   const undo = useCallback(() => {
     // Need at least 2 states to undo (initial + at least one change)
     if (historyIndexRef.current <= 0 || historyRef.current.length < 2) {
-      console.log('[Undo] Cannot undo - index:', historyIndexRef.current, 'length:', historyRef.current.length);
+      console.log(
+        '[Undo] Cannot undo - index:',
+        historyIndexRef.current,
+        'length:',
+        historyRef.current.length
+      );
       return;
     }
 
@@ -119,7 +144,14 @@ export const useCanvasDrawing = ({
     historyIndexRef.current--;
     const previousState = historyRef.current[historyIndexRef.current];
 
-    console.log('[Undo] Going from index', oldIndex, 'to', historyIndexRef.current, '- history length:', historyRef.current.length);
+    console.log(
+      '[Undo] Going from index',
+      oldIndex,
+      'to',
+      historyIndexRef.current,
+      '- history length:',
+      historyRef.current.length
+    );
 
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d', READBACK_CONTEXT_OPTIONS);
@@ -130,7 +162,16 @@ export const useCanvasDrawing = ({
 
     const img = new Image();
     img.onload = () => {
-      console.log('[Undo] Image loaded, natural size:', img.naturalWidth, 'x', img.naturalHeight, 'canvas size:', canvas.width, 'x', canvas.height);
+      console.log(
+        '[Undo] Image loaded, natural size:',
+        img.naturalWidth,
+        'x',
+        img.naturalHeight,
+        'canvas size:',
+        canvas.width,
+        'x',
+        canvas.height
+      );
       // CRITICAL: Reset composite operation to source-over before drawing
       // After erasing, it stays at 'destination-out' which would erase instead of draw!
       ctx.globalCompositeOperation = 'source-over';
@@ -144,101 +185,113 @@ export const useCanvasDrawing = ({
       console.log('[Undo] Image load failed');
       historyIndexRef.current++;
       setCanUndo(historyIndexRef.current > 0);
-      console.warn("Undo failed: could not load image from history.");
+      console.warn('Undo failed: could not load image from history.');
     };
     img.src = previousState;
   }, [canvasRef, onSave]);
 
-  const startDrawing = useCallback((e: React.MouseEvent | React.PointerEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if ('setPointerCapture' in e.currentTarget && e.currentTarget instanceof HTMLElement) {
-      try {
-        e.currentTarget.setPointerCapture((e as React.PointerEvent).pointerId);
-      } catch {
-        // Ignore
-      }
-    }
-
-    setIsDrawing(true);
-    const point = getPointFromEvent(e);
-    setLastPoint(point);
-    startPointRef.current = point;
-    hasMovedRef.current = false;
-  }, [getPointFromEvent]);
-
-  const draw = useCallback((e: React.MouseEvent | React.PointerEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!isDrawing || !lastPoint) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d', READBACK_CONTEXT_OPTIONS);
-    if (!canvas || !ctx) return;
-
-    const currentPoint = getPointFromEvent(e);
-
-    if (!hasMovedRef.current) {
-      const distanceFromStart = Math.hypot(currentPoint.x - lastPoint.x, currentPoint.y - lastPoint.y);
-      if (distanceFromStart > 4) {
-        hasMovedRef.current = true;
-      }
-    }
-
-    ctx.lineWidth = brushSize;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    if (isErasing) {
-      // SIMPLE ERASING: destination-out makes pixels transparent
-      // Since drawing layer is isolated, this reveals the background/overlay layers beneath
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.strokeStyle = 'rgba(0,0,0,1)';
-    } else {
-      // Normal drawing
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.strokeStyle = brushColor;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(lastPoint.x, lastPoint.y);
-    ctx.lineTo(currentPoint.x, currentPoint.y);
-    ctx.stroke();
-
-    setLastPoint(currentPoint);
-  }, [isDrawing, getPointFromEvent, isErasing, brushSize, brushColor, lastPoint, canvasRef]);
-
-  const stopDrawing = useCallback((e?: React.MouseEvent | React.PointerEvent) => {
-    if (e) {
+  const startDrawing = useCallback(
+    (e: React.MouseEvent | React.PointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
-      if ('releasePointerCapture' in e.currentTarget && e.currentTarget instanceof HTMLElement) {
+      if ('setPointerCapture' in e.currentTarget && e.currentTarget instanceof HTMLElement) {
         try {
-          e.currentTarget.releasePointerCapture((e as React.PointerEvent).pointerId);
+          e.currentTarget.setPointerCapture((e as React.PointerEvent).pointerId);
         } catch {
           // Ignore
         }
       }
-    }
 
-    if (isDrawing) {
-      const startedAt = startPointRef.current;
-      if (!hasMovedRef.current && startedAt) {
-        onTap?.(startedAt);
-      } else {
-        // Save state AFTER stroke completes
-        saveToHistory();
-        onSave();
+      setIsDrawing(true);
+      const point = getPointFromEvent(e);
+      setLastPoint(point);
+      startPointRef.current = point;
+      hasMovedRef.current = false;
+    },
+    [getPointFromEvent]
+  );
+
+  const draw = useCallback(
+    (e: React.MouseEvent | React.PointerEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!isDrawing || !lastPoint) return;
+
+      const canvas = canvasRef.current;
+      const ctx = canvas?.getContext('2d', READBACK_CONTEXT_OPTIONS);
+      if (!canvas || !ctx) return;
+
+      const currentPoint = getPointFromEvent(e);
+
+      if (!hasMovedRef.current) {
+        const distanceFromStart = Math.hypot(
+          currentPoint.x - lastPoint.x,
+          currentPoint.y - lastPoint.y
+        );
+        if (distanceFromStart > 4) {
+          hasMovedRef.current = true;
+        }
       }
-    }
-    setIsDrawing(false);
-    setLastPoint(null);
-    startPointRef.current = null;
-    hasMovedRef.current = false;
-  }, [isDrawing, onSave, saveToHistory, onTap]);
+
+      ctx.lineWidth = brushSize;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (isErasing) {
+        // SIMPLE ERASING: destination-out makes pixels transparent
+        // Since drawing layer is isolated, this reveals the background/overlay layers beneath
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        // Normal drawing
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = brushColor;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(lastPoint.x, lastPoint.y);
+      ctx.lineTo(currentPoint.x, currentPoint.y);
+      ctx.stroke();
+
+      setLastPoint(currentPoint);
+    },
+    [isDrawing, getPointFromEvent, isErasing, brushSize, brushColor, lastPoint, canvasRef]
+  );
+
+  const stopDrawing = useCallback(
+    (e?: React.MouseEvent | React.PointerEvent) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if ('releasePointerCapture' in e.currentTarget && e.currentTarget instanceof HTMLElement) {
+          try {
+            e.currentTarget.releasePointerCapture((e as React.PointerEvent).pointerId);
+          } catch {
+            // Ignore
+          }
+        }
+      }
+
+      if (isDrawing) {
+        const startedAt = startPointRef.current;
+        if (!hasMovedRef.current && startedAt) {
+          onTap?.(startedAt);
+        } else {
+          // Save state AFTER stroke completes
+          saveToHistory();
+          onSave();
+        }
+      }
+      setIsDrawing(false);
+      setLastPoint(null);
+      startPointRef.current = null;
+      hasMovedRef.current = false;
+    },
+    [isDrawing, onSave, saveToHistory, onTap]
+  );
 
   const canvasStyle: React.CSSProperties = {
     userSelect: 'none',
@@ -248,7 +301,7 @@ export const useCanvasDrawing = ({
     display: 'block',
     touchAction: 'none',
     WebkitTouchCallout: 'none',
-    WebkitTapHighlightColor: 'transparent'
+    WebkitTapHighlightColor: 'transparent',
   };
 
   const canvasEventHandlers = {
@@ -270,6 +323,6 @@ export const useCanvasDrawing = ({
     undo,
     canUndo,
     initializeHistory,
-    saveToHistory
+    saveToHistory,
   };
 };

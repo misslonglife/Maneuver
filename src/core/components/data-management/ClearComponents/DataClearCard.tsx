@@ -1,9 +1,15 @@
-import { useState } from "react";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
+import { useState } from 'react';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 interface DataClearCardProps {
   title: string;
@@ -24,7 +30,7 @@ export const DataClearCard = ({
   storageSize,
   onClear,
   disabled = false,
-  warningMessage
+  warningMessage,
 }: DataClearCardProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -46,7 +52,7 @@ export const DataClearCard = ({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{title}</CardTitle>
-          <Badge variant={hasData ? "default" : "secondary"}>
+          <Badge variant={hasData ? 'default' : 'secondary'}>
             {entryCount} {entryLabel}
           </Badge>
         </div>
@@ -69,18 +75,13 @@ export const DataClearCard = ({
         ) : (
           <div className="space-y-3">
             <Alert>
-              <AlertTriangle className="h-5 w-5" color="red"/>
+              <AlertTriangle className="h-5 w-5" color="red" />
               <AlertDescription>
                 {warningMessage || `This will permanently delete ${entryCount} ${entryLabel}.`}
               </AlertDescription>
             </Alert>
             <div className="flex gap-2">
-              <Button
-                variant="destructive"
-                size="sm"
-                className="flex-1"
-                onClick={handleClear}
-              >
+              <Button variant="destructive" size="sm" className="flex-1" onClick={handleClear}>
                 Yes, Delete All
               </Button>
               <Button

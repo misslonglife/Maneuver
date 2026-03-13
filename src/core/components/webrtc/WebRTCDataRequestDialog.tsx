@@ -41,13 +41,20 @@ export function WebRTCDataRequestDialog() {
 
   const getDataTypeLabel = (dataType: string | null) => {
     switch (dataType) {
-      case 'scouting': return 'Scouting Data';
-      case 'pit-scouting': return 'Pit Scouting Data';
-      case 'pit-assignments': return 'Pit Assignments';
-      case 'match': return 'Match Schedule';
-      case 'scout': return 'Scout Profiles';
-      case 'combined': return 'Combined Data';
-      default: return 'Data';
+      case 'scouting':
+        return 'Scouting Data';
+      case 'pit-scouting':
+        return 'Pit Scouting Data';
+      case 'pit-assignments':
+        return 'Pit Assignments';
+      case 'match':
+        return 'Match Schedule';
+      case 'scout':
+        return 'Scout Profiles';
+      case 'combined':
+        return 'Combined Data';
+      default:
+        return 'Data';
     }
   };
 
@@ -67,7 +74,10 @@ export function WebRTCDataRequestDialog() {
           if (requestFilters) {
             console.log('📋 Applying filters to scouting data:', requestFilters);
             setTransferStatus(`Filtering ${originalCount} entries...`);
-            const filteredData = applyFilters({ entries: scoutingData, exportedAt: Date.now(), version: '1.0' }, requestFilters);
+            const filteredData = applyFilters(
+              { entries: scoutingData, exportedAt: Date.now(), version: '1.0' },
+              requestFilters
+            );
             scoutingData = filteredData.entries as typeof scoutingData;
             console.log(`🔍 Filtered: ${originalCount} entries → ${scoutingData.length} entries`);
           }
@@ -85,7 +95,8 @@ export function WebRTCDataRequestDialog() {
         }
 
         case 'pit-assignments': {
-          const eventKey = localStorage.getItem('eventKey') || localStorage.getItem('eventName') || '';
+          const eventKey =
+            localStorage.getItem('eventKey') || localStorage.getItem('eventName') || '';
           const sourceScoutName = localStorage.getItem('currentScout') || 'Scout';
 
           if (!eventKey) {
@@ -113,7 +124,13 @@ export function WebRTCDataRequestDialog() {
           const achievements = await gameDB.scoutAchievements.toArray();
           originalCount = scouts.length;
           data = { scouts, predictions, achievements };
-          console.log('📊 Loaded scout profiles:', scouts.length, 'scouts,', predictions.length, 'predictions');
+          console.log(
+            '📊 Loaded scout profiles:',
+            scouts.length,
+            'scouts,',
+            predictions.length,
+            'predictions'
+          );
           break;
         }
 
@@ -126,24 +143,29 @@ export function WebRTCDataRequestDialog() {
           if (requestFilters) {
             const origScoutingCount = scoutingData.length;
             console.log('📋 Applying filters to combined scouting data:', requestFilters);
-            const filteredData = applyFilters({ entries: scoutingData, exportedAt: Date.now(), version: '1.0' }, requestFilters);
+            const filteredData = applyFilters(
+              { entries: scoutingData, exportedAt: Date.now(), version: '1.0' },
+              requestFilters
+            );
             scoutingData = filteredData.entries as typeof scoutingData;
-            console.log(`📊 Filtered scouting: ${origScoutingCount} → ${scoutingData.length} entries`);
+            console.log(
+              `📊 Filtered scouting: ${origScoutingCount} → ${scoutingData.length} entries`
+            );
           }
 
           data = {
             entries: scoutingData,
             metadata: {
               exportedAt: new Date().toISOString(),
-              version: "1.0",
+              version: '1.0',
               scoutingEntriesCount: scoutingData.length,
               scoutsCount: scouts.length,
-              predictionsCount: predictions.length
+              predictionsCount: predictions.length,
             },
             scoutProfiles: {
               scouts,
-              predictions
-            }
+              predictions,
+            },
           };
           originalCount = scoutingData.length + scouts.length + predictions.length;
           console.log('📊 Loaded combined data');
@@ -196,12 +218,15 @@ export function WebRTCDataRequestDialog() {
     // Match range
     if (requestFilters.matchRange.type === 'preset' && requestFilters.matchRange.preset !== 'all') {
       const presetLabels = {
-        'last10': 'Last 10 matches',
-        'last15': 'Last 15 matches',
-        'last30': 'Last 30 matches',
-        'fromLastExport': 'From last export'
+        last10: 'Last 10 matches',
+        last15: 'Last 15 matches',
+        last30: 'Last 30 matches',
+        fromLastExport: 'From last export',
       };
-      parts.push(presetLabels[requestFilters.matchRange.preset as keyof typeof presetLabels] || 'Custom range');
+      parts.push(
+        presetLabels[requestFilters.matchRange.preset as keyof typeof presetLabels] ||
+          'Custom range'
+      );
     } else if (requestFilters.matchRange.type === 'custom') {
       const start = requestFilters.matchRange.customStart || '?';
       const end = requestFilters.matchRange.customEnd || '?';
@@ -253,20 +278,26 @@ export function WebRTCDataRequestDialog() {
                 <div className="flex items-center gap-2 text-sm bg-amber-50 dark:bg-amber-950 p-3 rounded border border-amber-200 dark:border-amber-800">
                   <Filter className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-amber-900 dark:text-amber-100">Filter Request</span>
-                    <span className="text-xs text-amber-700 dark:text-amber-300">{getFilterDescription()}</span>
+                    <span className="font-medium text-amber-900 dark:text-amber-100">
+                      Filter Request
+                    </span>
+                    <span className="text-xs text-amber-700 dark:text-amber-300">
+                      {getFilterDescription()}
+                    </span>
                   </div>
                 </div>
               )}
 
-              <p className="text-sm text-muted-foreground">
-                Send your data to the lead scout?
-              </p>
+              <p className="text-sm text-muted-foreground">Send your data to the lead scout?</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleDecline} className='p-2'>Decline</AlertDialogCancel>
-            <AlertDialogAction onClick={handleAcceptRequest} className='p-2'>Send Data</AlertDialogAction>
+            <AlertDialogCancel onClick={handleDecline} className="p-2">
+              Decline
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleAcceptRequest} className="p-2">
+              Send Data
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -280,9 +311,7 @@ export function WebRTCDataRequestDialog() {
               Sending Data
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
-              <div className="text-center py-2 text-lg">
-                {transferStatus}
-              </div>
+              <div className="text-center py-2 text-lg">{transferStatus}</div>
               {requestFilters && transferStatus.includes('Loading') && (
                 <div className="text-xs bg-muted p-2 rounded">
                   <Filter className="h-3 w-3 inline mr-1" />

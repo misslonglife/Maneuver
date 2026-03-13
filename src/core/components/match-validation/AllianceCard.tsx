@@ -18,8 +18,12 @@ export const AllianceCard: React.FC<AllianceCardProps> = ({
 }) => {
   const isRed = allianceValidation.alliance === 'red';
   const allianceColor = isRed ? 'bg-red-100 dark:bg-red-950' : 'bg-blue-100 dark:bg-blue-950';
-  const allianceBorder = isRed ? 'border-red-300 dark:border-red-800' : 'border-blue-300 dark:border-blue-800';
-  const allianceText = isRed ? 'text-red-900 dark:text-red-100' : 'text-blue-900 dark:text-blue-100';
+  const allianceBorder = isRed
+    ? 'border-red-300 dark:border-red-800'
+    : 'border-blue-300 dark:border-blue-800';
+  const allianceText = isRed
+    ? 'text-red-900 dark:text-red-100'
+    : 'text-blue-900 dark:text-blue-100';
 
   // Get severity badge variant
   const getSeverityVariant = (severity: Discrepancy['severity']) => {
@@ -69,8 +73,11 @@ export const AllianceCard: React.FC<AllianceCardProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Difference:</span>
             <div className="flex items-center gap-2">
-              <span className={`font-bold ${Math.abs(allianceValidation.scoreDifference) > 10 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
-                {allianceValidation.scoreDifference > 0 ? '+' : ''}{allianceValidation.scoreDifference}
+              <span
+                className={`font-bold ${Math.abs(allianceValidation.scoreDifference) > 10 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}
+              >
+                {allianceValidation.scoreDifference > 0 ? '+' : ''}
+                {allianceValidation.scoreDifference}
               </span>
               <span className="text-xs text-muted-foreground">
                 ({allianceValidation.scorePercentDiff.toFixed(1)}%)
@@ -82,10 +89,15 @@ export const AllianceCard: React.FC<AllianceCardProps> = ({
         {/* Confidence */}
         <div className="flex justify-between items-center mb-4">
           <span className="text-sm text-muted-foreground">Confidence:</span>
-          <Badge variant={
-            allianceValidation.confidence === 'high' ? 'default' :
-              allianceValidation.confidence === 'medium' ? 'secondary' : 'destructive'
-          }>
+          <Badge
+            variant={
+              allianceValidation.confidence === 'high'
+                ? 'default'
+                : allianceValidation.confidence === 'medium'
+                  ? 'secondary'
+                  : 'destructive'
+            }
+          >
             {allianceValidation.confidence.toUpperCase()}
           </Badge>
         </div>
@@ -101,12 +113,17 @@ export const AllianceCard: React.FC<AllianceCardProps> = ({
           ) : (
             <div className="space-y-1">
               {['critical', 'warning', 'minor'].map(severity => {
-                const count = allianceValidation.discrepancies.filter(d => d.severity === severity).length;
+                const count = allianceValidation.discrepancies.filter(
+                  d => d.severity === severity
+                ).length;
                 if (count === 0) return null;
                 return (
                   <div key={severity} className="flex items-center justify-between text-sm">
                     <span className="capitalize">{severity}:</span>
-                    <Badge variant={getSeverityVariant(severity as Discrepancy['severity'])} className="text-xs">
+                    <Badge
+                      variant={getSeverityVariant(severity as Discrepancy['severity'])}
+                      className="text-xs"
+                    >
                       {count}
                     </Badge>
                   </div>

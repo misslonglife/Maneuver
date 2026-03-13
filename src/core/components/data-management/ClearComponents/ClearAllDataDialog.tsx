@@ -5,9 +5,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/core/components/ui/dialog";
-import { Button } from "@/core/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+} from '@/core/components/ui/dialog';
+import { Button } from '@/core/components/ui/button';
+import { AlertTriangle } from 'lucide-react';
 
 interface ClearAllDataDialogProps {
   open: boolean;
@@ -67,11 +67,7 @@ export const ClearAllDataDialog = ({
           <Button variant="outline" onClick={() => onOpenChange(false)} className="p-4">
             Cancel
           </Button>
-          <Button 
-            variant="destructive"
-            onClick={handleConfirm}
-            className="text-white p-4"
-          >
+          <Button variant="destructive" onClick={handleConfirm} className="text-white p-4">
             🗑️ Clear Everything
           </Button>
         </DialogFooter>

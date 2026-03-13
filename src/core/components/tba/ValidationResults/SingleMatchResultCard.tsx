@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Single Match Result Card Component
- * 
+ *
  * Displays detailed validation results for a single match.
  * Shows overall status, confidence, alliance results, and team information.
  */
@@ -33,9 +33,7 @@ export const SingleMatchResultCard: React.FC<SingleMatchResultCardProps> = ({ re
           <div className="flex items-center gap-2">
             {getStatusIcon(result.status)}
             <span className="font-medium">Status:</span>
-            <Badge className={getStatusColor(result.status)}>
-              {result.status.toUpperCase()}
-            </Badge>
+            <Badge className={getStatusColor(result.status)}>{result.status.toUpperCase()}</Badge>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Confidence:</span>
@@ -53,15 +51,11 @@ export const SingleMatchResultCard: React.FC<SingleMatchResultCardProps> = ({ re
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Critical</p>
-            <p className="text-lg font-semibold text-red-600">
-              {result.criticalDiscrepancies}
-            </p>
+            <p className="text-lg font-semibold text-red-600">{result.criticalDiscrepancies}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Warnings</p>
-            <p className="text-lg font-semibold text-yellow-600">
-              {result.warningDiscrepancies}
-            </p>
+            <p className="text-lg font-semibold text-yellow-600">{result.warningDiscrepancies}</p>
           </div>
         </div>
 
@@ -75,15 +69,10 @@ export const SingleMatchResultCard: React.FC<SingleMatchResultCardProps> = ({ re
         <div className="space-y-2">
           <h4 className="font-medium">Teams</h4>
           <div className="grid grid-cols-2 gap-2">
-            {result.teams.map((team) => (
-              <div
-                key={team.teamNumber}
-                className="p-2 border rounded text-sm"
-              >
+            {result.teams.map(team => (
+              <div key={team.teamNumber} className="p-2 border rounded text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">
-                    Team {team.teamNumber}
-                  </span>
+                  <span className="font-medium">Team {team.teamNumber}</span>
                   <Badge
                     variant="outline"
                     className={team.alliance === 'red' ? 'border-red-300' : 'border-blue-300'}
@@ -91,9 +80,7 @@ export const SingleMatchResultCard: React.FC<SingleMatchResultCardProps> = ({ re
                     {team.alliance}
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Scout: {team.scoutName}
-                </p>
+                <p className="text-xs text-muted-foreground">Scout: {team.scoutName}</p>
                 {!team.hasScoutedData && (
                   <p className="text-xs text-red-600 mt-1">No scouted data</p>
                 )}

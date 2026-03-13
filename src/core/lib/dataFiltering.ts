@@ -112,7 +112,7 @@ export function extractMatchRange(data: ScoutingDataCollection): { min: number; 
 
   return {
     min: min === Infinity ? 1 : min,
-    max: max === -Infinity ? 1 : max
+    max: max === -Infinity ? 1 : max,
   };
 }
 
@@ -145,7 +145,9 @@ export function applyFilters(
       startMatch = Math.max(matchRange.min, matchRange.max - 29);
     } else if (filters.matchRange.preset === 'fromLastExport') {
       const lastExportedMatch = getLastExportedMatch();
-      startMatch = lastExportedMatch ? Math.max(matchRange.min, lastExportedMatch + 1) : matchRange.min;
+      startMatch = lastExportedMatch
+        ? Math.max(matchRange.min, lastExportedMatch + 1)
+        : matchRange.min;
     }
 
     filteredEntries = filteredEntries.filter(entry => {
@@ -164,7 +166,7 @@ export function applyFilters(
 
   return {
     ...data,
-    entries: filteredEntries
+    entries: filteredEntries,
   };
 }
 
@@ -190,7 +192,10 @@ export function calculateFilterStats(
 
   // Fountain estimate mirrors UniversalFountainGenerator settings
   const estimatedFountainPacketsFast = getFountainEstimate(transferBytes, 'fast').targetPackets;
-  const estimatedFountainPacketsReliable = getFountainEstimate(transferBytes, 'reliable').targetPackets;
+  const estimatedFountainPacketsReliable = getFountainEstimate(
+    transferBytes,
+    'reliable'
+  ).targetPackets;
   const estimatedFountainPackets = estimatedFountainPacketsFast;
   const avgBytesPerEntry = filteredEntries > 0 ? Math.round(transferBytes / filteredEntries) : 0;
 
@@ -231,7 +236,9 @@ export function calculateFilterStats(
       benchmarkBestMethod = best.name;
       benchmarkBestBytes = best.gzipBytes;
       benchmarkBestPackets = best.estimatedFountainPackets;
-      benchmarkReductionPct = Number((((actualCompressedBytes - best.gzipBytes) / actualCompressedBytes) * 100).toFixed(1));
+      benchmarkReductionPct = Number(
+        (((actualCompressedBytes - best.gzipBytes) / actualCompressedBytes) * 100).toFixed(1)
+      );
     }
   }
 
@@ -240,7 +247,7 @@ export function calculateFilterStats(
     const originalBytes = new TextEncoder().encode(originalJson).length;
     const compressedOriginalBytes = pako.gzip(originalJson).length;
     if (originalBytes > 0) {
-      const reduction = ((1 - (compressedOriginalBytes / originalBytes)) * 100).toFixed(1);
+      const reduction = ((1 - compressedOriginalBytes / originalBytes) * 100).toFixed(1);
       compressionReduction = `${reduction}% smaller payload with compression`;
     }
   }
@@ -261,7 +268,7 @@ export function calculateFilterStats(
     benchmarkReductionPct,
     compressionReduction,
     scanTimeEstimate,
-    warningLevel
+    warningLevel,
   };
 }
 
@@ -275,12 +282,12 @@ export function createDefaultFilters(): DataFilters {
   return {
     matchRange: {
       type: 'preset',
-      preset: defaultPreset
+      preset: defaultPreset,
     },
     teams: {
       selectedTeams: [],
-      includeAll: true
-    }
+      includeAll: true,
+    },
   };
 }
 

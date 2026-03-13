@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { getOrCreateScoutByName, getScout } from '@/core/lib/scoutGamificationUtils';
 
 interface ScoutContextType {
@@ -47,7 +54,7 @@ export const ScoutProvider: React.FC<ScoutProviderProps> = ({ children }) => {
       const savedCurrentScout = localStorage.getItem('currentScout');
       if (savedCurrentScout) {
         setCurrentScoutState(savedCurrentScout);
-        
+
         // Get scout stakes from database
         try {
           const scout = await getOrCreateScoutByName(savedCurrentScout);
@@ -71,80 +78,89 @@ export const ScoutProvider: React.FC<ScoutProviderProps> = ({ children }) => {
   }, []);
 
   // Set current scout
-  const setCurrentScout = useCallback(async (name: string) => {
-    if (!name.trim()) return;
+  const setCurrentScout = useCallback(
+    async (name: string) => {
+      if (!name.trim()) return;
 
-    const trimmedName = name.trim();
-    
-    try {
-      // Create/get scout from database
-      const scout = await getOrCreateScoutByName(trimmedName);
-      
-      // Update state
-      setCurrentScoutState(trimmedName);
-      setCurrentScoutStakes(scout.stakes);
-      
-      // Update localStorage
-      localStorage.setItem('currentScout', trimmedName);
-      
-      // Add to scouts list if not present
-      if (!scoutsList.includes(trimmedName)) {
+      const trimmedName = name.trim();
+
+      try {
+        // Create/get scout from database
+        const scout = await getOrCreateScoutByName(trimmedName);
+
+        // Update state
+        setCurrentScoutState(trimmedName);
+        setCurrentScoutStakes(scout.stakes);
+
+        // Update localStorage
+        localStorage.setItem('currentScout', trimmedName);
+
+        // Add to scouts list if not present
+        if (!scoutsList.includes(trimmedName)) {
+          const updatedList = [...scoutsList, trimmedName].sort();
+          setScoutsList(updatedList);
+          localStorage.setItem('scoutsList', JSON.stringify(updatedList));
+        }
+      } catch (error) {
+        console.error('Error setting current scout:', error);
+        throw error;
+      }
+    },
+    [scoutsList]
+  );
+
+  // Add a new scout to the list
+  const addScout = useCallback(
+    async (name: string) => {
+      if (!name.trim()) return;
+
+      const trimmedName = name.trim();
+
+      if (scoutsList.includes(trimmedName)) {
+        // Scout already exists, just set as current
+        await setCurrentScout(trimmedName);
+        return;
+      }
+
+      try {
+        // Create scout in database
+        const scout = await getOrCreateScoutByName(trimmedName);
+
+        // Update scouts list
         const updatedList = [...scoutsList, trimmedName].sort();
         setScoutsList(updatedList);
         localStorage.setItem('scoutsList', JSON.stringify(updatedList));
+
+        // Set as current scout
+        setCurrentScoutState(trimmedName);
+        setCurrentScoutStakes(scout.stakes);
+        localStorage.setItem('currentScout', trimmedName);
+
+        console.log('✅ ScoutContext: Scout set to', trimmedName);
+      } catch (error) {
+        console.error('Error adding scout:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error('Error setting current scout:', error);
-      throw error;
-    }
-  }, [scoutsList]);
-
-  // Add a new scout to the list
-  const addScout = useCallback(async (name: string) => {
-    if (!name.trim()) return;
-
-    const trimmedName = name.trim();
-    
-    if (scoutsList.includes(trimmedName)) {
-      // Scout already exists, just set as current
-      await setCurrentScout(trimmedName);
-      return;
-    }
-
-    try {
-      // Create scout in database
-      const scout = await getOrCreateScoutByName(trimmedName);
-      
-      // Update scouts list
-      const updatedList = [...scoutsList, trimmedName].sort();
-      setScoutsList(updatedList);
-      localStorage.setItem('scoutsList', JSON.stringify(updatedList));
-      
-      // Set as current scout
-      setCurrentScoutState(trimmedName);
-      setCurrentScoutStakes(scout.stakes);
-      localStorage.setItem('currentScout', trimmedName);
-      
-      console.log('✅ ScoutContext: Scout set to', trimmedName);
-    } catch (error) {
-      console.error('Error adding scout:', error);
-      throw error;
-    }
-  }, [scoutsList, setCurrentScout]);
+    },
+    [scoutsList, setCurrentScout]
+  );
 
   // Remove a scout from the list
-  const removeScout = useCallback(async (name: string) => {
-    const updatedList = scoutsList.filter(s => s !== name);
-    setScoutsList(updatedList);
-    localStorage.setItem('scoutsList', JSON.stringify(updatedList));
+  const removeScout = useCallback(
+    async (name: string) => {
+      const updatedList = scoutsList.filter(s => s !== name);
+      setScoutsList(updatedList);
+      localStorage.setItem('scoutsList', JSON.stringify(updatedList));
 
-    // If removing current scout, clear it
-    if (currentScout === name) {
-      setCurrentScoutState('');
-      setCurrentScoutStakes(0);
-      localStorage.removeItem('currentScout');
-    }
-  }, [scoutsList, currentScout]);
+      // If removing current scout, clear it
+      if (currentScout === name) {
+        setCurrentScoutState('');
+        setCurrentScoutStakes(0);
+        localStorage.removeItem('currentScout');
+      }
+    },
+    [scoutsList, currentScout]
+  );
 
   // Set player station
   const setPlayerStation = useCallback((station: string) => {
@@ -193,7 +209,7 @@ export const ScoutProvider: React.FC<ScoutProviderProps> = ({ children }) => {
     window.addEventListener('scoutChanged', handleScoutChanged);
     window.addEventListener('scoutDataCleared', handleScoutDataCleared);
     window.addEventListener('playerStationChanged', handlePlayerStationChanged);
-    
+
     return () => {
       window.removeEventListener('scoutChanged', handleScoutChanged);
       window.removeEventListener('scoutDataCleared', handleScoutDataCleared);

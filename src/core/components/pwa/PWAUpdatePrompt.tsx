@@ -21,7 +21,7 @@ export function PWAUpdatePrompt() {
       };
 
       // Check for updates on page load
-      navigator.serviceWorker.ready.then((registration) => {
+      navigator.serviceWorker.ready.then(registration => {
         // Immediately check for a waiting worker
         if (registration.waiting) {
           setWaitingWorker(registration.waiting);
@@ -70,9 +70,7 @@ export function PWAUpdatePrompt() {
     <Card className="fixed bottom-4 right-4 z-50 w-80 shadow-lg">
       <CardContent className="p-4">
         <div className="space-y-3">
-          <p className="text-sm font-medium">
-            A new version is available!
-          </p>
+          <p className="text-sm font-medium">A new version is available!</p>
           <p className="text-xs text-muted-foreground">
             Update now to get the latest features and improvements.
           </p>

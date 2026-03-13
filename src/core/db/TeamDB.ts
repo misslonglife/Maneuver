@@ -1,9 +1,9 @@
 /**
  * Team Database - Dexie database for team metadata
- * 
+ *
  * SINGLE SOURCE OF TRUTH for team metadata from TBA and Statbotics.
  * Stores consolidated TeamProfile objects with indexing for fast queries.
- * 
+ *
  * Architecture:
  * - Single table: teamProfiles (indexed by teamNumber)
  * - Compound index: [eventKey+teamNumber] for event-based lookups
@@ -14,7 +14,7 @@ import type { TeamProfile } from '../types/team-profile';
 
 /**
  * TeamDB - Dexie database for team metadata
- * 
+ *
  * Provides persistent, indexed storage of team information consolidated
  * from TBA (basic info) and Statbotics (rankings) with competition history.
  */

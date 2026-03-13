@@ -19,9 +19,7 @@ export function calculateClusterSpread(cluster: TeamPosition[]): number {
     for (let j = i + 1; j < cluster.length; j++) {
       const teamJ = cluster[j];
       if (!teamJ) continue;
-      const distance = Math.sqrt(
-        Math.pow(teamI.x - teamJ.x, 2) + Math.pow(teamI.y - teamJ.y, 2)
-      );
+      const distance = Math.sqrt(Math.pow(teamI.x - teamJ.x, 2) + Math.pow(teamI.y - teamJ.y, 2));
       maxDistance = Math.max(maxDistance, distance);
     }
   }
@@ -90,9 +88,7 @@ export function createSpatialClusters(
       let closestCluster = 0;
 
       centers.forEach((center, clusterIndex) => {
-        const distance = Math.sqrt(
-          Math.pow(team.x - center.x, 2) + Math.pow(team.y - center.y, 2)
-        );
+        const distance = Math.sqrt(Math.pow(team.x - center.x, 2) + Math.pow(team.y - center.y, 2));
         if (distance < minDistance) {
           minDistance = distance;
           closestCluster = clusterIndex;
@@ -124,9 +120,7 @@ export function createSpatialClusters(
     const remaining = [...cluster];
 
     // Start with leftmost team
-    let current = remaining.reduce((leftmost, team) =>
-      team.x < leftmost.x ? team : leftmost
-    );
+    let current = remaining.reduce((leftmost, team) => (team.x < leftmost.x ? team : leftmost));
 
     sortedCluster.push(current);
     remaining.splice(remaining.indexOf(current), 1);
@@ -168,7 +162,10 @@ export function createSpatialClusters(
 }
 
 // Proximity-based reassignment to ensure teams go to their closest cluster
-function applyProximityReassignment(clusters: SpatialCluster[], teamPositions: TeamPosition[]): void {
+function applyProximityReassignment(
+  clusters: SpatialCluster[],
+  teamPositions: TeamPosition[]
+): void {
   const numClusters = clusters.length;
   const avgClusterSize = Math.floor(teamPositions.length / numClusters);
   const remainder = teamPositions.length % numClusters;
@@ -177,8 +174,14 @@ function applyProximityReassignment(clusters: SpatialCluster[], teamPositions: T
   let iterations = 0;
 
   console.log('=== Starting Proximity-Based Reassignment ===');
-  console.log('Initial cluster sizes:', clusters.map(c => c.length));
-  console.log('Target sizes:', clusters.map((_, i) => i < remainder ? avgClusterSize + 1 : avgClusterSize));
+  console.log(
+    'Initial cluster sizes:',
+    clusters.map(c => c.length)
+  );
+  console.log(
+    'Target sizes:',
+    clusters.map((_, i) => (i < remainder ? avgClusterSize + 1 : avgClusterSize))
+  );
 
   while (changed && iterations < 5) {
     changed = false;
@@ -235,7 +238,7 @@ function applyProximityReassignment(clusters: SpatialCluster[], teamPositions: T
             closestOtherCluster: bestCluster,
             distanceToClosestOther: currentMinDistance,
             distanceToCurrentCluster: minDistanceToCurrentCluster,
-            ratio: currentMinDistance / minDistanceToCurrentCluster
+            ratio: currentMinDistance / minDistanceToCurrentCluster,
           });
         }
 
@@ -255,32 +258,45 @@ function applyProximityReassignment(clusters: SpatialCluster[], teamPositions: T
           const clusterSpread = calculateClusterSpread(testCluster);
           const maxAllowedSpread = isVeryClose ? 800 : 600;
 
-          if (bestClusterArray.length < bestTargetSize + 2 &&
+          if (
+            bestClusterArray.length < bestTargetSize + 2 &&
             currentClusterArray.length > Math.max(1, currentTargetSize - 2) &&
-            clusterSpread <= maxAllowedSpread) {
-
+            clusterSpread <= maxAllowedSpread
+          ) {
             // Move the team
             currentClusterArray.splice(teamIndex, 1);
             bestClusterArray.push(team);
             changed = true;
 
-            console.log(`✅ Moved team ${team.teamNumber} from cluster ${i} to cluster ${bestCluster} for better proximity`);
-            console.log(`  Distance improvement: ${minDistanceToCurrentCluster.toFixed(1)} → ${currentMinDistance.toFixed(1)}`);
+            console.log(
+              `✅ Moved team ${team.teamNumber} from cluster ${i} to cluster ${bestCluster} for better proximity`
+            );
+            console.log(
+              `  Distance improvement: ${minDistanceToCurrentCluster.toFixed(1)} → ${currentMinDistance.toFixed(1)}`
+            );
             console.log(`  Cluster spread after move: ${clusterSpread.toFixed(1)}`);
           } else {
             const reasons = [];
-            if (bestClusterArray.length >= bestTargetSize + 2) reasons.push('target cluster too large');
-            if (currentClusterArray.length <= Math.max(1, currentTargetSize - 2)) reasons.push('source cluster too small');
-            if (clusterSpread > maxAllowedSpread) reasons.push(`spread too large (${clusterSpread.toFixed(1)} > ${maxAllowedSpread})`);
+            if (bestClusterArray.length >= bestTargetSize + 2)
+              reasons.push('target cluster too large');
+            if (currentClusterArray.length <= Math.max(1, currentTargetSize - 2))
+              reasons.push('source cluster too small');
+            if (clusterSpread > maxAllowedSpread)
+              reasons.push(`spread too large (${clusterSpread.toFixed(1)} > ${maxAllowedSpread})`);
 
-            console.log(`❌ Cannot move team ${team.teamNumber} due to constraints: ${reasons.join(', ')}`);
+            console.log(
+              `❌ Cannot move team ${team.teamNumber} due to constraints: ${reasons.join(', ')}`
+            );
           }
         }
       }
     }
 
     console.log(`Iteration ${iterations} complete. Changed: ${changed}`);
-    console.log('Updated cluster sizes:', clusters.map(c => c.length));
+    console.log(
+      'Updated cluster sizes:',
+      clusters.map(c => c.length)
+    );
   }
 }
 
@@ -298,8 +314,13 @@ function applyGeographicOptimization(clusters: SpatialCluster[]): void {
 
     // Find the best possible swap across all cluster pairs
     let bestSwap: {
-      clusterI: number, clusterJ: number, teamI: number, teamJ: number,
-      improvement: number, teamFromI: TeamPosition, teamFromJ: TeamPosition
+      clusterI: number;
+      clusterJ: number;
+      teamI: number;
+      teamJ: number;
+      improvement: number;
+      teamFromI: TeamPosition;
+      teamFromJ: TeamPosition;
     } | null = null;
 
     for (let i = 0; i < numClusters; i++) {
@@ -336,14 +357,25 @@ function applyGeographicOptimization(clusters: SpatialCluster[]): void {
             // If this swap is better than our current best, save it
             if (improvement > 0 && (!bestSwap || improvement > bestSwap.improvement)) {
               bestSwap = {
-                clusterI: i, clusterJ: j, teamI, teamJ,
-                improvement, teamFromI, teamFromJ
+                clusterI: i,
+                clusterJ: j,
+                teamI,
+                teamJ,
+                improvement,
+                teamFromI,
+                teamFromJ,
               };
 
               // Debug specific teams we're interested in
-              if (teamFromI.teamNumber === 8876 || teamFromJ.teamNumber === 8876 ||
-                teamFromI.teamNumber === 9991 || teamFromJ.teamNumber === 9991) {
-                console.log(`  Considering swap: ${teamFromI.teamNumber} ↔ ${teamFromJ.teamNumber}, improvement: ${improvement.toFixed(1)}`);
+              if (
+                teamFromI.teamNumber === 8876 ||
+                teamFromJ.teamNumber === 8876 ||
+                teamFromI.teamNumber === 9991 ||
+                teamFromJ.teamNumber === 9991
+              ) {
+                console.log(
+                  `  Considering swap: ${teamFromI.teamNumber} ↔ ${teamFromJ.teamNumber}, improvement: ${improvement.toFixed(1)}`
+                );
               }
             }
           }
@@ -353,7 +385,9 @@ function applyGeographicOptimization(clusters: SpatialCluster[]): void {
 
     // Perform the best swap if one was found
     if (bestSwap && bestSwap.improvement > 10) {
-      console.log(`🔄 Swapping team ${bestSwap.teamFromI.teamNumber} (cluster ${bestSwap.clusterI}) with team ${bestSwap.teamFromJ.teamNumber} (cluster ${bestSwap.clusterJ}) for better geography`);
+      console.log(
+        `🔄 Swapping team ${bestSwap.teamFromI.teamNumber} (cluster ${bestSwap.clusterI}) with team ${bestSwap.teamFromJ.teamNumber} (cluster ${bestSwap.clusterJ}) for better geography`
+      );
       console.log(`  Spread improvement: ${bestSwap.improvement.toFixed(1)} units`);
 
       // Perform the swap
@@ -368,7 +402,10 @@ function applyGeographicOptimization(clusters: SpatialCluster[]): void {
 
     if (geographicImprovement) {
       console.log(`Geographic optimization iteration ${geoIterations} complete`);
-      console.log('Updated cluster sizes:', clusters.map(c => c.length));
+      console.log(
+        'Updated cluster sizes:',
+        clusters.map(c => c.length)
+      );
     }
   }
 }

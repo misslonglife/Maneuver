@@ -27,11 +27,14 @@ export const SHOT_GRID_SHOOTABLE_ROWS = [0, 1, 2, 3, 4] as const;
 
 const totalRowWeight = SHOT_GRID_ROW_WEIGHTS.reduce((acc, weight) => acc + weight, 0);
 
-export const SHOT_GRID_ROW_BOUNDARIES = SHOT_GRID_ROW_WEIGHTS.reduce<number[]>((boundaries, weight) => {
-  const previous = boundaries[boundaries.length - 1] ?? 0;
-  boundaries.push(previous + (weight / totalRowWeight));
-  return boundaries;
-}, []);
+export const SHOT_GRID_ROW_BOUNDARIES = SHOT_GRID_ROW_WEIGHTS.reduce<number[]>(
+  (boundaries, weight) => {
+    const previous = boundaries[boundaries.length - 1] ?? 0;
+    boundaries.push(previous + weight / totalRowWeight);
+    return boundaries;
+  },
+  []
+);
 
 export const SHOT_GRID_CELL_LABELS = Array.from({ length: SHOT_GRID_CELL_COUNT }, (_, index) => {
   const row = Math.floor(index / SHOT_GRID_COLS);

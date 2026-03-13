@@ -10,11 +10,11 @@ import { Button } from '@/core/components/ui/button';
 
 /**
  * Bottom Navigation Component
- * 
- * Shows a bottom navigation bar on mobile devices (under 2xl breakpoint) 
- * ONLY when the app is installed as a PWA. This prevents conflicts with 
+ *
+ * Shows a bottom navigation bar on mobile devices (under 2xl breakpoint)
+ * ONLY when the app is installed as a PWA. This prevents conflicts with
  * iOS Safari's native navigation bar.
- * 
+ *
  * In development mode, the navigation is visible for testing purposes
  * with a warning indicator.
  */
@@ -62,7 +62,7 @@ export function BottomNavigation() {
     handleConfirm,
     handleCancel,
     isConfirmDialogOpen,
-    pendingDestinationLabel
+    pendingDestinationLabel,
   } = useNavigationConfirm();
 
   // Show in development for testing, or on mobile when installed as PWA
@@ -90,7 +90,7 @@ export function BottomNavigation() {
           </div>
         )}
         <nav className="flex items-center justify-around py-2 px-4">
-          {navItems.map((item) => {
+          {navItems.map(item => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
 
@@ -100,11 +100,11 @@ export function BottomNavigation() {
                 variant="ghost"
                 onClick={() => handleNavigation(item.href, item.label)}
                 className={cn(
-                  "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors",
-                  "min-w-0 flex-1 max-w-16 h-auto",
+                  'flex flex-col items-center gap-1 p-2 rounded-lg transition-colors',
+                  'min-w-0 flex-1 max-w-16 h-auto',
                   isActive
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? 'text-primary bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />

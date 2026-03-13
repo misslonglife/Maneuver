@@ -13,16 +13,16 @@ export function setupDebugFunctions(): void {
   // Manual extraction helper
   (window as unknown as Record<string, unknown>).manuallyExtractNexusTeams = (eventKey: string) => {
     console.log(`Attempting to manually extract teams for event: ${eventKey}`);
-    
-    // Check if pit data exists  
+
+    // Check if pit data exists
     const pitData = getStoredPitData(eventKey);
     console.log('Found pit data:', pitData);
-    
+
     // Try to extract teams directly from pit map data
     if (pitData.map && pitData.map.pits) {
       console.log('Extracting from pit map...');
       const teams: number[] = [];
-      
+
       Object.values(pitData.map.pits).forEach((pit: unknown) => {
         if (pit && typeof pit === 'object' && 'team' in pit) {
           const teamNumber = Number(pit.team);
@@ -31,9 +31,12 @@ export function setupDebugFunctions(): void {
           }
         }
       });
-      
-      console.log('Extracted teams from pit map:', teams.sort((a, b) => a - b));
-      
+
+      console.log(
+        'Extracted teams from pit map:',
+        teams.sort((a, b) => a - b)
+      );
+
       if (teams.length > 0) {
         // Store in localStorage
         const nexusKey = `nexus_event_teams_${eventKey}`;
@@ -42,9 +45,14 @@ export function setupDebugFunctions(): void {
       }
     } else if (pitData.addresses && Object.keys(pitData.addresses).length > 0) {
       console.log('Extracting from addresses...');
-      const teams = Object.keys(pitData.addresses).map(Number).filter(n => !isNaN(n));
-      console.log('Extracted teams from addresses:', teams.sort((a, b) => a - b));
-      
+      const teams = Object.keys(pitData.addresses)
+        .map(Number)
+        .filter(n => !isNaN(n));
+      console.log(
+        'Extracted teams from addresses:',
+        teams.sort((a, b) => a - b)
+      );
+
       if (teams.length > 0) {
         const nexusKey = `nexus_event_teams_${eventKey}`;
         localStorage.setItem(nexusKey, JSON.stringify(teams));
@@ -54,7 +62,7 @@ export function setupDebugFunctions(): void {
       console.log('No pit data found to extract teams from');
     }
   };
-  
+
   // List available pit data
   (window as unknown as Record<string, unknown>).listAvailablePitData = () => {
     console.log('=== Available Pit Data ===');
@@ -67,7 +75,7 @@ export function setupDebugFunctions(): void {
       }
     }
   };
-  
+
   // Debug localStorage
   (window as unknown as Record<string, unknown>).debugPitAssignments = () => {
     console.log('=== Manual Debug localStorage ===');
@@ -79,7 +87,7 @@ export function setupDebugFunctions(): void {
       }
     }
     console.log('All nexus/tba keys:', allKeys);
-    
+
     allKeys.forEach(key => {
       const data = localStorage.getItem(key);
       try {
@@ -98,14 +106,14 @@ export function debugTeamAssignments(
   targetTeams: number[] = [9977, 9990, 8876, 9991]
 ): void {
   console.log('\n=== Team Assignment Debug ===');
-  
+
   targetTeams.forEach(teamNumber => {
     const team = teams.find(t => t.teamNumber === teamNumber);
     if (team) {
       console.log(`Team ${teamNumber}:`, {
         coordinates: team.coordinates,
         cluster: team.cluster,
-        scout: team.scout
+        scout: team.scout,
       });
     } else {
       console.log(`Team ${teamNumber}: Not found`);
@@ -127,7 +135,7 @@ export function logSpatialStats(
     clusterSizes,
     scoutAssignments: scoutNames.map((name, index) => ({
       scout: name,
-      teams: clusterSizes[index] || 0
-    }))
+      teams: clusterSizes[index] || 0,
+    })),
   });
 }

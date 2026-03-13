@@ -1,6 +1,6 @@
 /**
  * Team Database CRUD Operations
- * 
+ *
  * Provides utilities for saving, loading, and managing team profiles.
  * All operations use TeamDB as the single source of truth.
  */
@@ -11,9 +11,7 @@ import { teamDB } from './TeamDB';
 /**
  * Save a single team profile to database
  */
-export const saveTeamProfile = async (
-  team: TeamProfile
-): Promise<void> => {
+export const saveTeamProfile = async (team: TeamProfile): Promise<void> => {
   try {
     await teamDB.teamProfiles.put(team);
   } catch (error) {
@@ -37,9 +35,7 @@ export const saveTeamProfiles = async (teams: TeamProfile[]): Promise<void> => {
 /**
  * Load a single team profile by team number
  */
-export const loadTeamProfile = async (
-  teamNumber: number
-): Promise<TeamProfile | undefined> => {
+export const loadTeamProfile = async (teamNumber: number): Promise<TeamProfile | undefined> => {
   try {
     return await teamDB.teamProfiles.get(teamNumber);
   } catch (error) {
@@ -81,10 +77,7 @@ export const loadTeamsByEvent = async (eventKey: string): Promise<TeamProfile[]>
  */
 export const loadTeamProfiles = async (teamNumbers: number[]): Promise<TeamProfile[]> => {
   try {
-    return await teamDB.teamProfiles
-      .where('teamNumber')
-      .anyOf(teamNumbers)
-      .toArray();
+    return await teamDB.teamProfiles.where('teamNumber').anyOf(teamNumbers).toArray();
   } catch (error) {
     console.error(`Failed to load team profiles for teams ${teamNumbers.join(',')}:`, error);
     return [];
@@ -186,7 +179,8 @@ export const recomputeAggregateStats = (team: TeamProfile): void => {
   const avgRanks = team.competitionHistory
     .map(r => r.avgRank)
     .filter((rank): rank is number => rank !== undefined);
-  team.avgRankTrend = avgRanks.length > 0 ? avgRanks.reduce((a, b) => a + b, 0) / avgRanks.length : undefined;
+  team.avgRankTrend =
+    avgRanks.length > 0 ? avgRanks.reduce((a, b) => a + b, 0) / avgRanks.length : undefined;
 };
 
 /**
@@ -219,7 +213,7 @@ export const clearAllTeamProfiles = async (): Promise<void> => {
 export const clearTeamProfilesByEvent = async (eventKey: string): Promise<void> => {
   try {
     const teams = await loadTeamsByEvent(eventKey);
-    
+
     // Remove the event from each team's competition history
     for (const team of teams) {
       team.competitionHistory = team.competitionHistory.filter(r => r.eventKey !== eventKey);

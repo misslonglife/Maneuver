@@ -1,6 +1,6 @@
 /**
  * Statbotics Team Ranking Utilities
- * 
+ *
  * Fetches and caches team rankings from Statbotics API.
  * Provides both global rankings and event-specific rankings.
  */
@@ -58,10 +58,7 @@ export const fetchTeamGlobalRanking = async (
       globalPercentile: response.rank.percentile,
     };
   } catch (error) {
-    console.warn(
-      `[Statbotics] Failed to fetch global ranking for team ${teamNumber}:`,
-      error
-    );
+    console.warn(`[Statbotics] Failed to fetch global ranking for team ${teamNumber}:`, error);
     return null;
   }
 };
@@ -81,9 +78,7 @@ export const fetchTeamEventRanking = async (
     );
 
     if (!response?.rank?.rank || response.rank.percentile === undefined) {
-      console.warn(
-        `No event ranking data for team ${teamNumber} at event ${eventKey}`
-      );
+      console.warn(`No event ranking data for team ${teamNumber} at event ${eventKey}`);
       return null;
     }
 

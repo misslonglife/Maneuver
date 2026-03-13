@@ -7,10 +7,10 @@ interface DataAttributionProps {
   className?: string;
 }
 
-export const DataAttribution: React.FC<DataAttributionProps> = ({ 
-  sources, 
+export const DataAttribution: React.FC<DataAttributionProps> = ({
+  sources,
   variant = 'compact',
-  className = '' 
+  className = '',
 }) => {
   const showTBA = sources.includes('tba');
   const showNexus = sources.includes('nexus');
@@ -22,9 +22,9 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
         {showTBA && (
           <div className="flex items-center gap-1">
             <span>Powered by</span>
-            <a 
-              href="https://thebluealliance.com" 
-              target="_blank" 
+            <a
+              href="https://thebluealliance.com"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline flex items-center gap-1"
             >
@@ -36,9 +36,9 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
         {showNexus && (
           <div className="flex items-center gap-1">
             <span>Pit data from</span>
-            <a 
-              href="https://frc.nexus" 
-              target="_blank" 
+            <a
+              href="https://frc.nexus"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 underline flex items-center gap-1"
             >
@@ -69,10 +69,10 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
     const attributions = [];
     if (showTBA) {
       attributions.push(
-        <a 
+        <a
           key="tba"
-          href="https://thebluealliance.com" 
-          target="_blank" 
+          href="https://thebluealliance.com"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
         >
@@ -82,10 +82,10 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
     }
     if (showNexus) {
       attributions.push(
-        <a 
+        <a
           key="nexus"
-          href="https://frc.nexus" 
-          target="_blank" 
+          href="https://frc.nexus"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 underline"
         >
@@ -109,10 +109,14 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
 
     return (
       <span className={`text-xs text-muted-foreground ${className}`}>
-        Data from {attributions.reduce((prev, curr, index) => {
-          if (prev === null) return [curr];
-          return [...prev, index === attributions.length - 1 ? ' and ' : ', ', curr];
-        }, null as React.ReactNode[] | null)}
+        Data from{' '}
+        {attributions.reduce(
+          (prev, curr, index) => {
+            if (prev === null) return [curr];
+            return [...prev, index === attributions.length - 1 ? ' and ' : ', ', curr];
+          },
+          null as React.ReactNode[] | null
+        )}
       </span>
     );
   }
@@ -121,9 +125,9 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
   return (
     <div className={`flex flex-wrap items-center gap-2 text-xs text-muted-foreground ${className}`}>
       {showTBA && (
-        <a 
-          href="https://thebluealliance.com" 
-          target="_blank" 
+        <a
+          href="https://thebluealliance.com"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline flex items-center gap-1"
           title="Powered by The Blue Alliance"
@@ -133,9 +137,9 @@ export const DataAttribution: React.FC<DataAttributionProps> = ({
         </a>
       )}
       {showNexus && (
-        <a 
-          href="https://frc.nexus" 
-          target="_blank" 
+        <a
+          href="https://frc.nexus"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 underline flex items-center gap-1"
           title="Pit data from FRC Nexus"

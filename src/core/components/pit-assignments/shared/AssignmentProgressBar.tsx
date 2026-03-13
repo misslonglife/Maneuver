@@ -1,5 +1,5 @@
 import React from 'react';
-import { Progress } from "@/core/components/ui/progress";
+import { Progress } from '@/core/components/ui/progress';
 import type { PitAssignment } from '@/core/lib/pitAssignmentTypes';
 
 interface AssignmentProgressBarProps {
@@ -9,7 +9,7 @@ interface AssignmentProgressBarProps {
 
 export const AssignmentProgressBar: React.FC<AssignmentProgressBarProps> = ({
   assignments,
-  className = ""
+  className = '',
 }) => {
   const completedCount = assignments.filter(a => a.completed).length;
   const totalCount = assignments.length;
@@ -19,9 +19,11 @@ export const AssignmentProgressBar: React.FC<AssignmentProgressBarProps> = ({
     <div className={className}>
       <div className="flex items-center justify-between text-sm mb-2">
         <span className="font-medium">Progress:</span>
-        <span>{completedCount} of {totalCount} completed ({percentage}%)</span>
+        <span>
+          {completedCount} of {totalCount} completed ({percentage}%)
+        </span>
       </div>
-      <Progress 
+      <Progress
         value={totalCount > 0 ? (completedCount / totalCount) * 100 : 0}
         className="w-full"
       />

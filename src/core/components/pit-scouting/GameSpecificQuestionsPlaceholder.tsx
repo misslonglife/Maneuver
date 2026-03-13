@@ -1,20 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { Info, Code } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
+import { Info, Code } from 'lucide-react';
 
 /**
  * Placeholder component for game-specific pit scouting questions
  * This was created so developers can easily create questions, but this does not have to be used.
- * 
+ *
  * HOW TO EXTEND PIT SCOUTING FOR YOUR GAME:
  * ========================================
- * 
+ *
  * 1. In your game implementation (e.g., maneuver-2025), create a PitScoutingRules implementation:
- * 
+ *
  *    ```typescript
  *    // src/game/pitScoutingRules.ts
  *    import type { PitScoutingRules, PitScoutingQuestion } from '@/types/game-interfaces';
- *    
+ *
  *    export const pitScoutingRules: PitScoutingRules = {
  *      getGameSpecificQuestions: () => [
  *        {
@@ -39,9 +39,9 @@ import { Info, Code } from "lucide-react";
  *      ]
  *    };
  *    ```
- * 
+ *
  * 2. Create a component to render your questions:
- * 
+ *
  *    ```typescript
  *    // src/game/components/GamePitScoutingQuestions.tsx
  *    import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
@@ -50,19 +50,19 @@ import { Info, Code } from "lucide-react";
  *    import { Input } from '@/core/components/ui/input';
  *    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/core/components/ui/select';
  *    import { pitScoutingRules } from '../pitScoutingRules';
- *    
+ *
  *    interface Props {
  *      gameData: Record<string, unknown> | undefined;
  *      onGameDataChange: (data: Record<string, unknown>) => void;
  *    }
- *    
+ *
  *    export function GamePitScoutingQuestions({ gameData = {}, onGameDataChange }: Props) {
  *      const questions = pitScoutingRules.getGameSpecificQuestions();
- *      
+ *
  *      const updateField = (id: string, value: unknown) => {
  *        onGameDataChange({ ...gameData, [id]: value });
  *      };
- *      
+ *
  *      return (
  *        <Card>
  *          <CardHeader>
@@ -108,18 +108,18 @@ import { Info, Code } from "lucide-react";
  *      );
  *    }
  *    ```
- * 
+ *
  * 3. Use your component in PitScoutingPage:
- * 
+ *
  *    ```typescript
  *    // src/App.tsx or wherever you define the pit scouting route
  *    import { PitScoutingPage } from '@/core/pages/PitScoutingPage';
  *    import { GamePitScoutingQuestions } from './game/components/GamePitScoutingQuestions';
  *    import { usePitScoutingForm } from '@/core/hooks/usePitScoutingForm';
- *    
+ *
  *    function PitScoutingPageWithGame() {
  *      const { formState, setGameData } = usePitScoutingForm();
- *      
+ *
  *      return (
  *        <PitScoutingPage>
  *          <GamePitScoutingQuestions
@@ -130,16 +130,16 @@ import { Info, Code } from "lucide-react";
  *      );
  *    }
  *    ```
- * 
+ *
  * 4. Your game-specific data is automatically saved to the `gameData` field in the database!
- * 
+ *
  * AVAILABLE QUESTION TYPES:
  * - 'boolean' - Checkbox
  * - 'text' - Text input
  * - 'number' - Number input
  * - 'select' - Dropdown with options
  * - 'multiselect' - Multiple selections (you'll need to implement the UI)
- * 
+ *
  * DATA STORAGE:
  * All game-specific questions are stored in the `gameData` object:
  * {
@@ -168,12 +168,21 @@ export function GameSpecificQuestionsPlaceholder() {
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            <strong>For game implementers:</strong> This is a placeholder component.
-            Replace this with your own game-specific pit scouting questions by:
+            <strong>For game implementers:</strong> This is a placeholder component. Replace this
+            with your own game-specific pit scouting questions by:
             <ol className="mt-2 ml-4 space-y-1 list-decimal">
-              <li>Creating a <code className="text-xs bg-muted px-1 py-0.5 rounded">PitScoutingRules</code> implementation or build your own custom solution</li>
+              <li>
+                Creating a{' '}
+                <code className="text-xs bg-muted px-1 py-0.5 rounded">PitScoutingRules</code>{' '}
+                implementation or build your own custom solution
+              </li>
               <li>Building a component to render your questions</li>
-              <li>Passing it as children to <code className="text-xs bg-muted px-1 py-0.5 rounded">&lt;PitScoutingPage&gt;</code></li>
+              <li>
+                Passing it as children to{' '}
+                <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                  &lt;PitScoutingPage&gt;
+                </code>
+              </li>
             </ol>
             <p className="mt-2 text-sm text-muted-foreground">
               See the JSDoc comments in this file for a complete implementation guide.

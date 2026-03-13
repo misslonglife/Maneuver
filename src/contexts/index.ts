@@ -1,6 +1,6 @@
 /**
  * Contexts exports
- * 
+ *
  * This exports all React context providers and hooks.
  */
 
@@ -12,15 +12,11 @@ export {
   NotificationProvider,
   useNotifications,
   type Notification,
-  type NotificationType
+  type NotificationType,
 } from '../core/contexts/NotificationContext';
 
 // Settings Context
-export {
-  SettingsProvider,
-  useSettings,
-  type AppSettings
-} from '../core/contexts/SettingsContext';
+export { SettingsProvider, useSettings, type AppSettings } from '../core/contexts/SettingsContext';
 
 // Data Sync Context
 export {
@@ -28,5 +24,5 @@ export {
   useDataSync,
   type SyncOperation,
   type SyncStatus,
-  type SyncMethod
+  type SyncMethod,
 } from '../core/contexts/DataSyncContext';

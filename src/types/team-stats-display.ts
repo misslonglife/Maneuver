@@ -1,6 +1,6 @@
 /**
  * Team Stats Display Configuration Types
- * 
+ *
  * These interfaces define how game implementations configure the
  * Team Statistics page display. The framework renders stats based
  * on these configurations.
@@ -119,7 +119,7 @@ export interface StartPositionConfig {
 
 /**
  * Complete team stats display configuration
- * 
+ *
  * Game implementations provide this to configure how
  * the Team Statistics page displays their stats.
  */

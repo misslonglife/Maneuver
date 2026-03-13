@@ -55,12 +55,18 @@ const recalcDerived = (metrics: NormalizedExperimentMetrics) => {
     phase.passActions = phase.passGridCounts.reduce((acc, value) => acc + value, 0);
     phase.collectActions = phase.collectGridCounts.reduce((acc, value) => acc + value, 0);
     phase.collectFromDepotActions = clamp(phase.collectFromDepotActions, 0, phase.collectActions);
-    phase.collectFromOutpostActions = clamp(phase.collectFromOutpostActions, 0, phase.collectActions);
+    phase.collectFromOutpostActions = clamp(
+      phase.collectFromOutpostActions,
+      0,
+      phase.collectActions
+    );
     if (phase.collectFromDepotActions + phase.collectFromOutpostActions < phase.collectActions) {
       phase.collectFromDepotActions = clamp(
-        phase.collectFromDepotActions + (phase.collectActions - (phase.collectFromDepotActions + phase.collectFromOutpostActions)),
+        phase.collectFromDepotActions +
+          (phase.collectActions -
+            (phase.collectFromDepotActions + phase.collectFromOutpostActions)),
         0,
-        phase.collectActions,
+        phase.collectActions
       );
     }
 
@@ -125,13 +131,26 @@ const makeAnswerKeyMetrics = (clipId: string): NormalizedExperimentMetrics => {
   return recalcDerived(metrics);
 };
 
-const mutateCellCounts = (cells: number[], seedPrefix: string, interfaceType: InterfaceType, variability: number) =>
+const mutateCellCounts = (
+  cells: number[],
+  seedPrefix: string,
+  interfaceType: InterfaceType,
+  variability: number
+) =>
   cells.map((value, index) => {
-    const delta = randomInt(`${seedPrefix}-cell-${index}-${interfaceType}`, -variability, variability);
+    const delta = randomInt(
+      `${seedPrefix}-cell-${index}-${interfaceType}`,
+      -variability,
+      variability
+    );
     return Math.max(0, value + delta);
   });
 
-const mutateStartLocation = (current: AutoStartLocationValue, seed: string, interfaceType: InterfaceType): AutoStartLocationValue => {
+const mutateStartLocation = (
+  current: AutoStartLocationValue,
+  seed: string,
+  interfaceType: InterfaceType
+): AutoStartLocationValue => {
   const options: AutoStartLocationValue[] = ['trench1', 'bump1', 'hub', 'bump2', 'trench2'];
   if (current === 'none') return current;
   const driftChance = interfaceType === 'form' ? 0.2 : 0.1;
@@ -143,7 +162,12 @@ const mutateStartLocation = (current: AutoStartLocationValue, seed: string, inte
   return options[clamp(index + move, 0, options.length - 1)]!;
 };
 
-const mutateEnum = <T extends string>(value: T, options: readonly T[], seed: string, chance: number) => {
+const mutateEnum = <T extends string>(
+  value: T,
+  options: readonly T[],
+  seed: string,
+  chance: number
+) => {
   if (hashToUnit(seed) > chance) return value;
   const nextIndex = randomInt(`${seed}-next`, 0, options.length - 1);
   return options[nextIndex]!;
@@ -153,42 +177,106 @@ const makeScoutMetrics = (
   answer: NormalizedExperimentMetrics,
   interfaceType: InterfaceType,
   scoutIndex: number,
-  block: 1 | 2,
+  block: 1 | 2
 ) => {
   const base = cloneMetrics(answer);
   const variability = interfaceType === 'form' ? 2 : 1;
   const seedPrefix = `scout-${scoutIndex}-block-${block}`;
 
-  base.auto.shotGridCounts = mutateCellCounts(base.auto.shotGridCounts, `${seedPrefix}-auto-shot`, interfaceType, variability);
-  base.auto.passGridCounts = mutateCellCounts(base.auto.passGridCounts, `${seedPrefix}-auto-pass`, interfaceType, variability);
-  base.auto.collectGridCounts = mutateCellCounts(base.auto.collectGridCounts, `${seedPrefix}-auto-collect`, interfaceType, variability);
+  base.auto.shotGridCounts = mutateCellCounts(
+    base.auto.shotGridCounts,
+    `${seedPrefix}-auto-shot`,
+    interfaceType,
+    variability
+  );
+  base.auto.passGridCounts = mutateCellCounts(
+    base.auto.passGridCounts,
+    `${seedPrefix}-auto-pass`,
+    interfaceType,
+    variability
+  );
+  base.auto.collectGridCounts = mutateCellCounts(
+    base.auto.collectGridCounts,
+    `${seedPrefix}-auto-collect`,
+    interfaceType,
+    variability
+  );
 
-  base.teleop.shotGridCounts = mutateCellCounts(base.teleop.shotGridCounts, `${seedPrefix}-teleop-shot`, interfaceType, variability);
-  base.teleop.passGridCounts = mutateCellCounts(base.teleop.passGridCounts, `${seedPrefix}-teleop-pass`, interfaceType, variability);
+  base.teleop.shotGridCounts = mutateCellCounts(
+    base.teleop.shotGridCounts,
+    `${seedPrefix}-teleop-shot`,
+    interfaceType,
+    variability
+  );
+  base.teleop.passGridCounts = mutateCellCounts(
+    base.teleop.passGridCounts,
+    `${seedPrefix}-teleop-pass`,
+    interfaceType,
+    variability
+  );
 
-  base.auto.autoStartLocation = mutateStartLocation(base.auto.autoStartLocation, `${seedPrefix}-auto-start`, interfaceType);
+  base.auto.autoStartLocation = mutateStartLocation(
+    base.auto.autoStartLocation,
+    `${seedPrefix}-auto-start`,
+    interfaceType
+  );
 
-  base.auto.foulActions = Math.max(0, base.auto.foulActions + randomInt(`${seedPrefix}-auto-foul-${interfaceType}`, -1, 1));
-  base.teleop.defenseActions = Math.max(0, base.teleop.defenseActions + randomInt(`${seedPrefix}-teleop-defense-${interfaceType}`, -1, 1));
-  base.teleop.stealActions = Math.max(0, base.teleop.stealActions + randomInt(`${seedPrefix}-teleop-steal-${interfaceType}`, -1, 1));
+  base.auto.foulActions = Math.max(
+    0,
+    base.auto.foulActions + randomInt(`${seedPrefix}-auto-foul-${interfaceType}`, -1, 1)
+  );
+  base.teleop.defenseActions = Math.max(
+    0,
+    base.teleop.defenseActions + randomInt(`${seedPrefix}-teleop-defense-${interfaceType}`, -1, 1)
+  );
+  base.teleop.stealActions = Math.max(
+    0,
+    base.teleop.stealActions + randomInt(`${seedPrefix}-teleop-steal-${interfaceType}`, -1, 1)
+  );
 
-  base.auto.collectFromDepotActions = Math.max(0, base.auto.collectFromDepotActions + randomInt(`${seedPrefix}-collect-depot-${interfaceType}`, -1, 1));
-  base.auto.collectFromOutpostActions = Math.max(0, base.auto.collectFromOutpostActions + randomInt(`${seedPrefix}-collect-outpost-${interfaceType}`, -1, 1));
+  base.auto.collectFromDepotActions = Math.max(
+    0,
+    base.auto.collectFromDepotActions +
+      randomInt(`${seedPrefix}-collect-depot-${interfaceType}`, -1, 1)
+  );
+  base.auto.collectFromOutpostActions = Math.max(
+    0,
+    base.auto.collectFromOutpostActions +
+      randomInt(`${seedPrefix}-collect-outpost-${interfaceType}`, -1, 1)
+  );
 
-  base.teleop.climbActions = mutateEnum(base.teleop.climbActions, ['no', 'yes'] as const, `${seedPrefix}-climb-attempt-${interfaceType}`, interfaceType === 'form' ? 0.2 : 0.1);
-  base.teleop.climbResult = mutateEnum(base.teleop.climbResult, ['none', 'success', 'fail'] as const, `${seedPrefix}-climb-result-${interfaceType}`, interfaceType === 'form' ? 0.18 : 0.08) as ClimbResultValue;
-  base.teleop.climbLocation = mutateEnum(base.teleop.climbLocation, ['none', 'side', 'middle'] as const, `${seedPrefix}-climb-location-${interfaceType}`, interfaceType === 'form' ? 0.18 : 0.08) as ClimbLocationValue;
+  base.teleop.climbActions = mutateEnum(
+    base.teleop.climbActions,
+    ['no', 'yes'] as const,
+    `${seedPrefix}-climb-attempt-${interfaceType}`,
+    interfaceType === 'form' ? 0.2 : 0.1
+  );
+  base.teleop.climbResult = mutateEnum(
+    base.teleop.climbResult,
+    ['none', 'success', 'fail'] as const,
+    `${seedPrefix}-climb-result-${interfaceType}`,
+    interfaceType === 'form' ? 0.18 : 0.08
+  ) as ClimbResultValue;
+  base.teleop.climbLocation = mutateEnum(
+    base.teleop.climbLocation,
+    ['none', 'side', 'middle'] as const,
+    `${seedPrefix}-climb-location-${interfaceType}`,
+    interfaceType === 'form' ? 0.18 : 0.08
+  ) as ClimbLocationValue;
 
   return recalcDerived(base);
 };
 
 const makeTlx = (interfaceType: InterfaceType, scoutIndex: number, block: 1 | 2) => {
   const base = interfaceType === 'visual' ? 4.5 : 5.8;
-  const score = (dimension: string) => clamp(
-    Math.round(base + randomInt(`tlx-${dimension}-${interfaceType}-${scoutIndex}-${block}`, -2, 2)),
-    1,
-    10,
-  );
+  const score = (dimension: string) =>
+    clamp(
+      Math.round(
+        base + randomInt(`tlx-${dimension}-${interfaceType}-${scoutIndex}-${block}`, -2, 2)
+      ),
+      1,
+      10
+    );
 
   return {
     mentalDemand: score('mental'),
@@ -249,9 +337,8 @@ export const seedExperimentDemoData = async () => {
   for (let index = 0; index < 12; index += 1) {
     const scoutNumber = index + 1;
     const group = index < 6 ? 'A' : 'B';
-    const interfaceOrder: [InterfaceType, InterfaceType] = group === 'A'
-      ? ['visual', 'form']
-      : ['form', 'visual'];
+    const interfaceOrder: [InterfaceType, InterfaceType] =
+      group === 'A' ? ['visual', 'form'] : ['form', 'visual'];
 
     const sessionId = `demo-session-${group}-${group === 'A' ? scoutNumber : scoutNumber - 6}`;
     const sessionCreatedAt = createdAtBase + index * 1000;
@@ -273,7 +360,8 @@ export const seedExperimentDemoData = async () => {
     ];
 
     blocks.forEach(({ block, clipId, interfaceType }) => {
-      const baseAnswer = clipId === STUDY_CLIP_IDS.block1 ? answerKeyClip1Metrics : answerKeyClip2Metrics;
+      const baseAnswer =
+        clipId === STUDY_CLIP_IDS.block1 ? answerKeyClip1Metrics : answerKeyClip2Metrics;
       const metrics = makeScoutMetrics(baseAnswer, interfaceType, scoutNumber, block);
 
       const durationBaseSeconds = interfaceType === 'visual' ? 85 : 108;

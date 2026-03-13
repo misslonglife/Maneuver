@@ -1,7 +1,13 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
 import {
   Download,
   Loader2,
@@ -89,7 +95,8 @@ export const DataOperationsCard: React.FC<DataOperationsCardProps> = ({
       case 'match-validation-data':
         return {
           title: 'Load Match Validation Data',
-          description: 'Download TBA match breakdowns and refresh TBA COPR + Statbotics EPA metrics for validation',
+          description:
+            'Download TBA match breakdowns and refresh TBA COPR + Statbotics EPA metrics for validation',
           icon: CheckCircle,
           requiresEvent: true,
           requiresTBA: true,
@@ -107,7 +114,8 @@ export const DataOperationsCard: React.FC<DataOperationsCardProps> = ({
       case 'statbotics-epa':
         return {
           title: 'Load Statbotics EPA',
-          description: 'Download Statbotics team-event EPA breakdown data for all teams in this event',
+          description:
+            'Download Statbotics team-event EPA breakdown data for all teams in this event',
           icon: BarChart3,
           requiresEvent: true,
           requiresTBA: true,
@@ -309,9 +317,7 @@ export const DataOperationsCard: React.FC<DataOperationsCardProps> = ({
           <dataTypeInfo.icon className="h-5 w-5" />
           {dataTypeInfo.title}
         </CardTitle>
-        <CardDescription>
-          {dataTypeInfo.description}
-        </CardDescription>
+        <CardDescription>{dataTypeInfo.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Requirements Check */}
@@ -333,11 +339,11 @@ export const DataOperationsCard: React.FC<DataOperationsCardProps> = ({
             <p>{useServerProxy ? '• Uses server-side TBA API key' : '• Requires TBA API Key'}</p>
           )}
           {dataTypeInfo.requiresNexus && (
-            <p>{useServerProxy ? '• Uses server-side Nexus API key' : '• Requires Nexus API Key'}</p>
+            <p>
+              {useServerProxy ? '• Uses server-side Nexus API key' : '• Requires Nexus API Key'}
+            </p>
           )}
-          {dataTypeInfo.requiresEvent && (
-            <p>• Requires Event Key</p>
-          )}
+          {dataTypeInfo.requiresEvent && <p>• Requires Event Key</p>}
         </div>
       </CardContent>
     </Card>

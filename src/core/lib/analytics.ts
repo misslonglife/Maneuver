@@ -10,23 +10,22 @@ class SimpleGA4 {
 
   private initializeGA4() {
     if (this.initialized) return;
-    
-    try {      
+
+    try {
       // Load gtag script
       const script = document.createElement('script');
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`;
-      
+
       script.onload = () => {
         this.setupGtag();
       };
-      
-      script.onerror = (e) => {
+
+      script.onerror = e => {
         console.error('❌ Failed to load GA4 script:', e);
       };
-      
+
       document.head.appendChild(script);
-      
     } catch (error) {
       console.error('❌ Error initializing GA4:', error);
     }
@@ -36,14 +35,14 @@ class SimpleGA4 {
     try {
       // Initialize gtag
       window.dataLayer = window.dataLayer || [];
-      
+
       function gtag(...args: any[]) {
         window.dataLayer.push(args);
         if (process.env.NODE_ENV === 'development') {
           console.log('📊 gtag called:', args);
         }
       }
-      
+
       window.gtag = gtag;
 
       gtag('js', new Date());
@@ -57,10 +56,9 @@ class SimpleGA4 {
       });
 
       this.initialized = true;
-      
+
       // Track initial page view
       this.trackPageView();
-      
     } catch (error) {
       console.error('❌ Error setting up gtag:', error);
     }
@@ -72,13 +70,12 @@ class SimpleGA4 {
 
     const path = pagePath || window.location.pathname;
     const title = pageTitle || document.title;
-    
+
     try {
       window.gtag('config', this.measurementId, {
         page_path: path,
         page_title: title,
       });
-      
     } catch (error) {
       console.error('❌ Error tracking page view:', error);
     }
@@ -97,7 +94,6 @@ class SimpleGA4 {
         app_version: '2025.1.0',
         ...parameters,
       });
-      
     } catch (error) {
       console.error('❌ Error tracking event:', error);
     }
@@ -117,7 +113,7 @@ class SimpleGA4 {
 
   trackDemoDataClear() {
     this.trackEvent('demo_data_clear', {
-      event_category: 'engagement', 
+      event_category: 'engagement',
       event_label: 'demo_data',
     });
   }
@@ -188,15 +184,15 @@ class SimpleGA4 {
   testTracking() {
     console.log('🧪 Testing analytics tracking...');
     this.debug();
-    
+
     // Test events
     this.trackEvent('test_event', {
       test_parameter: 'test_value',
       timestamp: new Date().toISOString(),
     });
-    
+
     this.trackPageView('/test-page', 'Test Page');
-    
+
     console.log('✅ Test events sent');
   }
 }

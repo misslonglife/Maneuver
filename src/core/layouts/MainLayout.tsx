@@ -1,5 +1,5 @@
-import Dashboard from "@/core/pages/Dashboard";
-import { Toaster } from "@/core/components/ui/sonner";
+import Dashboard from '@/core/pages/Dashboard';
+import { Toaster } from '@/core/components/ui/sonner';
 
 const MainLayout = () => {
   return (

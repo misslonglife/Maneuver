@@ -40,9 +40,10 @@ const TEST_VISUAL_SCOUT_OPTIONS: Record<string, boolean> = {
   [GAME_SCOUT_OPTION_KEYS.disableDefensePopup]: true,
 };
 
-const generateId = () => (typeof crypto !== 'undefined' && 'randomUUID' in crypto
-  ? crypto.randomUUID()
-  : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+const generateId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const downloadJsonFile = (filename: string, payload: unknown) => {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -66,7 +67,7 @@ const toSafeNumber = (value: unknown) => {
 
 const toSafeNumberArray = (value: unknown): number[] => {
   if (!Array.isArray(value)) return [];
-  return value.map((item) => toSafeNumber(item));
+  return value.map(item => toSafeNumber(item));
 };
 
 const normalizeImportedAnswerKey = (raw: unknown): ExperimentAnswerKey | null => {
@@ -78,14 +79,22 @@ const normalizeImportedAnswerKey = (raw: unknown): ExperimentAnswerKey | null =>
   const rawAuto = isObject(rawMetrics.auto) ? rawMetrics.auto : {};
   const rawTeleop = isObject(rawMetrics.teleop) ? rawMetrics.teleop : {};
 
-  if (Array.isArray(rawAuto.shotGridCounts)) metrics.auto.shotGridCounts = toSafeNumberArray(rawAuto.shotGridCounts);
-  if (Array.isArray(rawAuto.collectGridCounts)) metrics.auto.collectGridCounts = toSafeNumberArray(rawAuto.collectGridCounts);
-  if (Array.isArray(rawTeleop.shotGridCounts)) metrics.teleop.shotGridCounts = toSafeNumberArray(rawTeleop.shotGridCounts);
+  if (Array.isArray(rawAuto.shotGridCounts))
+    metrics.auto.shotGridCounts = toSafeNumberArray(rawAuto.shotGridCounts);
+  if (Array.isArray(rawAuto.collectGridCounts))
+    metrics.auto.collectGridCounts = toSafeNumberArray(rawAuto.collectGridCounts);
+  if (Array.isArray(rawTeleop.shotGridCounts))
+    metrics.teleop.shotGridCounts = toSafeNumberArray(rawTeleop.shotGridCounts);
 
-  metrics.auto.scoreActions = toSafeNumber(rawAuto.scoreActions) || metrics.auto.shotGridCounts.reduce((acc, value) => acc + value, 0);
-  metrics.teleop.scoreActions = toSafeNumber(rawTeleop.scoreActions) || metrics.teleop.shotGridCounts.reduce((acc, value) => acc + value, 0);
+  metrics.auto.scoreActions =
+    toSafeNumber(rawAuto.scoreActions) ||
+    metrics.auto.shotGridCounts.reduce((acc, value) => acc + value, 0);
+  metrics.teleop.scoreActions =
+    toSafeNumber(rawTeleop.scoreActions) ||
+    metrics.teleop.shotGridCounts.reduce((acc, value) => acc + value, 0);
 
-  const autoStartLocation = typeof rawAuto.autoStartLocation === 'string' ? rawAuto.autoStartLocation : 'none';
+  const autoStartLocation =
+    typeof rawAuto.autoStartLocation === 'string' ? rawAuto.autoStartLocation : 'none';
   metrics.auto.autoStartLocation = autoStartLocation as typeof metrics.auto.autoStartLocation;
 
   metrics.auto.collectActions = toSafeNumber(rawAuto.collectActions);
@@ -96,7 +105,10 @@ const normalizeImportedAnswerKey = (raw: unknown): ExperimentAnswerKey | null =>
   if (!clipId) return null;
 
   return {
-    id: typeof raw.id === 'string' && raw.id.trim() ? raw.id : `${now}-${Math.random().toString(36).slice(2, 8)}`,
+    id:
+      typeof raw.id === 'string' && raw.id.trim()
+        ? raw.id
+        : `${now}-${Math.random().toString(36).slice(2, 8)}`,
     clipId,
     metrics,
     notes: typeof raw.notes === 'string' ? raw.notes : '',
@@ -140,10 +152,14 @@ const TestAnswerKeyPage = () => {
   const [loadedKeyPreview, setLoadedKeyPreview] = useState<ExperimentAnswerKey | null>(null);
   const [savedGridPhase, setSavedGridPhase] = useState<GridPhase>('auto');
 
-  const computedMetrics = useMemo(() => buildMetricsFromActions({
-    autoActions,
-    teleopActions,
-  }), [autoActions, teleopActions]);
+  const computedMetrics = useMemo(
+    () =>
+      buildMetricsFromActions({
+        autoActions,
+        teleopActions,
+      }),
+    [autoActions, teleopActions]
+  );
 
   useEffect(() => {
     setExistingUpdatedAt(null);
@@ -175,17 +191,17 @@ const TestAnswerKeyPage = () => {
   const handleAddAction = (action: any) => {
     const timestamped = { ...action, timestamp: action.timestamp ?? Date.now() };
     if (phase === 'auto') {
-      setAutoActions((prev) => [...prev, timestamped]);
+      setAutoActions(prev => [...prev, timestamped]);
     } else {
-      setTeleopActions((prev) => [...prev, timestamped]);
+      setTeleopActions(prev => [...prev, timestamped]);
     }
   };
 
   const handleUndo = () => {
     if (phase === 'auto') {
-      setAutoActions((prev) => prev.slice(0, -1));
+      setAutoActions(prev => prev.slice(0, -1));
     } else {
-      setTeleopActions((prev) => prev.slice(0, -1));
+      setTeleopActions(prev => prev.slice(0, -1));
     }
   };
 
@@ -339,7 +355,9 @@ const TestAnswerKeyPage = () => {
           Back
         </Button>
         <h1 className="text-2xl font-bold">Answer Key Builder (Visual)</h1>
-        <p className="text-sm text-muted-foreground">Build answer keys from visual actions using the same interface scouts use.</p>
+        <p className="text-sm text-muted-foreground">
+          Build answer keys from visual actions using the same interface scouts use.
+        </p>
       </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
@@ -373,11 +391,15 @@ const TestAnswerKeyPage = () => {
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               {!loadedKeyPreview ? (
-                <div className="text-muted-foreground">Load or check an existing key to visualize saved shot locations on the field.</div>
+                <div className="text-muted-foreground">
+                  Load or check an existing key to visualize saved shot locations on the field.
+                </div>
               ) : (
                 <>
                   <div className="flex items-center justify-between gap-2">
-                    <div className="text-muted-foreground">Viewing clip <strong>{loadedKeyPreview.clipId}</strong></div>
+                    <div className="text-muted-foreground">
+                      Viewing clip <strong>{loadedKeyPreview.clipId}</strong>
+                    </div>
                     <div className="flex gap-2">
                       <Button
                         className="p-2"
@@ -407,15 +429,20 @@ const TestAnswerKeyPage = () => {
                       className="absolute inset-0 grid"
                       style={{
                         gridTemplateColumns: `repeat(${SHOT_GRID_COLS}, minmax(0, 1fr))`,
-                        gridTemplateRows: SHOT_GRID_ROW_WEIGHTS.map((weight) => `${weight}fr`).join(' '),
+                        gridTemplateRows: SHOT_GRID_ROW_WEIGHTS.map(weight => `${weight}fr`).join(
+                          ' '
+                        ),
                       }}
                     >
                       {SHOT_GRID_CELL_LABELS.map((cellLabel, index) => {
                         const row = Math.floor(index / SHOT_GRID_COLS);
-                        const isShootable = SHOT_GRID_SHOOTABLE_ROWS.includes(row as (typeof SHOT_GRID_SHOOTABLE_ROWS)[number]);
-                        const count = savedGridPhase === 'auto'
-                          ? (loadedKeyPreview.metrics.auto.shotGridCounts?.[index] ?? 0)
-                          : (loadedKeyPreview.metrics.teleop.shotGridCounts?.[index] ?? 0);
+                        const isShootable = SHOT_GRID_SHOOTABLE_ROWS.includes(
+                          row as (typeof SHOT_GRID_SHOOTABLE_ROWS)[number]
+                        );
+                        const count =
+                          savedGridPhase === 'auto'
+                            ? (loadedKeyPreview.metrics.auto.shotGridCounts?.[index] ?? 0)
+                            : (loadedKeyPreview.metrics.teleop.shotGridCounts?.[index] ?? 0);
 
                         return (
                           <div
@@ -453,7 +480,7 @@ const TestAnswerKeyPage = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {STUDY_CLIP_OPTIONS.map((clip) => (
+                  {STUDY_CLIP_OPTIONS.map(clip => (
                     <SelectItem key={clip.id} value={clip.id}>
                       {clip.label} ({clip.id})
                     </SelectItem>
@@ -466,9 +493,17 @@ const TestAnswerKeyPage = () => {
               Selected clip: <strong>{clipId}</strong>
             </div>
 
-            <Button className="w-full p-2" variant="outline" onClick={handleLoad}>Load Existing Key</Button>
-            <Button className="w-full p-2" onClick={handleSave}>Save Key to Selected Clip</Button>
-            <Button className="w-full p-2" variant="secondary" onClick={handleExportSelectedClipKey}>
+            <Button className="w-full p-2" variant="outline" onClick={handleLoad}>
+              Load Existing Key
+            </Button>
+            <Button className="w-full p-2" onClick={handleSave}>
+              Save Key to Selected Clip
+            </Button>
+            <Button
+              className="w-full p-2"
+              variant="secondary"
+              onClick={handleExportSelectedClipKey}
+            >
               Export Selected Clip Key
             </Button>
             <Button className="w-full p-2" variant="secondary" onClick={handleExportAllAnswerKeys}>
@@ -480,36 +515,58 @@ const TestAnswerKeyPage = () => {
               onChange={handleImportAnswerKeys}
               className="w-full"
             />
-            <Button className="w-full p-2" variant="destructive" onClick={handleDeleteSelectedClipKey}>
+            <Button
+              className="w-full p-2"
+              variant="destructive"
+              onClick={handleDeleteSelectedClipKey}
+            >
               Delete Selected Clip Key
             </Button>
-            <Button className="w-full p-2" variant="outline" onClick={handleResetActions}>Reset Actions</Button>
+            <Button className="w-full p-2" variant="outline" onClick={handleResetActions}>
+              Reset Actions
+            </Button>
 
-            <div>Current phase: <strong className="capitalize">{phase}</strong></div>
+            <div>
+              Current phase: <strong className="capitalize">{phase}</strong>
+            </div>
             <div>Auto actions: {autoActions.length}</div>
             <div>Teleop actions: {teleopActions.length}</div>
-            <div>Total fuel scored: {computedMetrics.auto.fuelScored + computedMetrics.teleop.fuelScored}</div>
-            <div>Total fuel passed: {computedMetrics.auto.fuelPassed + computedMetrics.teleop.fuelPassed}</div>
+            <div>
+              Total fuel scored:{' '}
+              {computedMetrics.auto.fuelScored + computedMetrics.teleop.fuelScored}
+            </div>
+            <div>
+              Total fuel passed:{' '}
+              {computedMetrics.auto.fuelPassed + computedMetrics.teleop.fuelPassed}
+            </div>
             {existingUpdatedAt ? (
-              <div className="text-muted-foreground">Existing key last updated: {new Date(existingUpdatedAt).toLocaleString()}</div>
+              <div className="text-muted-foreground">
+                Existing key last updated: {new Date(existingUpdatedAt).toLocaleString()}
+              </div>
             ) : null}
 
             <div className="space-y-1">
               <Label htmlFor="notes">Notes (optional)</Label>
-              <Textarea id="notes" value={notes} onChange={(event) => setNotes(event.target.value)} />
+              <Textarea id="notes" value={notes} onChange={event => setNotes(event.target.value)} />
             </div>
 
             <div className="space-y-1">
               <Label>Saved Key Preview (loaded clip)</Label>
               <Textarea
-                value={loadedKeyPreview
-                  ? JSON.stringify({
-                    clipId: loadedKeyPreview.clipId,
-                    updatedAt: loadedKeyPreview.updatedAt,
-                    notes: loadedKeyPreview.notes || '',
-                    metrics: loadedKeyPreview.metrics,
-                  }, null, 2)
-                  : 'Load an existing key to inspect saved metrics for this clip.'}
+                value={
+                  loadedKeyPreview
+                    ? JSON.stringify(
+                        {
+                          clipId: loadedKeyPreview.clipId,
+                          updatedAt: loadedKeyPreview.updatedAt,
+                          notes: loadedKeyPreview.notes || '',
+                          metrics: loadedKeyPreview.metrics,
+                        },
+                        null,
+                        2
+                      )
+                    : 'Load an existing key to inspect saved metrics for this clip.'
+                }
                 readOnly
                 className="min-h-45 font-mono text-xs"
               />
@@ -524,13 +581,18 @@ const TestAnswerKeyPage = () => {
             <CardTitle className="text-lg">Answer Keys by Clip</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            {STUDY_CLIP_OPTIONS.map((clip) => {
-              const key = answerKeys.find((item) => item.clipId === clip.id);
+            {STUDY_CLIP_OPTIONS.map(clip => {
+              const key = answerKeys.find(item => item.clipId === clip.id);
 
               return (
-                <div key={clip.id} className="border rounded p-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div
+                  key={clip.id}
+                  className="border rounded p-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                >
                   <div>
-                    <div className="font-medium">{clip.label} ({clip.id})</div>
+                    <div className="font-medium">
+                      {clip.label} ({clip.id})
+                    </div>
                     <div className="text-muted-foreground">
                       {key
                         ? `Key exists • updated ${new Date(key.updatedAt).toLocaleString()}`
@@ -584,7 +646,11 @@ const TestAnswerKeyPage = () => {
                       className="p-2"
                       variant="destructive"
                       onClick={async () => {
-                        if (!window.confirm(`Delete answer key for ${clip.id}? This cannot be undone.`)) {
+                        if (
+                          !window.confirm(
+                            `Delete answer key for ${clip.id}? This cannot be undone.`
+                          )
+                        ) {
                           return;
                         }
 
@@ -612,7 +678,6 @@ const TestAnswerKeyPage = () => {
           </CardContent>
         </Card>
       </div>
-
     </div>
   );
 };

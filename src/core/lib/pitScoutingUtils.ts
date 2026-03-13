@@ -7,7 +7,7 @@ import {
   loadPitScoutingByEvent,
   deletePitScoutingEntry as dbDeletePitScoutingEntry,
   clearAllPitScoutingData as dbClearAllPitScoutingData,
-  getPitScoutingStats as dbGetPitScoutingStats
+  getPitScoutingStats as dbGetPitScoutingStats,
 } from '../db/database';
 
 // Type alias for convenience - uses the database schema type
@@ -20,7 +20,9 @@ export interface PitScoutingData {
 }
 
 // Generate unique ID for pit scouting entries
-export const generatePitScoutingId = (entry: Omit<PitScoutingEntry, 'id' | 'timestamp'>): string => {
+export const generatePitScoutingId = (
+  entry: Omit<PitScoutingEntry, 'id' | 'timestamp'>
+): string => {
   const baseString = `${entry.teamNumber}-${entry.eventKey}-${entry.scoutName}`;
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
@@ -28,7 +30,9 @@ export const generatePitScoutingId = (entry: Omit<PitScoutingEntry, 'id' | 'time
 };
 
 // Save pit scouting entry
-export const savePitScoutingEntry = async (entry: Omit<PitScoutingEntry, 'id' | 'timestamp'>): Promise<PitScoutingEntry> => {
+export const savePitScoutingEntry = async (
+  entry: Omit<PitScoutingEntry, 'id' | 'timestamp'>
+): Promise<PitScoutingEntry> => {
   try {
     // Check if an entry for this team and event already exists
     const existing = await loadPitScoutingByTeamAndEvent(entry.teamNumber, entry.eventKey);
@@ -36,7 +40,7 @@ export const savePitScoutingEntry = async (entry: Omit<PitScoutingEntry, 'id' | 
     const completeEntry: PitScoutingEntry = {
       ...entry,
       id: existing?.id || generatePitScoutingId(entry),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     await dbSavePitScoutingEntry(completeEntry);
@@ -53,7 +57,7 @@ export const loadPitScoutingData = async (): Promise<PitScoutingData> => {
     const entries = await loadAllPitScoutingEntries();
     return {
       entries,
-      lastUpdated: entries.length > 0 ? Math.max(...entries.map(e => e.timestamp)) : 0
+      lastUpdated: entries.length > 0 ? Math.max(...entries.map(e => e.timestamp)) : 0,
     };
   } catch (error) {
     console.error('Error loading pit scouting data:', error);
@@ -62,7 +66,10 @@ export const loadPitScoutingData = async (): Promise<PitScoutingData> => {
 };
 
 // Load pit scouting entry by team and event
-export const loadPitScoutingEntry = async (teamNumber: number, eventKey: string): Promise<PitScoutingEntry | null> => {
+export const loadPitScoutingEntry = async (
+  teamNumber: number,
+  eventKey: string
+): Promise<PitScoutingEntry | null> => {
   try {
     const result = await loadPitScoutingByTeamAndEvent(teamNumber, eventKey);
     return result || null;
@@ -73,7 +80,9 @@ export const loadPitScoutingEntry = async (teamNumber: number, eventKey: string)
 };
 
 // Load pit scouting entries by team
-export const loadPitScoutingEntriesByTeam = async (teamNumber: number): Promise<PitScoutingEntry[]> => {
+export const loadPitScoutingEntriesByTeam = async (
+  teamNumber: number
+): Promise<PitScoutingEntry[]> => {
   try {
     return await loadPitScoutingByTeam(teamNumber);
   } catch (error) {
@@ -83,7 +92,9 @@ export const loadPitScoutingEntriesByTeam = async (teamNumber: number): Promise<
 };
 
 // Load pit scouting entries by event
-export const loadPitScoutingEntriesByEvent = async (eventKey: string): Promise<PitScoutingEntry[]> => {
+export const loadPitScoutingEntriesByEvent = async (
+  eventKey: string
+): Promise<PitScoutingEntry[]> => {
   try {
     return await loadPitScoutingByEvent(eventKey);
   } catch (error) {
@@ -115,7 +126,7 @@ export const clearAllPitScoutingData = async (): Promise<void> => {
 // Get pit scouting statistics
 export const getPitScoutingStats = async (): Promise<{
   totalEntries: number;
-  teams: number[];  // Team numbers are numeric
+  teams: number[]; // Team numbers are numeric
   events: string[];
   scouts: string[];
 }> => {
@@ -127,7 +138,7 @@ export const getPitScoutingStats = async (): Promise<{
       totalEntries: 0,
       teams: [],
       events: [],
-      scouts: []
+      scouts: [],
     };
   }
 };
@@ -182,8 +193,8 @@ export const downloadPitScoutingImagesOnly = async (): Promise<void> => {
           teamNumber: entry.teamNumber,
           eventKey: entry.eventKey,
           robotPhoto: entry.robotPhoto,
-          timestamp: entry.timestamp // For conflict resolution
-        }))
+          timestamp: entry.timestamp, // For conflict resolution
+        })),
     };
 
     if (imagesOnlyData.entries.length === 0) {
@@ -221,12 +232,10 @@ export const importPitScoutingData = async (
     } else {
       const existingEntries = await loadAllPitScoutingEntries();
       // Create a set of existing team-event combinations instead of IDs
-      const existingTeamEvents = new Set(
-        existingEntries.map(e => `${e.teamNumber}-${e.eventKey}`)
-      );
+      const existingTeamEvents = new Set(existingEntries.map(e => `${e.teamNumber}-${e.eventKey}`));
 
-      const newEntries = importData.entries.filter(entry =>
-        !existingTeamEvents.has(`${entry.teamNumber}-${entry.eventKey}`)
+      const newEntries = importData.entries.filter(
+        entry => !existingTeamEvents.has(`${entry.teamNumber}-${entry.eventKey}`)
       );
 
       // Save only new entries
@@ -234,7 +243,7 @@ export const importPitScoutingData = async (
 
       return {
         imported: newEntries.length,
-        duplicatesSkipped: importData.entries.length - newEntries.length
+        duplicatesSkipped: importData.entries.length - newEntries.length,
       };
     }
   } catch (error) {
@@ -256,8 +265,8 @@ export const exportPitScoutingToCSV = async (excludedFields: string[] = []): Pro
   }
 
   const shouldExcludeField = (fieldPath: string): boolean => {
-    return excludedFields.some(excluded =>
-      fieldPath === excluded || fieldPath.startsWith(`${excluded}.`)
+    return excludedFields.some(
+      excluded => fieldPath === excluded || fieldPath.startsWith(`${excluded}.`)
     );
   };
 
@@ -305,7 +314,7 @@ export const exportPitScoutingToCSV = async (excludedFields: string[] = []): Pro
     'Programming Language',
     'Robot Photo',
     'Notes',
-    ...sortedGameDataKeys // Add all game data fields as columns
+    ...sortedGameDataKeys, // Add all game data fields as columns
   ];
 
   // Helper to get nested value using dot notation
@@ -335,9 +344,9 @@ export const exportPitScoutingToCSV = async (excludedFields: string[] = []): Pro
       entry.eventKey,
       entry.scoutName,
       new Date(entry.timestamp).toISOString(),
-    
+
       entry.robotPhoto ? 'Has Image' : 'No Image',
-      entry.notes || ''
+      entry.notes || '',
     ];
 
     // Add dynamic game data values in the same order as headers
@@ -352,23 +361,21 @@ export const exportPitScoutingToCSV = async (excludedFields: string[] = []): Pro
   });
 
   // Convert to CSV format
-  return [headers, ...rows].map(row =>
-    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-  ).join('\n');
+  return [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
 };
 
 // Import images-only data and merge with existing pit scouting entries
-export const importPitScoutingImagesOnly = async (
-  imagesData: {
-    type: string;
-    entries: Array<{
-      teamNumber: number;
-      eventKey: string;
-      robotPhoto: string;
-      timestamp: number;
-    }>;
-  }
-): Promise<{ updated: number; notFound: number }> => {
+export const importPitScoutingImagesOnly = async (imagesData: {
+  type: string;
+  entries: Array<{
+    teamNumber: number;
+    eventKey: string;
+    robotPhoto: string;
+    timestamp: number;
+  }>;
+}): Promise<{ updated: number; notFound: number }> => {
   try {
     if (imagesData.type !== 'pit-scouting-images-only') {
       throw new Error('Invalid images-only data format');
@@ -379,24 +386,32 @@ export const importPitScoutingImagesOnly = async (
     let notFound = 0;
 
     console.log('Images import debug:');
-    console.log('Existing entries:', existingEntries.map(e => `${e.teamNumber}@${e.eventKey}`));
-    console.log('Image entries to match:', imagesData.entries.map(e => `${e.teamNumber}@${e.eventKey}`));
+    console.log(
+      'Existing entries:',
+      existingEntries.map(e => `${e.teamNumber}@${e.eventKey}`)
+    );
+    console.log(
+      'Image entries to match:',
+      imagesData.entries.map(e => `${e.teamNumber}@${e.eventKey}`)
+    );
 
     for (const imageEntry of imagesData.entries) {
       // Find existing entry by team and event
       const existingEntry = existingEntries.find(
-        entry => entry.teamNumber === imageEntry.teamNumber &&
-          entry.eventKey === imageEntry.eventKey
+        entry =>
+          entry.teamNumber === imageEntry.teamNumber && entry.eventKey === imageEntry.eventKey
       );
 
-      console.log(`Looking for ${imageEntry.teamNumber}@${imageEntry.eventKey}: ${existingEntry ? 'FOUND' : 'NOT FOUND'}`);
+      console.log(
+        `Looking for ${imageEntry.teamNumber}@${imageEntry.eventKey}: ${existingEntry ? 'FOUND' : 'NOT FOUND'}`
+      );
 
       if (existingEntry) {
         // Update existing entry with the image
         const updatedEntry = {
           ...existingEntry,
           robotPhoto: imageEntry.robotPhoto,
-          timestamp: Math.max(existingEntry.timestamp, imageEntry.timestamp) // Keep latest timestamp
+          timestamp: Math.max(existingEntry.timestamp, imageEntry.timestamp), // Keep latest timestamp
         };
 
         await dbSavePitScoutingEntry(updatedEntry);

@@ -1,17 +1,17 @@
 /**
  * Game-Specific Auto Start Position Selector Component
- * 
+ *
  * This component displays the field map with clickable zones for scouts
  * to select starting positions during autonomous mode scouting.
- * 
+ *
  * SINGLE SOURCE OF TRUTH: Uses zones and field images from analysis.ts
  * via getStartPositionConfig().
  */
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Badge } from "@/core/components/ui/badge";
-import { InteractiveFieldMap } from "@/game-template/components/shared/InteractiveFieldMap";
-import { strategyAnalysis } from "@/game-template/analysis";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Badge } from '@/core/components/ui/badge';
+import { InteractiveFieldMap } from '@/game-template/components/shared/InteractiveFieldMap';
+import { strategyAnalysis } from '@/game-template/analysis';
 
 interface AutoStartFieldSelectorProps {
   startPosition: (boolean | null)[];
@@ -21,7 +21,7 @@ interface AutoStartFieldSelectorProps {
 
 /**
  * Auto Start Field Selector
- * 
+ *
  * Uses the shared InteractiveFieldMap component with configuration from
  * strategyAnalysis.getStartPositionConfig() for consistent zones and images.
  */
@@ -37,21 +37,15 @@ export function AutoStartFieldSelector({
   const config = strategyAnalysis.getStartPositionConfig();
 
   // Convert setStartPosition to the expected type
-  const setStartPoses = setStartPosition.map(setter =>
-    (value: boolean) => setter(value)
-  );
+  const setStartPoses = setStartPosition.map(setter => (value: boolean) => setter(value));
 
   return (
     <Card className="w-full">
       <CardHeader className="pb-3 lg:pb-4">
         <CardTitle className="text-xl xl:text-2xl">Starting Position</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Click where your robot starts on the field
-        </p>
+        <p className="text-sm text-muted-foreground">Click where your robot starts on the field</p>
         {hasSelection && (
-          <Badge className="w-fit bg-green-600">
-            Position {selectedPosition} Selected
-          </Badge>
+          <Badge className="w-fit bg-green-600">Position {selectedPosition} Selected</Badge>
         )}
       </CardHeader>
       <CardContent className="p-4">

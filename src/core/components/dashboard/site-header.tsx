@@ -1,13 +1,13 @@
-import { useLocation } from "react-router-dom";
-import { Button } from "@/core/components/ui/button"
-import { Separator } from "@/core/components/ui/separator"
-import { SidebarTrigger } from "@/core/components/ui/sidebar"
-import { PageHelpTooltip } from "@/core/components/PageHelpTooltip";
-import { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
+import { Button } from '@/core/components/ui/button';
+import { Separator } from '@/core/components/ui/separator';
+import { SidebarTrigger } from '@/core/components/ui/sidebar';
+import { PageHelpTooltip } from '@/core/components/PageHelpTooltip';
+import { useState, useEffect } from 'react';
 
 export function SiteHeader() {
   const location = useLocation();
-  
+
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -15,7 +15,7 @@ export function SiteHeader() {
     const checkIsMobile = () => {
       const mobile = window.innerWidth < 1536;
       setIsMobile(mobile);
-      
+
       if (!mobile) {
         setIsHeaderVisible(true);
         return;
@@ -34,7 +34,7 @@ export function SiteHeader() {
           // Get scroll position from the SidebarInset container
           const scrollContainer = e.target as HTMLElement;
           const currentScrollY = scrollContainer.scrollTop;
-          
+
           if (currentScrollY <= 50) {
             // Always show header when at top
             setIsHeaderVisible(true);
@@ -57,7 +57,9 @@ export function SiteHeader() {
     const addScrollListener = () => {
       // Wait for DOM to be ready
       setTimeout(() => {
-        const sidebarInset = document.querySelector('main[data-slot="sidebar-inset"]') as HTMLElement;
+        const sidebarInset = document.querySelector(
+          'main[data-slot="sidebar-inset"]'
+        ) as HTMLElement;
         if (sidebarInset) {
           sidebarInset.addEventListener('scroll', handleScroll, { passive: true });
         }
@@ -98,19 +100,16 @@ export function SiteHeader() {
   }, [location.pathname, isMobile]); // Re-run when route changes or mobile state changes
 
   return (
-    <header 
+    <header
       className={`flex h-(--header-height) items-center bg-popover/95 backdrop-blur-sm gap-2 border-b transition-all duration-300 ease-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height) py-2 z-30 ${
-        isMobile 
-          ? `fixed top-0 left-0 right-0 ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}` 
+        isMobile
+          ? `fixed top-0 left-0 right-0 ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`
           : 'sticky top-0'
       }`}
     >
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-        <SidebarTrigger className="-ml-1" size={"lg"} />
-        <Separator
-          orientation="vertical"
-          className="mx-2 data-[orientation=vertical]:h-12"
-        />
+        <SidebarTrigger className="-ml-1" size={'lg'} />
+        <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-12" />
         <div className="ml-auto flex items-center gap-2">
           <div className="flex items-center justify-center">
             <PageHelpTooltip />
@@ -128,5 +127,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

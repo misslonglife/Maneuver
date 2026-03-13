@@ -34,7 +34,7 @@ export function buildCompactPacketJson(packet: {
     i: packet.packetId,
     p: packet.profile,
     v: 1,
-    d: packet.data
+    d: packet.data,
   });
 }
 
@@ -56,7 +56,7 @@ export function buildLegacyPacketJson(packet: {
     k: packet.k,
     bytes: packet.bytes,
     checksum: packet.checksum,
-    indices: packet.indices
+    indices: packet.indices,
   });
 }
 
@@ -70,7 +70,7 @@ export function parseScannedFountainPacket(rawValue: string): FountainPacket | n
         sessionId: parsed.s,
         packetId: parsed.i,
         data: parsed.d,
-        profile: parsed.p
+        profile: parsed.p,
       };
     }
 

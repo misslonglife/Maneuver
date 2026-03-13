@@ -1,15 +1,16 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { EventNameSelector } from "@/core/components/GameStartComponents/EventNameSelector";
 import {
-  Calendar,
-  Trash2,
-  AlertTriangle,
-  CheckCircle2,
-} from 'lucide-react';
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
+import { EventNameSelector } from '@/core/components/GameStartComponents/EventNameSelector';
+import { Calendar, Trash2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface EventConfigurationCardProps {
   eventKey: string;
@@ -56,9 +57,7 @@ export const EventConfigurationCard: React.FC<EventConfigurationCardProps> = ({
               onEventKeyChange={setEventKey}
               showCustomEvents={false}
             />
-            <p className="text-xs text-muted-foreground">
-              Select from official 2026 FRC events
-            </p>
+            <p className="text-xs text-muted-foreground">Select from official 2026 FRC events</p>
           </div>
 
           {/* Current Event Status */}
@@ -77,7 +76,10 @@ export const EventConfigurationCard: React.FC<EventConfigurationCardProps> = ({
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 <div className="space-y-2">
-                  <p>You have stored data for this event. Changing the event key or loading new data may cause confusion.</p>
+                  <p>
+                    You have stored data for this event. Changing the event key or loading new data
+                    may cause confusion.
+                  </p>
                   <Button
                     variant="outline"
                     size="sm"

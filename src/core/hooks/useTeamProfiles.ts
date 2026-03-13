@@ -1,12 +1,12 @@
 /**
  * useTeamProfiles Hook
- * 
+ *
  * React hook for consuming team profile data from TeamDB.
  * Provides loading state, error handling, and manual refresh capability.
- * 
+ *
  * Usage:
  * const { profiles, isLoading, error, refresh } = useTeamProfiles('2026mrcmp');
- * 
+ *
  * // Manually trigger refresh:
  * await refresh();
  */
@@ -17,11 +17,11 @@ import { refreshTeamDataForEvent, type RefreshTeamDataOptions } from '@/core/db/
 import type { TeamProfile } from '@/core/types/team-profile';
 
 export interface UseTeamProfilesOptions {
-  eventKey?: string;        // Filter by specific event
-  teamNumbers?: number[];   // Specific teams to load
-  autoRefresh?: boolean;    // Auto-refresh on mount (default: false)
+  eventKey?: string; // Filter by specific event
+  teamNumbers?: number[]; // Specific teams to load
+  autoRefresh?: boolean; // Auto-refresh on mount (default: false)
   includeRankings?: boolean; // Include Statbotics rankings (default: true)
-  includeHistory?: boolean;  // Include competition history (default: true)
+  includeHistory?: boolean; // Include competition history (default: true)
 }
 
 export interface UseTeamProfilesResult {
@@ -38,9 +38,9 @@ export interface UseTeamProfilesResult {
 
 /**
  * React hook for team profiles
- * 
+ *
  * Loads team data from TeamDB and provides refresh capability.
- * 
+ *
  * @param options - Loading/filtering options
  * @returns Team profiles, loading state, error, and refresh function
  */
@@ -117,14 +117,10 @@ export const useTeamProfiles = (options: UseTeamProfilesOptions = {}): UseTeamPr
         const apiKey = localStorage.getItem('tbaApiKey') || '';
 
         // Refresh from API
-        const refreshedProfiles = await refreshTeamDataForEvent(
-          eventKey,
-          apiKey,
-          {
-            includeRankings: refreshOptions.includeRankings ?? includeRankings,
-            includeHistory: refreshOptions.includeHistory ?? includeHistory,
-          }
-        );
+        const refreshedProfiles = await refreshTeamDataForEvent(eventKey, apiKey, {
+          includeRankings: refreshOptions.includeRankings ?? includeRankings,
+          includeHistory: refreshOptions.includeHistory ?? includeHistory,
+        });
 
         setProfiles(refreshedProfiles);
 
@@ -140,7 +136,7 @@ export const useTeamProfiles = (options: UseTeamProfilesOptions = {}): UseTeamPr
         const error = err instanceof Error ? err : new Error(String(err));
         setError(error);
         console.error('[useTeamProfiles] Failed to refresh profiles:', error);
-        
+
         // Still try to load from cache on error
         await loadProfiles();
       } finally {

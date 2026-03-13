@@ -30,40 +30,40 @@ export const generateDeterministicEntryId = (
 ): string | null => {
   const event = typeof eventKey === 'string' ? normalizeEventKey(eventKey) : '';
   const match = typeof matchKey === 'string' ? matchKey.toLowerCase().trim() : '';
-  const team = typeof teamNumber === 'number' && Number.isFinite(teamNumber)
-    ? String(teamNumber).trim()
-    : '';
-  const alliance = isValidAllianceColor(allianceColor)
-    ? allianceColor.toLowerCase().trim()
-    : '';
+  const team =
+    typeof teamNumber === 'number' && Number.isFinite(teamNumber) ? String(teamNumber).trim() : '';
+  const alliance = isValidAllianceColor(allianceColor) ? allianceColor.toLowerCase().trim() : '';
 
   if (!event || !match || !team || !alliance) {
     return null;
   }
-  
+
   return `${event}::${match}::${team}::${alliance}`;
 };
 
 export const generateDataFingerprint = (entry: ScoutingEntryBase): string => {
-  const sortedEntries = Object.entries(entry.gameData || {})
-    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-  
+  const sortedEntries = Object.entries(entry.gameData || {}).sort(([keyA], [keyB]) =>
+    keyA.localeCompare(keyB)
+  );
+
   const dataString = sortedEntries
     .map(([key, value]) => `${key}:${JSON.stringify(value)}`)
     .join('|');
-  
+
   let hash = 2166136261;
   for (let i = 0; i < dataString.length; i++) {
     hash ^= dataString.charCodeAt(i);
     hash = Math.imul(hash, 16777619);
   }
-  
+
   return (hash >>> 0).toString(36);
 };
 
-const parseMatchKeyForSort = (matchKey: string): { compOrder: number; setNumber: number; matchNumber: number; raw: string } => {
+const parseMatchKeyForSort = (
+  matchKey: string
+): { compOrder: number; setNumber: number; matchNumber: number; raw: string } => {
   const raw = String(matchKey || '').trim();
-  const keyPart = raw.includes('_') ? (raw.split('_')[1] || raw) : raw;
+  const keyPart = raw.includes('_') ? raw.split('_')[1] || raw : raw;
 
   const qm = keyPart.match(/^qm(\d+)$/i);
   if (qm && qm[1]) {
@@ -150,25 +150,25 @@ export const getDataSummary = async (): Promise<{
   events: string[];
 }> => {
   const entries = await loadScoutingData();
-  
+
   const teams = new Set<number>();
   const matches = new Set<string>();
   const scouts = new Set<string>();
   const events = new Set<string>();
-  
+
   entries.forEach(entry => {
     if (entry.teamNumber) teams.add(entry.teamNumber);
     if (entry.matchKey) matches.add(entry.matchKey);
     if (entry.scoutName) scouts.add(entry.scoutName);
     if (entry.eventKey) events.add(entry.eventKey);
   });
-  
+
   return {
     totalEntries: entries.length,
     teams: Array.from(teams).sort((a, b) => a - b),
     matches: Array.from(matches).sort(compareMatchKeys),
     scouts: Array.from(scouts).sort(),
-    events: Array.from(events).sort()
+    events: Array.from(events).sort(),
   };
 };
 
@@ -196,24 +196,24 @@ export interface ConflictDetectionResult {
  * Flattens nested objects (auto, teleop, endgame) for detailed field-by-field comparison
  */
 export const computeChangedFields = (
-  localEntry: ScoutingEntryBase, 
+  localEntry: ScoutingEntryBase,
   incomingEntry: ScoutingEntryBase
 ): Array<{ field: string; localValue: unknown; incomingValue: unknown }> => {
   const changes: Array<{ field: string; localValue: unknown; incomingValue: unknown }> = [];
-  
+
   const localData = localEntry.gameData || {};
   const incomingData = incomingEntry.gameData || {};
-  
+
   /**
    * Recursively flatten nested objects into dot notation
    * e.g., { auto: { startPosition: 'Left' } } → { 'auto.startPosition': 'Left' }
    */
   const flattenObject = (obj: Record<string, unknown>, prefix = ''): Record<string, unknown> => {
     const flattened: Record<string, unknown> = {};
-    
+
     for (const [key, value] of Object.entries(obj)) {
       const fullKey = prefix ? `${prefix}.${key}` : key;
-      
+
       if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
         // Recursively flatten nested objects
         Object.assign(flattened, flattenObject(value as Record<string, unknown>, fullKey));
@@ -222,32 +222,29 @@ export const computeChangedFields = (
         flattened[fullKey] = value;
       }
     }
-    
+
     return flattened;
   };
-  
+
   const flattenedLocal = flattenObject(localData);
   const flattenedIncoming = flattenObject(incomingData);
-  
-  const allFields = new Set([
-    ...Object.keys(flattenedLocal),
-    ...Object.keys(flattenedIncoming)
-  ]);
-  
+
+  const allFields = new Set([...Object.keys(flattenedLocal), ...Object.keys(flattenedIncoming)]);
+
   for (const field of allFields) {
     const localValue = flattenedLocal[field];
     const incomingValue = flattenedIncoming[field];
-    
+
     // Skip if either value is null/undefined
     if (incomingValue === null || incomingValue === undefined) continue;
     if (localValue === null || localValue === undefined) continue;
-    
+
     // Compare values
     if (JSON.stringify(localValue) !== JSON.stringify(incomingValue)) {
       changes.push({ field, localValue, incomingValue });
     }
   }
-  
+
   return changes;
 };
 
@@ -262,12 +259,12 @@ export const detectConflicts = async (
   const autoReplace: ScoutingEntryBase[] = [];
   const batchReview: ScoutingEntryBase[] = [];
   const conflicts: ConflictInfo[] = [];
-  
+
   const allLocalEntries = await db.scoutingData.toArray();
   const localEntriesById = new Map(
     allLocalEntries.map(entry => [entry.id, entry as unknown as ScoutingEntryBase])
   );
-  
+
   const localEntriesByFields = new Map(
     allLocalEntries.flatMap(entry => {
       const typedEntry = entry as unknown as ScoutingEntryBase;
@@ -280,10 +277,10 @@ export const detectConflicts = async (
       return key ? [[key, typedEntry] as const] : [];
     })
   );
-  
+
   for (const incomingEntry of incomingData) {
     let matchingLocal = localEntriesById.get(incomingEntry.id);
-    
+
     if (!matchingLocal) {
       const fieldBasedKey = generateDeterministicEntryId(
         incomingEntry.eventKey,
@@ -296,39 +293,49 @@ export const detectConflicts = async (
         matchingLocal = localEntriesByFields.get(fieldBasedKey);
       }
     }
-    
+
     if (!matchingLocal) {
       autoImport.push(incomingEntry);
       continue;
     }
-    
+
     const localIsCorrected = matchingLocal.isCorrected || false;
     const incomingIsCorrected = Boolean(incomingEntry.isCorrected);
-    
+
     const localFingerprint = generateDataFingerprint(matchingLocal);
     const incomingFingerprint = generateDataFingerprint(incomingEntry);
-    
+
     if (localIsCorrected && incomingIsCorrected) {
-      const localCorrectionTime = Number(matchingLocal.lastCorrectedAt || matchingLocal.timestamp || 0);
-      const incomingCorrectionTime = Number(incomingEntry.lastCorrectedAt || incomingEntry.timestamp || 0);
-      
-      if (localFingerprint === incomingFingerprint && Math.abs(localCorrectionTime - incomingCorrectionTime) <= 1000) {
+      const localCorrectionTime = Number(
+        matchingLocal.lastCorrectedAt || matchingLocal.timestamp || 0
+      );
+      const incomingCorrectionTime = Number(
+        incomingEntry.lastCorrectedAt || incomingEntry.timestamp || 0
+      );
+
+      if (
+        localFingerprint === incomingFingerprint &&
+        Math.abs(localCorrectionTime - incomingCorrectionTime) <= 1000
+      ) {
         continue;
       }
-    } else if (localFingerprint === incomingFingerprint && localIsCorrected === incomingIsCorrected) {
+    } else if (
+      localFingerprint === incomingFingerprint &&
+      localIsCorrected === incomingIsCorrected
+    ) {
       continue;
     }
-    
+
     if (!localIsCorrected && !incomingIsCorrected) {
       batchReview.push(incomingEntry);
       continue;
     }
-    
+
     if (!localIsCorrected && incomingIsCorrected) {
       autoReplace.push(incomingEntry);
       continue;
     }
-    
+
     if (localIsCorrected && !incomingIsCorrected) {
       const changedFields = computeChangedFields(matchingLocal, incomingEntry);
       conflicts.push({
@@ -336,35 +343,37 @@ export const detectConflicts = async (
         local: matchingLocal,
         conflictType: 'corrected-vs-uncorrected',
         isNewerIncoming: false,
-        changedFields
+        changedFields,
       });
       continue;
     }
-    
+
     if (localIsCorrected && incomingIsCorrected) {
       const localCorrectionTime = matchingLocal.lastCorrectedAt || matchingLocal.timestamp;
-      const incomingCorrectionTime = Number(incomingEntry.lastCorrectedAt || incomingEntry.timestamp || 0);
-      
+      const incomingCorrectionTime = Number(
+        incomingEntry.lastCorrectedAt || incomingEntry.timestamp || 0
+      );
+
       if (Math.abs(localCorrectionTime - incomingCorrectionTime) <= 1000) {
         autoReplace.push(incomingEntry);
         continue;
       }
-      
+
       const changedFields = computeChangedFields(matchingLocal, incomingEntry);
       conflicts.push({
         incoming: incomingEntry,
         local: matchingLocal,
         conflictType: 'corrected-vs-corrected',
         isNewerIncoming: incomingCorrectionTime > localCorrectionTime,
-        changedFields
+        changedFields,
       });
     }
   }
-  
+
   return {
     autoImport,
     autoReplace,
     batchReview,
-    conflicts
+    conflicts,
   };
 };

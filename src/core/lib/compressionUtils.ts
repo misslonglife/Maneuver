@@ -1,7 +1,7 @@
 /**
  * Generic compression utilities for QR code data transfer
  * Framework implementation - game-agnostic
- * 
+ *
  * NOTE: Game implementations should provide field mappings for compression optimization
  */
 
@@ -32,14 +32,16 @@ export function shouldUseCompression(data: unknown, jsonString?: string): boolea
 export function compressData(data: unknown, originalJson?: string): Uint8Array {
   const jsonString = originalJson || JSON.stringify(data);
   const gzipCompressed = pako.gzip(jsonString);
-  
+
   if (import.meta.env.DEV) {
     const originalSize = jsonString.length;
     const finalSize = gzipCompressed.length;
     const compressionRatio = ((1 - finalSize / originalSize) * 100).toFixed(1);
-    console.log(`✅ Compressed: ${originalSize} → ${finalSize} bytes (${compressionRatio}% reduction)`);
+    console.log(
+      `✅ Compressed: ${originalSize} → ${finalSize} bytes (${compressionRatio}% reduction)`
+    );
   }
-  
+
   return gzipCompressed;
 }
 
@@ -61,8 +63,8 @@ export function decompressData<T = unknown>(compressedData: Uint8Array): T {
  * @param originalJson - Optional pre-computed JSON string to avoid duplicate serialization
  */
 export function getCompressionStats(
-  originalData: unknown, 
-  compressedData: Uint8Array, 
+  originalData: unknown,
+  compressedData: Uint8Array,
   originalJson?: string
 ): {
   originalSize: number;
@@ -73,17 +75,17 @@ export function getCompressionStats(
   const originalSize = originalJson ? originalJson.length : JSON.stringify(originalData).length;
   const compressedSize = compressedData.length;
   const compressionRatio = compressedSize / originalSize;
-  
+
   // Estimate QR code count reduction
   const originalQRs = Math.ceil(originalSize / QR_CODE_SIZE_BYTES);
   const compressedQRs = Math.ceil(compressedSize / QR_CODE_SIZE_BYTES);
   const estimatedQRReduction = `~${originalQRs} → ${compressedQRs} codes`;
-  
+
   return {
     originalSize,
     compressedSize,
     compressionRatio,
-    estimatedQRReduction
+    estimatedQRReduction,
   };
 }
 
@@ -100,7 +102,7 @@ export function createCompressionWrapper<T>(
 ): { compressed: boolean; data: string | T } {
   return {
     compressed: isCompressed,
-    data: isCompressed ? fromUint8Array(data as Uint8Array) : data as T
+    data: isCompressed ? fromUint8Array(data as Uint8Array) : (data as T),
   };
 }
 
@@ -112,7 +114,7 @@ export function createCompressionWrapper<T>(
  * @param dataLabel - Label for error messages
  */
 export function convertToUint8Array(
-  data: unknown, 
+  data: unknown,
   toUint8Array: (data: string) => Uint8Array,
   dataLabel: string
 ): Uint8Array {
@@ -123,6 +125,8 @@ export function convertToUint8Array(
   } else if (data instanceof Uint8Array) {
     return data;
   } else {
-    throw new Error(`Invalid ${dataLabel} format: expected base64 string, number array, or Uint8Array`);
+    throw new Error(
+      `Invalid ${dataLabel} format: expected base64 string, number array, or Uint8Array`
+    );
   }
 }

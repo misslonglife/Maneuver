@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Input } from "@/core/components/ui/input";
-import { toast } from "sonner";
-import { ArrowRight } from "lucide-react";
-import { ScoringSections, StatusToggles } from "@/game-template/components";
-import { FIELD_ELEMENTS } from "@/game-template/components/field-map";
-import { formatDurationSecondsLabel } from "@/game-template/duration";
-import { TELEOP_PHASE_DURATION_MS } from "@/game-template/constants";
-import { useWorkflowNavigation } from "@/core/hooks/useWorkflowNavigation";
-import { submitMatchData } from "@/core/lib/submitMatch";
-import { useGame } from "@/core/contexts/GameContext";
-import { workflowConfig } from "@/game-template/game-schema";
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { Input } from '@/core/components/ui/input';
+import { toast } from 'sonner';
+import { ArrowRight } from 'lucide-react';
+import { ScoringSections, StatusToggles } from '@/game-template/components';
+import { FIELD_ELEMENTS } from '@/game-template/components/field-map';
+import { formatDurationSecondsLabel } from '@/game-template/duration';
+import { TELEOP_PHASE_DURATION_MS } from '@/game-template/constants';
+import { useWorkflowNavigation } from '@/core/hooks/useWorkflowNavigation';
+import { submitMatchData } from '@/core/lib/submitMatch';
+import { useGame } from '@/core/contexts/GameContext';
+import { workflowConfig } from '@/game-template/game-schema';
 
 const TELEOP_CLIMB_START_PRESETS = [30, 25, 20, 15, 10, 5] as const;
 
@@ -26,42 +26,43 @@ const TeleopScoringPage = () => {
   const isSubmitPage = isLastPage('teleopScoring');
 
   const getSavedState = () => {
-    const saved = localStorage.getItem("teleopStateStack");
+    const saved = localStorage.getItem('teleopStateStack');
     if (!saved) return [];
     const parsed = JSON.parse(saved);
     return Array.isArray(parsed) ? parsed : [];
   };
 
   const getSavedStatus = () => {
-    const saved = localStorage.getItem("teleopRobotStatus");
+    const saved = localStorage.getItem('teleopRobotStatus');
     return saved ? JSON.parse(saved) : {};
   };
 
   const getSavedHistory = () => {
-    const saved = localStorage.getItem("teleopUndoHistory");
+    const saved = localStorage.getItem('teleopUndoHistory');
     return saved ? JSON.parse(saved) : [];
   };
 
   const [scoringActions, setScoringActions] = useState(getSavedState());
   const [robotStatus, setRobotStatus] = useState(getSavedStatus());
   const [undoHistory, setUndoHistory] = useState(getSavedHistory());
-  const teleopClimbStartTimeSecRemaining = typeof robotStatus?.teleopClimbStartTimeSecRemaining === 'number'
-    ? robotStatus.teleopClimbStartTimeSecRemaining
-    : null;
+  const teleopClimbStartTimeSecRemaining =
+    typeof robotStatus?.teleopClimbStartTimeSecRemaining === 'number'
+      ? robotStatus.teleopClimbStartTimeSecRemaining
+      : null;
 
   // Save state to localStorage whenever actions change
   useEffect(() => {
-    localStorage.setItem("teleopStateStack", JSON.stringify(scoringActions));
+    localStorage.setItem('teleopStateStack', JSON.stringify(scoringActions));
   }, [scoringActions]);
 
   // Save robot status to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("teleopRobotStatus", JSON.stringify(robotStatus));
+    localStorage.setItem('teleopRobotStatus', JSON.stringify(robotStatus));
   }, [robotStatus]);
 
   // Save undo history to localStorage
   useEffect(() => {
-    localStorage.setItem("teleopUndoHistory", JSON.stringify(undoHistory));
+    localStorage.setItem('teleopUndoHistory', JSON.stringify(undoHistory));
   }, [undoHistory]);
 
   const addScoringAction = (action: any) => {
@@ -80,7 +81,7 @@ const TeleopScoringPage = () => {
 
   const undoLastAction = () => {
     if (undoHistory.length === 0) {
-      toast.error("No changes to undo");
+      toast.error('No changes to undo');
       return;
     }
 
@@ -157,7 +158,7 @@ const TeleopScoringPage = () => {
               timestamp: now,
               duration,
               obstacleType,
-              amountLabel: formatDurationSecondsLabel(duration)
+              amountLabel: formatDurationSecondsLabel(duration),
             };
             nextActions.push(unstuckWaypoint);
             addedAny = true;
@@ -185,7 +186,7 @@ const TeleopScoringPage = () => {
     if (Array.isArray(finalActions)) {
       setScoringActions(actionsToUse);
     }
-    localStorage.setItem("teleopStateStack", JSON.stringify(actionsToUse));
+    localStorage.setItem('teleopStateStack', JSON.stringify(actionsToUse));
 
     if (isSubmitPage) {
       // This is the last page - submit match data
@@ -216,10 +217,8 @@ const TeleopScoringPage = () => {
         <h1 className="text-2xl font-bold pb-4">Teleoperated</h1>
       </div>
       <div className="flex flex-col-reverse lg:flex-row items-start gap-0 lg:gap-6 max-w-7xl w-full h-full min-h-0">
-
         {/* Main Scoring Section */}
         <div className="w-full lg:flex-1 space-y-4 min-h-0 overflow-y-auto">
-
           {/* Game-Specific Scoring Sections */}
           <ScoringSections
             phase="teleop"
@@ -236,11 +235,7 @@ const TeleopScoringPage = () => {
 
           {/* Action Buttons - Mobile Only */}
           <div className="flex lg:hidden gap-4 w-full">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-12 text-lg"
-            >
+            <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-lg">
               Back
             </Button>
             <Button
@@ -255,7 +250,6 @@ const TeleopScoringPage = () => {
 
         {/* Info and Controls Sidebar */}
         <div className="flex flex-col gap-4 w-full lg:w-80 pb-4 lg:pb-0 min-h-0">
-
           {/* Match Info Card */}
           {states?.inputs && (
             <Card>
@@ -286,25 +280,28 @@ const TeleopScoringPage = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 h-40 overflow-y-auto pb-2">
-                {undoHistory.slice(-8).reverse().map((change: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {change.type === 'action' ? (
-                        <>
-                          {change.data.actionType || change.data.type || 'Action'}
-                          {change.data.pieceType && ` - ${change.data.pieceType}`}
-                          {change.data.location && ` @ ${change.data.location}`}
-                          {change.data.level && ` (${change.data.level})`}
-                        </>
-                      ) : (
-                        <span className="text-blue-600 dark:text-blue-400">Status Change</span>
-                      )}
-                    </span>
-                    <Badge variant="outline" className="text-xs">
-                      #{undoHistory.length - index}
-                    </Badge>
-                  </div>
-                ))}
+                {undoHistory
+                  .slice(-8)
+                  .reverse()
+                  .map((change: any, index: number) => (
+                    <div key={index} className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        {change.type === 'action' ? (
+                          <>
+                            {change.data.actionType || change.data.type || 'Action'}
+                            {change.data.pieceType && ` - ${change.data.pieceType}`}
+                            {change.data.location && ` @ ${change.data.location}`}
+                            {change.data.level && ` (${change.data.level})`}
+                          </>
+                        ) : (
+                          <span className="text-blue-600 dark:text-blue-400">Status Change</span>
+                        )}
+                      </span>
+                      <Badge variant="outline" className="text-xs">
+                        #{undoHistory.length - index}
+                      </Badge>
+                    </div>
+                  ))}
                 {undoHistory.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-2">
                     No actions recorded yet
@@ -336,11 +333,11 @@ const TeleopScoringPage = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-2">
-                {TELEOP_CLIMB_START_PRESETS.map((seconds) => (
+                {TELEOP_CLIMB_START_PRESETS.map(seconds => (
                   <Button
                     key={seconds}
                     type="button"
-                    variant={teleopClimbStartTimeSecRemaining === seconds ? "default" : "outline"}
+                    variant={teleopClimbStartTimeSecRemaining === seconds ? 'default' : 'outline'}
                     onClick={() => handleTeleopClimbStartPreset(seconds)}
                     className="h-9"
                   >
@@ -359,7 +356,7 @@ const TeleopScoringPage = () => {
                   min={0}
                   max={135}
                   value={teleopClimbStartTimeSecRemaining ?? ''}
-                  onChange={(e) => handleTeleopClimbStartInput(e.target.value)}
+                  onChange={e => handleTeleopClimbStartInput(e.target.value)}
                   placeholder="Type exact time"
                 />
               </div>
@@ -378,11 +375,7 @@ const TeleopScoringPage = () => {
 
           {/* Action Buttons - Desktop Only */}
           <div className="hidden lg:flex gap-4 w-full">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-12 text-lg"
-            >
+            <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-lg">
               Back
             </Button>
             <Button
@@ -394,7 +387,6 @@ const TeleopScoringPage = () => {
             </Button>
           </div>
         </div>
-
       </div>
     </div>
   );

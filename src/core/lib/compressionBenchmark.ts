@@ -65,7 +65,7 @@ function encodeWithKeyDictionary(value: unknown, keyIndex: Map<string, number>):
 
   return Object.entries(value).map(([key, child]) => [
     keyIndex.get(key) ?? key,
-    encodeWithKeyDictionary(child, keyIndex)
+    encodeWithKeyDictionary(child, keyIndex),
   ]);
 }
 
@@ -89,7 +89,7 @@ function encodeWithKeyAndValueDictionary(
 
   return Object.entries(value).map(([key, child]) => [
     keyIndex.get(key) ?? key,
-    encodeWithKeyAndValueDictionary(child, keyIndex, valueIndex)
+    encodeWithKeyAndValueDictionary(child, keyIndex, valueIndex),
   ]);
 }
 
@@ -107,7 +107,7 @@ function buildIndex(values: string[]): { values: string[]; index: Map<string, nu
   const uniqueValues = Array.from(new Set(values));
   return {
     values: uniqueValues,
-    index: new Map(uniqueValues.map((value, idx) => [value, idx]))
+    index: new Map(uniqueValues.map((value, idx) => [value, idx])),
   };
 }
 
@@ -198,25 +198,32 @@ function encodeScoutingSchemaAware(data: unknown): unknown | null {
       }
     }
 
-    const encodedExtra = Object.keys(extraObject).length > 0
-      ? encodeWithKeyDictionary(extraObject, extraKeyIndex)
-      : null;
+    const encodedExtra =
+      Object.keys(extraObject).length > 0
+        ? encodeWithKeyDictionary(extraObject, extraKeyIndex)
+        : null;
 
     return [
       entry.id,
       entry.teamNumber,
       entry.matchNumber,
-      typeof entry.matchKey === 'string' ? (matchKeyDict.index.get(entry.matchKey) ?? entry.matchKey) : entry.matchKey,
+      typeof entry.matchKey === 'string'
+        ? (matchKeyDict.index.get(entry.matchKey) ?? entry.matchKey)
+        : entry.matchKey,
       entry.allianceColor === 'red' ? 0 : 1,
-      typeof entry.scoutName === 'string' ? (scoutDict.index.get(entry.scoutName) ?? entry.scoutName) : entry.scoutName,
-      typeof entry.eventKey === 'string' ? (eventDict.index.get(entry.eventKey) ?? entry.eventKey) : entry.eventKey,
+      typeof entry.scoutName === 'string'
+        ? (scoutDict.index.get(entry.scoutName) ?? entry.scoutName)
+        : entry.scoutName,
+      typeof entry.eventKey === 'string'
+        ? (eventDict.index.get(entry.eventKey) ?? entry.eventKey)
+        : entry.eventKey,
       typeof entry.timestamp === 'number' ? entry.timestamp - baseTimestamp : entry.timestamp,
       entry.noShow ? 1 : 0,
       typeof entry.comments === 'string' && entry.comments.length > 0
         ? (commentDict.index.get(entry.comments) ?? entry.comments)
         : -1,
       encodeWithKeyDictionary(entry.gameData, gameKeyIndex),
-      encodedExtra
+      encodedExtra,
     ];
   });
 
@@ -231,7 +238,7 @@ function encodeScoutingSchemaAware(data: unknown): unknown | null {
     cm: commentDict.values,
     gk: gameKeys,
     xk: extraKeys,
-    r: rows
+    r: rows,
   };
 }
 
@@ -244,8 +251,8 @@ export function benchmarkCompressionVariants(data: unknown): CompressionBenchmar
     {
       name: 'Baseline gzip',
       gzipBytes: baselineGzipBytes,
-      estimatedFountainPackets: baselineFountainPackets
-    }
+      estimatedFountainPackets: baselineFountainPackets,
+    },
   ];
 
   const keySet = new Set<string>();
@@ -256,13 +263,13 @@ export function benchmarkCompressionVariants(data: unknown): CompressionBenchmar
     const keyIndex = new Map(keys.map((key, index) => [key, index]));
     const keyEncodedPayload = {
       k: keys,
-      d: encodeWithKeyDictionary(data, keyIndex)
+      d: encodeWithKeyDictionary(data, keyIndex),
     };
     const keyEncodedBytes = pako.gzip(JSON.stringify(keyEncodedPayload)).length;
     variants.push({
       name: 'Key dictionary + gzip',
       gzipBytes: keyEncodedBytes,
-      estimatedFountainPackets: estimateFountainPackets(keyEncodedBytes)
+      estimatedFountainPackets: estimateFountainPackets(keyEncodedBytes),
     });
 
     const stringCounts = new Map<string, number>();
@@ -278,13 +285,13 @@ export function benchmarkCompressionVariants(data: unknown): CompressionBenchmar
       const keyAndValueEncodedPayload = {
         k: keys,
         s: valueDictionary,
-        d: encodeWithKeyAndValueDictionary(data, keyIndex, valueIndex)
+        d: encodeWithKeyAndValueDictionary(data, keyIndex, valueIndex),
       };
       const keyAndValueBytes = pako.gzip(JSON.stringify(keyAndValueEncodedPayload)).length;
       variants.push({
         name: 'Key+value dictionary + gzip',
         gzipBytes: keyAndValueBytes,
-        estimatedFountainPackets: estimateFountainPackets(keyAndValueBytes)
+        estimatedFountainPackets: estimateFountainPackets(keyAndValueBytes),
       });
     }
   }
@@ -295,7 +302,7 @@ export function benchmarkCompressionVariants(data: unknown): CompressionBenchmar
     variants.push({
       name: 'Scouting schema-aware + gzip',
       gzipBytes: schemaAwareBytes,
-      estimatedFountainPackets: estimateFountainPackets(schemaAwareBytes)
+      estimatedFountainPackets: estimateFountainPackets(schemaAwareBytes),
     });
   }
 
@@ -316,6 +323,6 @@ export function benchmarkCompressionVariants(data: unknown): CompressionBenchmar
     baselineGzipBytes,
     baselineFountainPackets,
     variants,
-    bestVariant
+    bestVariant,
   };
 }

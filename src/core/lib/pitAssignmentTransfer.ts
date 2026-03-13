@@ -47,24 +47,30 @@ export const normalizeScoutName = (name: string): string => {
     .toLowerCase();
 };
 
-export const getPitAssignmentsStorageKey = (eventKey: string): string => `${PIT_ASSIGNMENTS_KEY_PREFIX}${eventKey}`;
+export const getPitAssignmentsStorageKey = (eventKey: string): string =>
+  `${PIT_ASSIGNMENTS_KEY_PREFIX}${eventKey}`;
 
-const getPitAssignmentsMetaKey = (eventKey: string): string => `${PIT_ASSIGNMENTS_META_KEY_PREFIX}${eventKey}`;
+const getPitAssignmentsMetaKey = (eventKey: string): string =>
+  `${PIT_ASSIGNMENTS_META_KEY_PREFIX}${eventKey}`;
 
 const getPitAssignmentsMineKey = (eventKey: string, normalizedScoutName: string): string =>
   `${PIT_ASSIGNMENTS_MINE_KEY_PREFIX}${eventKey}_${normalizedScoutName}`;
 
 const buildAssignmentIdentity = (assignment: PitAssignment): string =>
-  assignment.id || `${assignment.eventKey}:${assignment.teamNumber}:${normalizeScoutName(assignment.scoutName)}`;
+  assignment.id ||
+  `${assignment.eventKey}:${assignment.teamNumber}:${normalizeScoutName(assignment.scoutName)}`;
 
-const mergeAssignments = (existing: PitAssignment[], incoming: PitAssignment[]): PitAssignment[] => {
+const mergeAssignments = (
+  existing: PitAssignment[],
+  incoming: PitAssignment[]
+): PitAssignment[] => {
   const byIdentity = new Map<string, PitAssignment>();
 
-  existing.forEach((assignment) => {
+  existing.forEach(assignment => {
     byIdentity.set(buildAssignmentIdentity(assignment), assignment);
   });
 
-  incoming.forEach((assignment) => {
+  incoming.forEach(assignment => {
     byIdentity.set(buildAssignmentIdentity(assignment), assignment);
   });
 
@@ -72,7 +78,10 @@ const mergeAssignments = (existing: PitAssignment[], incoming: PitAssignment[]):
 };
 
 export const loadPitAssignmentsForEvent = (eventKey: string): PitAssignment[] => {
-  return parseJson<PitAssignment[]>(localStorage.getItem(getPitAssignmentsStorageKey(eventKey)), []);
+  return parseJson<PitAssignment[]>(
+    localStorage.getItem(getPitAssignmentsStorageKey(eventKey)),
+    []
+  );
 };
 
 export const loadMyPitAssignments = (eventKey: string, scoutName: string): PitAssignment[] => {
@@ -87,7 +96,7 @@ export const loadMyPitAssignments = (eventKey: string, scoutName: string): PitAs
   }
 
   const matchedAssignments = loadPitAssignmentsForEvent(eventKey).filter(
-    (assignment) => normalizeScoutName(assignment.scoutName) === normalizedScoutName
+    assignment => normalizeScoutName(assignment.scoutName) === normalizedScoutName
   );
 
   if (matchedAssignments.length > 0) {
@@ -101,7 +110,11 @@ const storePitAssignmentMeta = (eventKey: string, meta: PitAssignmentMeta) => {
   localStorage.setItem(getPitAssignmentsMetaKey(eventKey), JSON.stringify(meta));
 };
 
-const storeMineAssignments = (eventKey: string, scoutName: string, assignments: PitAssignment[]) => {
+const storeMineAssignments = (
+  eventKey: string,
+  scoutName: string,
+  assignments: PitAssignment[]
+) => {
   const normalizedScoutName = normalizeScoutName(scoutName);
   if (!normalizedScoutName) return;
 
@@ -111,7 +124,7 @@ const storeMineAssignments = (eventKey: string, scoutName: string, assignments: 
 
 export const buildPitAssignmentsTransferPayload = (
   eventKey: string,
-  sourceScoutName: string,
+  sourceScoutName: string
 ): PitAssignmentTransferPayload => ({
   eventKey,
   sourceScoutName,
@@ -127,7 +140,7 @@ export const hasPitAssignmentImportConflict = (payload: PitAssignmentTransferPay
 export const importPitAssignmentsPayload = (
   payload: PitAssignmentTransferPayload,
   currentScoutName: string,
-  strategyOverride?: PitAssignmentImportStrategy,
+  strategyOverride?: PitAssignmentImportStrategy
 ): PitAssignmentImportResult => {
   const existingAssignments = loadPitAssignmentsForEvent(payload.eventKey);
 
@@ -147,9 +160,10 @@ export const importPitAssignmentsPayload = (
     };
   }
 
-  const nextAssignments = strategy === 'replace'
-    ? [...payload.assignments]
-    : mergeAssignments(existingAssignments, payload.assignments);
+  const nextAssignments =
+    strategy === 'replace'
+      ? [...payload.assignments]
+      : mergeAssignments(existingAssignments, payload.assignments);
 
   // Sync active event context on the receiving scout
   if (payload.eventKey?.trim()) {
@@ -157,17 +171,16 @@ export const importPitAssignmentsPayload = (
     localStorage.setItem('eventName', payload.eventKey);
   }
 
-  localStorage.setItem(getPitAssignmentsStorageKey(payload.eventKey), JSON.stringify(nextAssignments));
+  localStorage.setItem(
+    getPitAssignmentsStorageKey(payload.eventKey),
+    JSON.stringify(nextAssignments)
+  );
 
   const myAssignments = nextAssignments.filter(
-    (assignment) => normalizeScoutName(assignment.scoutName) === normalizeScoutName(currentScoutName)
+    assignment => normalizeScoutName(assignment.scoutName) === normalizeScoutName(currentScoutName)
   );
   const scopedAssignments = myAssignments.length > 0 ? myAssignments : nextAssignments;
-  storeMineAssignments(
-    payload.eventKey,
-    currentScoutName,
-    scopedAssignments,
-  );
+  storeMineAssignments(payload.eventKey, currentScoutName, scopedAssignments);
 
   storePitAssignmentMeta(payload.eventKey, {
     lastSyncedAt: Date.now(),
@@ -179,14 +192,17 @@ export const importPitAssignmentsPayload = (
     strategy,
     importedCount: scopedAssignments.length,
     mergedCount: strategy === 'merge' ? nextAssignments.length : 0,
-    skippedCount: strategy === 'replace' ? 0 : Math.max(0, existingAssignments.length - payload.assignments.length),
+    skippedCount:
+      strategy === 'replace'
+        ? 0
+        : Math.max(0, existingAssignments.length - payload.assignments.length),
   };
 };
 
 export const markPitAssignmentCompleted = (
   eventKey: string,
   scoutName: string,
-  teamNumber: number,
+  teamNumber: number
 ): boolean => {
   const normalizedScoutName = normalizeScoutName(scoutName);
   if (!normalizedScoutName) return false;
@@ -194,9 +210,10 @@ export const markPitAssignmentCompleted = (
   const allAssignments = loadPitAssignmentsForEvent(eventKey);
   let updated = false;
 
-  const nextAssignments = allAssignments.map((assignment) => {
-    const isTarget = assignment.teamNumber === teamNumber
-      && normalizeScoutName(assignment.scoutName) === normalizedScoutName;
+  const nextAssignments = allAssignments.map(assignment => {
+    const isTarget =
+      assignment.teamNumber === teamNumber &&
+      normalizeScoutName(assignment.scoutName) === normalizedScoutName;
 
     if (!isTarget || assignment.completed) {
       return assignment;
@@ -216,15 +233,20 @@ export const markPitAssignmentCompleted = (
   localStorage.setItem(getPitAssignmentsStorageKey(eventKey), JSON.stringify(nextAssignments));
 
   const myAssignments = nextAssignments.filter(
-    (assignment) => normalizeScoutName(assignment.scoutName) === normalizedScoutName
+    assignment => normalizeScoutName(assignment.scoutName) === normalizedScoutName
   );
   storeMineAssignments(eventKey, scoutName, myAssignments);
 
   return true;
 };
 
-export const getPitAssignmentMeta = (eventKey: string): { lastSyncedAt: number; sourceScoutName: string } | null => {
-  const raw = parseJson<PitAssignmentMeta | null>(localStorage.getItem(getPitAssignmentsMetaKey(eventKey)), null);
+export const getPitAssignmentMeta = (
+  eventKey: string
+): { lastSyncedAt: number; sourceScoutName: string } | null => {
+  const raw = parseJson<PitAssignmentMeta | null>(
+    localStorage.getItem(getPitAssignmentsMetaKey(eventKey)),
+    null
+  );
   if (!raw) return null;
   return {
     lastSyncedAt: raw.lastSyncedAt,

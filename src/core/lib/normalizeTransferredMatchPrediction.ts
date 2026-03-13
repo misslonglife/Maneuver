@@ -47,9 +47,10 @@ export const normalizeTransferredMatchPrediction = (value: unknown): MatchPredic
   const id = typeof candidate.id === 'string' ? candidate.id.trim() : '';
   const scoutName = typeof candidate.scoutName === 'string' ? candidate.scoutName.trim() : '';
   const eventKey = typeof candidate.eventKey === 'string' ? candidate.eventKey.trim() : '';
-  const predictedWinner = typeof candidate.predictedWinner === 'string'
-    ? candidate.predictedWinner.trim().toLowerCase()
-    : '';
+  const predictedWinner =
+    typeof candidate.predictedWinner === 'string'
+      ? candidate.predictedWinner.trim().toLowerCase()
+      : '';
   const matchNumber = asFiniteNumber(candidate.matchNumber);
   const timestamp = asFiniteNumber(candidate.timestamp);
   const verified = asBoolean(candidate.verified);
@@ -76,9 +77,8 @@ export const normalizeTransferredMatchPrediction = (value: unknown): MatchPredic
     verified,
   };
 
-  const actualWinner = typeof candidate.actualWinner === 'string'
-    ? candidate.actualWinner.trim().toLowerCase()
-    : null;
+  const actualWinner =
+    typeof candidate.actualWinner === 'string' ? candidate.actualWinner.trim().toLowerCase() : null;
   if (actualWinner === 'red' || actualWinner === 'blue' || actualWinner === 'tie') {
     prediction.actualWinner = actualWinner;
   }

@@ -2,7 +2,7 @@
  * useMediaQuery Hook
  * Generic media query hook for responsive design
  * Framework hook - game-agnostic
- * 
+ *
  * Note: useIsMobile is a specialized version of this hook.
  */
 
@@ -16,7 +16,7 @@ export function useMediaQuery(query: string): boolean {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setMatches(e.matches);
     };
@@ -26,7 +26,7 @@ export function useMediaQuery(query: string): boolean {
 
     // Listen for changes
     mediaQuery.addEventListener('change', handleChange);
-    
+
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
     };
@@ -45,25 +45,25 @@ export const mediaQueries = {
   lg: '(min-width: 1024px)',
   xl: '(min-width: 1280px)',
   '2xl': '(min-width: 1536px)',
-  
+
   // Device types
   mobile: '(max-width: 767px)',
   tablet: '(min-width: 768px) and (max-width: 1023px)',
   desktop: '(min-width: 1024px)',
-  
+
   // Orientation
   portrait: '(orientation: portrait)',
   landscape: '(orientation: landscape)',
-  
+
   // Display modes
   standalone: '(display-mode: standalone)',
   fullscreen: '(display-mode: fullscreen)',
-  
+
   // Preferences
   darkMode: '(prefers-color-scheme: dark)',
   lightMode: '(prefers-color-scheme: light)',
   reducedMotion: '(prefers-reduced-motion: reduce)',
-  
+
   // High DPI
   retina: '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)',
 } as const;

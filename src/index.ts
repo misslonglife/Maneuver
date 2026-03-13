@@ -1,8 +1,8 @@
 /**
  * @maneuver/core
- * 
+ *
  * Year-agnostic FRC scouting framework
- * 
+ *
  * This package provides the core infrastructure for building
  * custom FRC scouting applications that work offline-first.
  */

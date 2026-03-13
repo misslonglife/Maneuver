@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Input } from "@/core/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Input } from '@/core/components/ui/input';
 import { AlertCircle, Users, UserPlus, Trash2, Wifi, WifiOff } from 'lucide-react';
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
 import { useScoutManagement } from '@/core/hooks/useScoutManagement';
 import { useWebRTC } from '@/core/contexts/WebRTCContext';
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
 export const ScoutManagementSection: React.FC = () => {
   const { scoutsList, saveScout, removeScout } = useScoutManagement();
@@ -14,16 +14,14 @@ export const ScoutManagementSection: React.FC = () => {
   const [newScoutName, setNewScoutName] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
-  const activeScouts = connectedScouts.filter((scout) => scout.status !== 'disconnected');
-  const readyConnectedScouts = activeScouts.filter((scout) => {
+  const activeScouts = connectedScouts.filter(scout => scout.status !== 'disconnected');
+  const readyConnectedScouts = activeScouts.filter(scout => {
     const channelState = scout.channel?.readyState || scout.dataChannel?.readyState;
     return channelState === 'open' || scout.status === 'connected';
   });
 
   const connectedScoutNames = useMemo(() => {
-    return activeScouts
-      .map((scout) => scout.name.trim())
-      .filter((name) => name.length > 0);
+    return activeScouts.map(scout => scout.name.trim()).filter(name => name.length > 0);
   }, [activeScouts]);
 
   const combinedScouts = useMemo(() => {
@@ -87,11 +85,11 @@ export const ScoutManagementSection: React.FC = () => {
             <Input
               placeholder="Enter scout name or initials..."
               value={newScoutName}
-              onChange={(e) => setNewScoutName(e.target.value)}
+              onChange={e => setNewScoutName(e.target.value)}
               onKeyPress={handleKeyPress}
               className="flex-1"
             />
-            <Button 
+            <Button
               onClick={handleAddScout}
               disabled={isAdding || !newScoutName.trim()}
               className="flex items-center gap-2"
@@ -109,50 +107,51 @@ export const ScoutManagementSection: React.FC = () => {
                 No scouts added yet. Add scouts above to create pit assignments.
                 <br />
                 <span className="text-xs text-muted-foreground mt-1 block">
-                  Since pit scouting happens before competition, you can add temporary names/initials here.
+                  Since pit scouting happens before competition, you can add temporary
+                  names/initials here.
                 </span>
               </AlertDescription>
             </Alert>
           ) : (
             <div className="space-y-2">
-              <div className="text-sm font-medium">
-                Available Scouts ({combinedScouts.length}):
-              </div>
+              <div className="text-sm font-medium">Available Scouts ({combinedScouts.length}):</div>
               <div className="flex flex-wrap gap-2">
-                {combinedScouts.map((scout) => {
+                {combinedScouts.map(scout => {
                   const isSavedScout = scoutsList.includes(scout);
                   const isConnectedScout = connectedScoutNames.includes(scout);
 
                   return (
-                  <div
-                    key={scout}
-                    className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 border"
-                  >
-                    <span className="text-sm font-medium">{scout}</span>
-                    {isConnectedScout && (
-                      <span className="text-[10px] font-medium uppercase tracking-wide text-green-600">
-                        WiFi
-                      </span>
-                    )}
-                    {isSavedScout && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveScout(scout)}
-                        className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
-                )})}
+                    <div
+                      key={scout}
+                      className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 border"
+                    >
+                      <span className="text-sm font-medium">{scout}</span>
+                      {isConnectedScout && (
+                        <span className="text-[10px] font-medium uppercase tracking-wide text-green-600">
+                          WiFi
+                        </span>
+                      )}
+                      {isSavedScout && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveScout(scout)}
+                          className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
 
           {combinedScouts.length > 0 && (
             <div className="text-xs text-muted-foreground">
-              💡 Tip: Teams will be divided into blocks among scouts. More scouts = smaller blocks per person.
+              💡 Tip: Teams will be divided into blocks among scouts. More scouts = smaller blocks
+              per person.
             </div>
           )}
 
@@ -172,31 +171,32 @@ export const ScoutManagementSection: React.FC = () => {
             </div>
 
             {activeScouts.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                No scouts connected yet.
-              </p>
+              <p className="text-xs text-muted-foreground">No scouts connected yet.</p>
             ) : (
               <div className="flex flex-wrap gap-2">
-                {activeScouts.map((scout) => {
+                {activeScouts.map(scout => {
                   const channelState = scout.channel?.readyState || scout.dataChannel?.readyState;
                   const isReady = channelState === 'open' || scout.status === 'connected';
 
                   return (
-                  <div
-                    key={scout.id}
-                    className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 ${isReady ? 'bg-green-500/10' : 'bg-yellow-500/10'
+                    <div
+                      key={scout.id}
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 ${
+                        isReady ? 'bg-green-500/10' : 'bg-yellow-500/10'
                       }`}
-                  >
-                    <span className={`h-2 w-2 rounded-full ${isReady ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                    <span className="text-sm font-medium">{scout.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {isReady ? 'Connected' : 'Connecting'}
-                    </span>
-                  </div>
-                )})}
+                    >
+                      <span
+                        className={`h-2 w-2 rounded-full ${isReady ? 'bg-green-500' : 'bg-yellow-500'}`}
+                      />
+                      <span className="text-sm font-medium">{scout.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {isReady ? 'Connected' : 'Connecting'}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
-
           </div>
         </div>
       </CardContent>

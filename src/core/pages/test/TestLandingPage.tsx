@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/core/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
 import { Button } from '@/core/components/ui/button';
 import { Checkbox } from '@/core/components/ui/checkbox';
 import { Label } from '@/core/components/ui/label';
@@ -13,22 +19,19 @@ import {
 } from '@/core/components/ui/select';
 import { saveExperimentSession } from '@/core/db/experimentDatabase';
 import { STUDY_CLIP_IDS } from '@/core/lib/experiment/constants';
-import {
-  exportExperimentCsv,
-  exportExperimentJson,
-} from '@/core/lib/experiment/export';
+import { exportExperimentCsv, exportExperimentJson } from '@/core/lib/experiment/export';
 import type { ExperimentGroup, InterfaceType } from '@/core/lib/experiment/types';
 
 const generateParticipantCode = () => `P-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-const generateId = () => (typeof crypto !== 'undefined' && 'randomUUID' in crypto
-  ? crypto.randomUUID()
-  : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+const generateId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const CONSENT_VERSION = 'gatech-qualtrics-consent-v1';
 const OFFICIAL_CONSENT_URL = 'https://gatech.co1.qualtrics.com/jfe/form/SV_3f8Yrdr23Q8kKnI';
 
-const getOrder = (group: ExperimentGroup): [InterfaceType, InterfaceType] => (
-  group === 'A' ? ['visual', 'form'] : ['form', 'visual']
-);
+const getOrder = (group: ExperimentGroup): [InterfaceType, InterfaceType] =>
+  group === 'A' ? ['visual', 'form'] : ['form', 'visual'];
 
 const TestLandingPage = () => {
   const navigate = useNavigate();
@@ -95,7 +98,7 @@ const TestLandingPage = () => {
 
           <div className="space-y-2">
             <Label>Group</Label>
-            <Select value={group} onValueChange={(value) => setGroup(value as ExperimentGroup)}>
+            <Select value={group} onValueChange={value => setGroup(value as ExperimentGroup)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -116,11 +119,27 @@ const TestLandingPage = () => {
             </div>
 
             <div className="space-y-2 text-xs text-muted-foreground">
-              <p><span className="font-medium text-foreground">Required form:</span> Open and complete the official consent survey link below.</p>
-              <p><span className="font-medium text-foreground">Procedure:</span> You will use both interfaces to scout match clips, then complete short workload and preference surveys.</p>
-              <p><span className="font-medium text-foreground">Time:</span> Approximately 50 minutes total.</p>
-              <p><span className="font-medium text-foreground">Risks:</span> Minimal risk, similar to standard computer use and timed observation tasks.</p>
-              <p><span className="font-medium text-foreground">Privacy:</span> This app stores only de-identified response data and consent-complete status for the session.</p>
+              <p>
+                <span className="font-medium text-foreground">Required form:</span> Open and
+                complete the official consent survey link below.
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Procedure:</span> You will use both
+                interfaces to scout match clips, then complete short workload and preference
+                surveys.
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Time:</span> Approximately 50 minutes
+                total.
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Risks:</span> Minimal risk, similar to
+                standard computer use and timed observation tasks.
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Privacy:</span> This app stores only
+                de-identified response data and consent-complete status for the session.
+              </p>
             </div>
 
             <Button
@@ -134,7 +153,7 @@ const TestLandingPage = () => {
             <label className="flex items-start gap-3 rounded-md border p-3 cursor-pointer">
               <Checkbox
                 checked={officialConsentCompleted}
-                onCheckedChange={(checked) => setOfficialConsentCompleted(checked === true)}
+                onCheckedChange={checked => setOfficialConsentCompleted(checked === true)}
                 className="mt-0.5"
               />
               <span className="text-sm">
@@ -151,8 +170,12 @@ const TestLandingPage = () => {
             >
               Start Session
             </Button>
-            <Button className="p-2" variant="outline" onClick={() => navigate('/test/answer-key')}>Answer Key Builder</Button>
-            <Button className="p-2" variant="outline" onClick={() => navigate('/test/results')}>Results + Export</Button>
+            <Button className="p-2" variant="outline" onClick={() => navigate('/test/answer-key')}>
+              Answer Key Builder
+            </Button>
+            <Button className="p-2" variant="outline" onClick={() => navigate('/test/results')}>
+              Results + Export
+            </Button>
             <Button className="p-2" variant="secondary" onClick={handleExportResponsesCsv}>
               Export Responses CSV
             </Button>

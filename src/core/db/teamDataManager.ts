@@ -1,12 +1,12 @@
 /**
  * Team Data Manager
- * 
+ *
  * SINGLE SOURCE OF TRUTH orchestration layer.
- * 
+ *
  * Consolidates data from multiple sources:
  * - TBA: Basic team info + match results
  * - Statbotics: Team rankings (global + event-specific)
- * 
+ *
  * Provides single refresh function that:
  * 1. Fetches all necessary data
  * 2. Merges into unified TeamProfile objects
@@ -20,28 +20,26 @@ import {
   fetchEventTeamRankings,
   clearTeamRankingCache,
 } from '@/core/lib/statbotics/teamRankUtils';
-import {
-  buildCompetitionHistory,
-} from '@/core/lib/tba/competitionHistoryUtils';
+import { buildCompetitionHistory } from '@/core/lib/tba/competitionHistoryUtils';
 import { saveTeamProfiles, recomputeAggregateStats } from '@/core/db/teamUtils';
 import { getCachedTBAEventMatches, getCachedTBAEventKeys } from '@/core/lib/tbaCache';
 import type { TeamProfile } from '@/core/types/team-profile';
 
 export interface RefreshTeamDataOptions {
   includeRankings?: boolean; // Fetch Statbotics rankings (default: true)
-  includeHistory?: boolean;  // Compute competition history (default: true)
+  includeHistory?: boolean; // Compute competition history (default: true)
 }
 
 /**
  * Refresh team data for an event
- * 
+ *
  * SINGLE SOURCE OF TRUTH function. Call this to:
  * 1. Fetch TBA team info for the event
  * 2. Optionally fetch Statbotics rankings
  * 3. Optionally compute competition history from cached TBA matches
  * 4. Save consolidated TeamProfile objects to TeamDB
  * 5. Return the merged data
- * 
+ *
  * @param eventKey - TBA event key (e.g., "2026mrcmp")
  * @param apiKey - Optional TBA API key to use
  * @param options - Refresh options
@@ -52,10 +50,7 @@ export const refreshTeamDataForEvent = async (
   apiKey: string = '',
   options: RefreshTeamDataOptions = {}
 ): Promise<TeamProfile[]> => {
-  const {
-    includeRankings = true,
-    includeHistory = true,
-  } = options;
+  const { includeRankings = true, includeHistory = true } = options;
 
   const profiles: TeamProfile[] = [];
 
@@ -125,9 +120,7 @@ export const refreshTeamDataForEvent = async (
           }
         }
 
-        console.log(
-          `[TeamDataManager] Computed history for ${historyByTeam.size} teams`
-        );
+        console.log(`[TeamDataManager] Computed history for ${historyByTeam.size} teams`);
       } catch (error) {
         console.warn('[TeamDataManager] Failed to build competition history:', error);
         // Don't fail entirely, continue without history

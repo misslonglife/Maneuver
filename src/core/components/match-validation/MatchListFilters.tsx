@@ -34,10 +34,7 @@ export const MatchListFilters: React.FC<MatchListFiltersProps> = ({
   matchCount,
   filteredCount,
 }) => {
-  const updateFilter = <K extends keyof MatchFilters>(
-    key: K,
-    value: MatchFilters[K]
-  ) => {
+  const updateFilter = <K extends keyof MatchFilters>(key: K, value: MatchFilters[K]) => {
     onFiltersChange({ ...filters, [key]: value });
   };
 
@@ -58,7 +55,7 @@ export const MatchListFilters: React.FC<MatchListFiltersProps> = ({
               id="search"
               placeholder="Match number or team..."
               value={filters.searchQuery}
-              onChange={(e) => updateFilter('searchQuery', e.target.value)}
+              onChange={e => updateFilter('searchQuery', e.target.value)}
               className="w-full"
             />
           </div>
@@ -73,7 +70,9 @@ export const MatchListFilters: React.FC<MatchListFiltersProps> = ({
               </Label>
               <Select
                 value={filters.matchType}
-                onValueChange={(value) => updateFilter('matchType', value as MatchFilters['matchType'])}
+                onValueChange={value =>
+                  updateFilter('matchType', value as MatchFilters['matchType'])
+                }
               >
                 <SelectTrigger id="matchType">
                   <SelectValue />
@@ -92,7 +91,7 @@ export const MatchListFilters: React.FC<MatchListFiltersProps> = ({
               <Label htmlFor="status">Status</Label>
               <Select
                 value={filters.status}
-                onValueChange={(value) => updateFilter('status', value as MatchFilters['status'])}
+                onValueChange={value => updateFilter('status', value as MatchFilters['status'])}
               >
                 <SelectTrigger id="status">
                   <SelectValue />
@@ -116,7 +115,7 @@ export const MatchListFilters: React.FC<MatchListFiltersProps> = ({
               </Label>
               <Select
                 value={filters.sortBy}
-                onValueChange={(value) => updateFilter('sortBy', value as MatchFilters['sortBy'])}
+                onValueChange={value => updateFilter('sortBy', value as MatchFilters['sortBy'])}
               >
                 <SelectTrigger id="sortBy">
                   <SelectValue />
@@ -135,7 +134,7 @@ export const MatchListFilters: React.FC<MatchListFiltersProps> = ({
               <Label htmlFor="sortOrder">Order</Label>
               <Select
                 value={filters.sortOrder}
-                onValueChange={(value) => updateFilter('sortOrder', value as 'asc' | 'desc')}
+                onValueChange={value => updateFilter('sortOrder', value as 'asc' | 'desc')}
               >
                 <SelectTrigger id="sortOrder">
                   <SelectValue />

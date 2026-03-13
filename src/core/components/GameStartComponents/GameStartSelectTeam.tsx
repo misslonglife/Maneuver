@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo, type JSX } from "react";
-import SelectTeamButton from "./GameStartSelectTeamButton";
-import { Input } from "../ui/input";
-import { loadScoutingEntriesByMatch } from "@/core/db/database";
+import { useEffect, useState, useMemo, type JSX } from 'react';
+import SelectTeamButton from './GameStartSelectTeamButton';
+import { Input } from '../ui/input';
+import { loadScoutingEntriesByMatch } from '@/core/db/database';
 /**
  * A component that renders a team selection interface.
  *
@@ -31,12 +31,12 @@ const InitialSelectTeam = ({
 }: InitialSelectTeamProps): JSX.Element => {
   const baseTeams = useMemo(() => {
     try {
-      const matchDataStr = localStorage.getItem("matchData");
+      const matchDataStr = localStorage.getItem('matchData');
       const matchData = matchDataStr ? JSON.parse(matchDataStr) : [];
 
       // Check if matchData is valid
       if (!Array.isArray(matchData) || matchData.length === 0) {
-        return ["0001", "0002", "0003"];
+        return ['0001', '0002', '0003'];
       }
 
       // Get the correct match data
@@ -49,17 +49,21 @@ const InitialSelectTeam = ({
 
       // Convert alliance value to correct property name and get teams
       if (currentMatch && typeof currentMatch === 'object') {
-        const allianceKey = selectedAlliance === "red" ? "redAlliance" :
-          selectedAlliance === "blue" ? "blueAlliance" : "redAlliance";
+        const allianceKey =
+          selectedAlliance === 'red'
+            ? 'redAlliance'
+            : selectedAlliance === 'blue'
+              ? 'blueAlliance'
+              : 'redAlliance';
         const teams = currentMatch[allianceKey];
         if (Array.isArray(teams) && teams.length > 0) {
           return teams;
         }
       }
 
-      return ["0001", "0002", "0003"];
+      return ['0001', '0002', '0003'];
     } catch {
-      return ["0001", "0002", "0003"];
+      return ['0001', '0002', '0003'];
     }
   }, [selectedMatch, selectedAlliance]);
 
@@ -75,10 +79,14 @@ const InitialSelectTeam = ({
       }
 
       try {
-        const activeEventKey = (selectedEventKey || localStorage.getItem("eventKey") || "").toLowerCase();
+        const activeEventKey = (
+          selectedEventKey ||
+          localStorage.getItem('eventKey') ||
+          ''
+        ).toLowerCase();
         const entries = await loadScoutingEntriesByMatch(matchNumber);
 
-        const filteredEntries = entries.filter((entry) => {
+        const filteredEntries = entries.filter(entry => {
           const entryAlliance = entry.allianceColor?.toLowerCase();
           const entryEvent = entry.eventKey?.toLowerCase();
 
@@ -98,8 +106,8 @@ const InitialSelectTeam = ({
 
         filteredEntries
           .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-          .forEach((entry) => {
-            const team = String(entry.teamNumber || "").trim();
+          .forEach(entry => {
+            const team = String(entry.teamNumber || '').trim();
             if (!team || seen.has(team)) {
               return;
             }
@@ -126,7 +134,7 @@ const InitialSelectTeam = ({
     }
 
     const base = [...baseTeams];
-    const extras = scoutedTeams.filter((team) => !base.includes(team));
+    const extras = scoutedTeams.filter(team => !base.includes(team));
 
     if (extras.length === 0) {
       return base;
@@ -159,7 +167,7 @@ const InitialSelectTeam = ({
   }, [baseTeams, scoutedTeams, preferredTeamPosition, hasPreferredRolePosition]);
 
   const recentCustomTeam = useMemo(() => {
-    return scoutedTeams.find((team) => !baseTeams.includes(team)) || "";
+    return scoutedTeams.find(team => !baseTeams.includes(team)) || '';
   }, [scoutedTeams, baseTeams]);
 
   // Helper function to determine if a team should be auto-selected based on position
@@ -170,9 +178,10 @@ const InitialSelectTeam = ({
         team1: defaultSelectTeam === baseTeams[0],
         team2: defaultSelectTeam === baseTeams[1],
         team3: defaultSelectTeam === baseTeams[2],
-        custom: defaultSelectTeam !== baseTeams[0] &&
+        custom:
+          defaultSelectTeam !== baseTeams[0] &&
           defaultSelectTeam !== baseTeams[1] &&
-          defaultSelectTeam !== baseTeams[2]
+          defaultSelectTeam !== baseTeams[2],
       };
     }
 
@@ -182,7 +191,7 @@ const InitialSelectTeam = ({
         team1: preferredTeamPosition === 1,
         team2: preferredTeamPosition === 2,
         team3: preferredTeamPosition === 3,
-        custom: false
+        custom: false,
       };
     }
 
@@ -191,7 +200,7 @@ const InitialSelectTeam = ({
       team1: false,
       team2: false,
       team3: false,
-      custom: false
+      custom: false,
     };
   };
 
@@ -205,15 +214,17 @@ const InitialSelectTeam = ({
 
   // State for the custom team value
   const [customTeamValue, setCustomTeamValue] = useState(
-    initialSelection.custom && defaultSelectTeam ? defaultSelectTeam : ""
+    initialSelection.custom && defaultSelectTeam ? defaultSelectTeam : ''
   );
 
   // Sync customTeamValue with defaultSelectTeam prop changes (important for batch re-scout)
   useEffect(() => {
-    if (defaultSelectTeam &&
+    if (
+      defaultSelectTeam &&
       defaultSelectTeam !== effectiveTeams[0] &&
       defaultSelectTeam !== effectiveTeams[1] &&
-      defaultSelectTeam !== effectiveTeams[2]) {
+      defaultSelectTeam !== effectiveTeams[2]
+    ) {
       setCustomTeamValue(defaultSelectTeam);
       setCustomTeamStatus(true);
       setTeam1Status(false);
@@ -233,25 +244,25 @@ const InitialSelectTeam = ({
 
   // Function to handle team selection
   const clickTeam = (currentTeamType: string, currentTeamStatus: boolean) => {
-    if (currentTeamType === "1") {
+    if (currentTeamType === '1') {
       setTeam1Status(!currentTeamStatus);
 
       setTeam2Status(false);
       setTeam3Status(false);
       setCustomTeamStatus(false);
-    } else if (currentTeamType === "2") {
+    } else if (currentTeamType === '2') {
       setTeam2Status(!currentTeamStatus);
 
       setTeam1Status(false);
       setTeam3Status(false);
       setCustomTeamStatus(false);
-    } else if (currentTeamType === "3") {
+    } else if (currentTeamType === '3') {
       setTeam3Status(!currentTeamStatus);
 
       setTeam1Status(false);
       setTeam2Status(false);
       setCustomTeamStatus(false);
-    } else if (currentTeamType === "custom") {
+    } else if (currentTeamType === 'custom') {
       setCustomTeamStatus(true);
 
       setTeam1Status(false);
@@ -268,19 +279,32 @@ const InitialSelectTeam = ({
       setSelectTeam(effectiveTeams[1]);
     } else if (team3Status) {
       setSelectTeam(effectiveTeams[2]);
-    } else if (customTeamStatus && customTeamValue != "") {
+    } else if (customTeamStatus && customTeamValue != '') {
       setSelectTeam(customTeamValue);
     } else {
       setSelectTeam(null);
     }
-  }, [team1Status, team2Status, team3Status, customTeamStatus, customTeamValue, setSelectTeam, effectiveTeams]);
+  }, [
+    team1Status,
+    team2Status,
+    team3Status,
+    customTeamStatus,
+    customTeamValue,
+    setSelectTeam,
+    effectiveTeams,
+  ]);
 
   // Effect to update team selection when baseTeams or preferredTeamPosition changes
   useEffect(() => {
     // Only auto-select if no current selection and we have a preferred position
-    if (!team1Status && !team2Status && !team3Status && !customTeamStatus &&
-      preferredTeamPosition >= 1 && preferredTeamPosition <= 3) {
-
+    if (
+      !team1Status &&
+      !team2Status &&
+      !team3Status &&
+      !customTeamStatus &&
+      preferredTeamPosition >= 1 &&
+      preferredTeamPosition <= 3
+    ) {
       if (preferredTeamPosition === 1) {
         setTeam1Status(true);
       } else if (preferredTeamPosition === 2) {
@@ -289,7 +313,14 @@ const InitialSelectTeam = ({
         setTeam3Status(true);
       }
     }
-  }, [effectiveTeams, preferredTeamPosition, team1Status, team2Status, team3Status, customTeamStatus]);
+  }, [
+    effectiveTeams,
+    preferredTeamPosition,
+    team1Status,
+    team2Status,
+    team3Status,
+    customTeamStatus,
+  ]);
 
   const [textSelected, setTextSelected] = useState(false);
 
@@ -301,9 +332,7 @@ const InitialSelectTeam = ({
         {textSelected &&
           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
             navigator.userAgent
-          ) && (
-            <div className="absolute left-0 top-0 w-full h-full z-1"></div>
-          )}
+          ) && <div className="absolute left-0 top-0 w-full h-full z-1"></div>}
         {preferredTeamPosition > 0 && (
           <p className="text-sm text-muted-foreground pb-2">
             Your role suggests position {preferredTeamPosition}
@@ -318,7 +347,7 @@ const InitialSelectTeam = ({
         <div className="flex flex-col w-full h-full gap-4">
           <div className="grow">
             <SelectTeamButton
-              currentTeamType={"1"}
+              currentTeamType={'1'}
               currentTeamStatus={team1Status}
               clickTeam={clickTeam}
               teamName={effectiveTeams[0]}
@@ -327,7 +356,7 @@ const InitialSelectTeam = ({
           </div>
           <div className="grow">
             <SelectTeamButton
-              currentTeamType={"2"}
+              currentTeamType={'2'}
               currentTeamStatus={team2Status}
               clickTeam={clickTeam}
               teamName={effectiveTeams[1]}
@@ -336,7 +365,7 @@ const InitialSelectTeam = ({
           </div>
           <div className="grow">
             <SelectTeamButton
-              currentTeamType={"3"}
+              currentTeamType={'3'}
               currentTeamStatus={team3Status}
               clickTeam={clickTeam}
               teamName={effectiveTeams[2]}
@@ -345,18 +374,16 @@ const InitialSelectTeam = ({
           </div>
           {/* Custom Team Selector */}
           <div className="flex justify-center z-2 items-center">
-            <h2 className="text-2xl font-semibold grow mr-2 pb-2">
-              Custom:
-            </h2>
+            <h2 className="text-2xl font-semibold grow mr-2 pb-2">Custom:</h2>
             <Input
               className="w-full h-12 text-xl rounded-lg"
               type="number"
               inputMode="numeric"
               placeholder="Team #"
               value={customTeamValue}
-              onChange={(e) => setCustomTeamValue(e.target.value)}
+              onChange={e => setCustomTeamValue(e.target.value)}
               onFocus={() => {
-                clickTeam("custom", customTeamStatus);
+                clickTeam('custom', customTeamStatus);
                 setTextSelected(true);
               }}
               onBlur={() => setTextSelected(false)}

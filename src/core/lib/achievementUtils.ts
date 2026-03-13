@@ -2,13 +2,9 @@ import {
   gamificationDB,
   updateScoutPoints,
   type ScoutAchievement,
-  ACHIEVEMENT_DEFINITIONS
+  ACHIEVEMENT_DEFINITIONS,
 } from '@/game-template/gamification';
-import {
-  checkAchievement,
-  getAchievementProgress,
-  type Achievement
-} from './achievementTypes';
+import { checkAchievement, getAchievementProgress, type Achievement } from './achievementTypes';
 
 export const checkForNewAchievements = async (scoutName: string): Promise<Achievement[]> => {
   const scout = await gamificationDB.scouts.get(scoutName);
@@ -26,7 +22,6 @@ export const checkForNewAchievements = async (scoutName: string): Promise<Achiev
     if (unlockedIds.has(achievement.id)) continue;
 
     if (checkAchievement(achievement, scout)) {
-
       if (achievement.requirements.type === 'special') {
         if (achievement.id === 'early_bird') {
           const totalScouts = await gamificationDB.scouts.count();
@@ -39,7 +34,7 @@ export const checkForNewAchievements = async (scoutName: string): Promise<Achiev
         scoutName,
         achievementId: achievement.id,
         unlockedAt: Date.now(),
-        progress: 100
+        progress: 100,
       };
 
       await gamificationDB.scoutAchievements.add(scoutAchievement);
@@ -53,14 +48,18 @@ export const checkForNewAchievements = async (scoutName: string): Promise<Achiev
   }
 
   if (newlyUnlocked.length > 0) {
-    console.log('🏆 Total new achievements unlocked for', scoutName, ':', newlyUnlocked.map(a => a.name));
+    console.log(
+      '🏆 Total new achievements unlocked for',
+      scoutName,
+      ':',
+      newlyUnlocked.map(a => a.name)
+    );
   }
 
   return newlyUnlocked;
 };
 
 export const backfillAchievementsForAllScouts = async (): Promise<void> => {
-
   const allScouts = await gamificationDB.scouts.toArray();
 
   for (const scout of allScouts) {
@@ -70,10 +69,11 @@ export const backfillAchievementsForAllScouts = async (): Promise<void> => {
       console.log('🏆 Backfilled', newAchievements.length, 'achievements for', scout.name);
     }
   }
-
 };
 
-export const getScoutAchievements = async (scoutName: string): Promise<{
+export const getScoutAchievements = async (
+  scoutName: string
+): Promise<{
   unlocked: Array<Achievement & { unlockedAt: number }>;
   available: Array<Achievement & { progress: number }>;
   hidden: Array<Achievement & { progress: number }>;
@@ -100,7 +100,7 @@ export const getScoutAchievements = async (scoutName: string): Promise<{
       const scoutAchievement = unlockedMap.get(achievement.id)!;
       unlocked.push({
         ...achievement,
-        unlockedAt: scoutAchievement.unlockedAt
+        unlockedAt: scoutAchievement.unlockedAt,
       });
     } else {
       const progress = getAchievementProgress(achievement, scout);
@@ -116,10 +116,13 @@ export const getScoutAchievements = async (scoutName: string): Promise<{
 
   unlocked.sort((a, b) => b.unlockedAt - a.unlockedAt);
 
-  available.sort((a, b) => b.progress - a.progress); return { unlocked, available, hidden };
+  available.sort((a, b) => b.progress - a.progress);
+  return { unlocked, available, hidden };
 };
 
-export const getAchievementStats = async (scoutName: string): Promise<{
+export const getAchievementStats = async (
+  scoutName: string
+): Promise<{
   totalAchievements: number;
   unlockedCount: number;
   completionPercentage: number;
@@ -139,19 +142,23 @@ export const getAchievementStats = async (scoutName: string): Promise<{
 
   return {
     totalAchievements: visibleAchievements.length,
-    unlockedCount: unlocked.filter(a => !ACHIEVEMENT_DEFINITIONS.find(def => def.id === a.id)?.hidden).length,
+    unlockedCount: unlocked.filter(
+      a => !ACHIEVEMENT_DEFINITIONS.find(def => def.id === a.id)?.hidden
+    ).length,
     completionPercentage: Math.round((unlocked.length / ACHIEVEMENT_DEFINITIONS.length) * 100),
     totalStakesFromAchievements,
-    recentAchievements
+    recentAchievements,
   };
 };
 
-export const getAchievementLeaderboard = async (): Promise<Array<{
-  scoutName: string;
-  achievementCount: number;
-  totalStakesFromAchievements: number;
-  recentUnlock?: Achievement & { unlockedAt: number };
-}>> => {
+export const getAchievementLeaderboard = async (): Promise<
+  Array<{
+    scoutName: string;
+    achievementCount: number;
+    totalStakesFromAchievements: number;
+    recentUnlock?: Achievement & { unlockedAt: number };
+  }>
+> => {
   const allScouts = await gamificationDB.scouts.toArray();
   const leaderboard = [];
 
@@ -163,7 +170,7 @@ export const getAchievementLeaderboard = async (): Promise<Array<{
       scoutName: scout.name,
       achievementCount: stats.unlockedCount,
       totalStakesFromAchievements: stats.totalStakesFromAchievements,
-      recentUnlock: unlocked[0] // Most recent achievement
+      recentUnlock: unlocked[0], // Most recent achievement
     });
   }
 
@@ -193,7 +200,10 @@ export const checkAllScoutAchievements = async (): Promise<{
   return results;
 };
 
-export const getNextAchievements = async (scoutName: string, limit = 3): Promise<Array<Achievement & { progress: number }>> => {
+export const getNextAchievements = async (
+  scoutName: string,
+  limit = 3
+): Promise<Array<Achievement & { progress: number }>> => {
   const { available } = await getScoutAchievements(scoutName);
 
   const nextAchievements = available

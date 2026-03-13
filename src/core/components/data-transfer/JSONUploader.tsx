@@ -1,22 +1,28 @@
-import React, { useState } from "react";
-import { Button } from "@/core/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Separator } from "@/core/components/ui/separator";
-import { toast } from "sonner";
-import { detectDataType } from "@/core/lib/uploadHandlers/dataTypeDetector";
-import { 
-  handleScoutingDataUpload, 
-  type UploadMode 
-} from "@/core/lib/uploadHandlers/scoutingDataUploadHandler";
-import { handleScoutProfilesUpload } from "@/core/lib/uploadHandlers/scoutProfilesUploadHandler";
-import { handlePitScoutingUpload } from "@/core/lib/uploadHandlers/pitScoutingUploadHandler";
-import { handlePitScoutingImagesUpload } from "@/core/lib/uploadHandlers/pitScoutingImagesUploadHandler";
-import { handleMatchScheduleUpload } from "@/core/lib/uploadHandlers/matchScheduleUploadHandler";
-import ConflictResolutionDialog from "./ConflictResolutionDialog";
-import { BatchConflictDialog } from "./BatchConflictDialog";
-import type { ConflictInfo } from "@/core/lib/scoutingDataUtils";
-import type { ScoutingEntryBase } from "@/types/scouting-entry";
-import { useConflictResolution } from "@/core/hooks/useConflictResolution";
+import React, { useState } from 'react';
+import { Button } from '@/core/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
+import { Separator } from '@/core/components/ui/separator';
+import { toast } from 'sonner';
+import { detectDataType } from '@/core/lib/uploadHandlers/dataTypeDetector';
+import {
+  handleScoutingDataUpload,
+  type UploadMode,
+} from '@/core/lib/uploadHandlers/scoutingDataUploadHandler';
+import { handleScoutProfilesUpload } from '@/core/lib/uploadHandlers/scoutProfilesUploadHandler';
+import { handlePitScoutingUpload } from '@/core/lib/uploadHandlers/pitScoutingUploadHandler';
+import { handlePitScoutingImagesUpload } from '@/core/lib/uploadHandlers/pitScoutingImagesUploadHandler';
+import { handleMatchScheduleUpload } from '@/core/lib/uploadHandlers/matchScheduleUploadHandler';
+import ConflictResolutionDialog from './ConflictResolutionDialog';
+import { BatchConflictDialog } from './BatchConflictDialog';
+import type { ConflictInfo } from '@/core/lib/scoutingDataUtils';
+import type { ScoutingEntryBase } from '@/types/scouting-entry';
+import { useConflictResolution } from '@/core/hooks/useConflictResolution';
 
 type JSONUploaderProps = {
   onBack: () => void;
@@ -24,14 +30,16 @@ type JSONUploaderProps = {
 
 const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [detectedDataType, setDetectedDataType] = useState<'scouting' | 'scoutProfiles' | 'pitScouting' | 'pitScoutingImagesOnly' | 'matchSchedule' | null>(null);
+  const [detectedDataType, setDetectedDataType] = useState<
+    'scouting' | 'scoutProfiles' | 'pitScouting' | 'pitScoutingImagesOnly' | 'matchSchedule' | null
+  >(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Batch review state
   const [showBatchDialog, setShowBatchDialog] = useState(false);
   const [batchReviewEntries, setBatchReviewEntries] = useState<ScoutingEntryBase[]>([]);
   const [pendingConflicts, setPendingConflicts] = useState<ConflictInfo[]>([]);
-  
+
   // Use conflict resolution hook
   const {
     showConflictDialog,
@@ -45,17 +53,17 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
     handleBatchResolve: handleBatchResolveBase,
     handleUndo,
     canUndo,
-    handleBatchReviewDecision: handleBatchReviewDecisionBase
+    handleBatchReviewDecision: handleBatchReviewDecisionBase,
   } = useConflictResolution();
 
-  type FileSelectEvent = React.ChangeEvent<HTMLInputElement>
+  type FileSelectEvent = React.ChangeEvent<HTMLInputElement>;
 
   const handleFileSelect = async (event: FileSelectEvent): Promise<void> => {
     const file: File | undefined = event.target.files?.[0];
     if (!file) return;
 
     if (!file.name.endsWith('.json')) {
-      toast.error("Please select a JSON file");
+      toast.error('Please select a JSON file');
       return;
     }
 
@@ -63,41 +71,41 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
       const text = await file.text();
       const jsonData: unknown = JSON.parse(text);
       const dataType = detectDataType(jsonData);
-      
+
       if (!dataType) {
-        toast.error("Unable to detect data type. Please check the JSON format.");
+        toast.error('Unable to detect data type. Please check the JSON format.');
         return;
       }
 
       setSelectedFile(file);
       setDetectedDataType(dataType);
-      
+
       const dataTypeNames = {
         scouting: 'Scouting Data',
         scoutProfiles: 'Scout Profiles',
         pitScouting: 'Pit Scouting Data',
         pitScoutingImagesOnly: 'Pit Scouting Images Only',
-        matchSchedule: 'Match Schedule'
+        matchSchedule: 'Match Schedule',
       };
-      
+
       toast.info(`Selected: ${file.name} (${dataTypeNames[dataType]})`);
     } catch (error) {
       setIsProcessing(false);
-      toast.error("Invalid JSON file");
-      console.error("File parsing error:", error);
+      toast.error('Invalid JSON file');
+      console.error('File parsing error:', error);
     }
   };
 
   const handleUpload = async (mode: UploadMode): Promise<void> => {
     if (!selectedFile || !detectedDataType) {
-      toast.error("Please select a file first");
+      toast.error('Please select a file first');
       return;
     }
-    
+
     if (isProcessing) {
       return;
     }
-    
+
     setIsProcessing(true);
 
     try {
@@ -106,7 +114,7 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
 
       if (detectedDataType === 'scouting') {
         const result = await handleScoutingDataUpload(jsonData, mode);
-        
+
         // Check if there are batch review entries first
         if (result.hasBatchReview && result.batchReviewEntries) {
           setBatchReviewEntries(result.batchReviewEntries);
@@ -115,7 +123,7 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
           setIsProcessing(false); // Re-enable for batch review
           return; // Don't reset file yet
         }
-        
+
         // Check if there are conflicts to resolve
         if (result.hasConflicts && result.conflicts) {
           setCurrentConflicts(result.conflicts);
@@ -125,7 +133,6 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
           setIsProcessing(false); // Re-enable for conflict resolution
           return; // Don't reset file yet, we need it for context
         }
-        
       } else if (detectedDataType === 'scoutProfiles') {
         await handleScoutProfilesUpload(jsonData, mode);
       } else if (detectedDataType === 'pitScouting') {
@@ -140,45 +147,50 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
       setDetectedDataType(null);
       setIsProcessing(false);
       // Reset file input
-      const fileInput = document.getElementById("jsonFileInput") as HTMLInputElement | null;
-      if (fileInput) fileInput.value = "";
-
+      const fileInput = document.getElementById('jsonFileInput') as HTMLInputElement | null;
+      if (fileInput) fileInput.value = '';
     } catch (error) {
-      toast.error("Error processing file");
-      console.error("Upload error:", error);
+      toast.error('Error processing file');
+      console.error('Upload error:', error);
       setIsProcessing(false);
     }
   };
-  
+
   // Wrapper for conflict resolution that also handles file reset
   const handleConflictResolution = async (action: 'replace' | 'skip') => {
     await handleConflictResolutionBase(action);
-    
+
     // Check if all conflicts are resolved
     if (currentConflictIndex >= currentConflicts.length - 1) {
       // Reset file after all conflicts resolved
       setSelectedFile(null);
       setDetectedDataType(null);
-      const fileInput = document.getElementById("jsonFileInput") as HTMLInputElement | null;
-      if (fileInput) fileInput.value = "";
+      const fileInput = document.getElementById('jsonFileInput') as HTMLInputElement | null;
+      if (fileInput) fileInput.value = '';
     }
   };
 
   // Wrapper for batch resolve that also handles file reset
   const handleBatchResolve = async (action: 'replace' | 'skip') => {
     await handleBatchResolveBase(action);
-    
+
     // Reset file after batch operation
     setSelectedFile(null);
     setDetectedDataType(null);
-    const fileInput = document.getElementById("jsonFileInput") as HTMLInputElement | null;
-    if (fileInput) fileInput.value = "";
+    const fileInput = document.getElementById('jsonFileInput') as HTMLInputElement | null;
+    if (fileInput) fileInput.value = '';
   };
 
   // Wrapper for batch review that handles closing dialog and resetting state, plus file cleanup
-  const handleBatchReviewDecision = async (decision: 'replace-all' | 'skip-all' | 'review-each') => {
-    const result = await handleBatchReviewDecisionBase(batchReviewEntries, pendingConflicts, decision);
-    
+  const handleBatchReviewDecision = async (
+    decision: 'replace-all' | 'skip-all' | 'review-each'
+  ) => {
+    const result = await handleBatchReviewDecisionBase(
+      batchReviewEntries,
+      pendingConflicts,
+      decision
+    );
+
     // Close batch dialog if no more conflicts
     if (!result.hasMoreConflicts) {
       setShowBatchDialog(false);
@@ -186,8 +198,8 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
       setPendingConflicts([]);
       setSelectedFile(null);
       setDetectedDataType(null);
-      const fileInput = document.getElementById("jsonFileInput") as HTMLInputElement | null;
-      if (fileInput) fileInput.value = "";
+      const fileInput = document.getElementById('jsonFileInput') as HTMLInputElement | null;
+      if (fileInput) fileInput.value = '';
     } else {
       // Move to conflict dialog
       setShowBatchDialog(false);
@@ -199,12 +211,7 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
       <div className="flex flex-col items-center gap-6 max-w-md w-full">
         {/* Navigation Header */}
         <div className="flex items-center justify-between w-full">
-          <Button 
-            onClick={onBack} 
-            variant="ghost" 
-            size="sm"
-            className="flex items-center gap-2"
-          >
+          <Button onClick={onBack} variant="ghost" size="sm" className="flex items-center gap-2">
             ← Back
           </Button>
         </div>
@@ -213,7 +220,8 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
           <CardHeader>
             <CardTitle className="text-center">Upload JSON Data</CardTitle>
             <CardDescription className="text-center">
-              Upload JSON data files to import scouting data, scout profiles, or pit scouting data. The system will automatically detect the data type.
+              Upload JSON data files to import scouting data, scout profiles, or pit scouting data.
+              The system will automatically detect the data type.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -222,22 +230,21 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
               type="file"
               id="jsonFileInput"
               accept=".json"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
               onChange={handleFileSelect}
             />
-            
+
             <Button
               onClick={() => {
-                const input = document.getElementById("jsonFileInput");
+                const input = document.getElementById('jsonFileInput');
                 if (input) input.click();
               }}
               variant="outline"
               className="w-full min-h-16 text-xl whitespace-normal text-wrap py-3 px-4"
             >
-              {selectedFile 
+              {selectedFile
                 ? `Selected: ${selectedFile.name}${detectedDataType ? ` (${detectedDataType === 'scouting' ? 'Scouting Data' : detectedDataType === 'scoutProfiles' ? 'Scout Profiles' : detectedDataType === 'pitScouting' ? 'Pit Scouting Data' : detectedDataType === 'pitScoutingImagesOnly' ? 'Pit Scouting Images Only' : 'Match Schedule'})` : ''}`
-                : "Select JSON Data File"
-              }
+                : 'Select JSON Data File'}
             </Button>
 
             {/* Upload Options */}
@@ -248,60 +255,78 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
                   /* Images-only upload doesn't need mode selection */
                   <div className="space-y-3">
                     <Button
-                      onClick={() => handleUpload("smart-merge")}
+                      onClick={() => handleUpload('smart-merge')}
                       className="w-full h-16 text-xl bg-green-500 hover:bg-green-600 text-white"
                     >
                       📷 Update Existing Teams with Images
                     </Button>
-                    <p><strong>Image Merge</strong>: Add images to existing pit scouting entries for matching teams and events</p>
+                    <p>
+                      <strong>Image Merge</strong>: Add images to existing pit scouting entries for
+                      matching teams and events
+                    </p>
                     <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded border">
-                      <strong>Note:</strong> Images can only be added to teams that already have pit scouting entries. Import pit scouting text data first via QR codes or JSON, then add images.
+                      <strong>Note:</strong> Images can only be added to teams that already have pit
+                      scouting entries. Import pit scouting text data first via QR codes or JSON,
+                      then add images.
                     </div>
                   </div>
                 ) : detectedDataType === 'matchSchedule' ? (
                   <div className="space-y-3">
                     <Button
-                      onClick={() => handleUpload("overwrite")}
+                      onClick={() => handleUpload('overwrite')}
                       disabled={isProcessing}
                       className="w-full h-16 text-xl bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isProcessing ? '⏳ Processing...' : '📅 Replace Match Schedule'}
                     </Button>
-                    <p><strong>Replace Match Schedule</strong>: Overwrites all existing local match schedule data with the uploaded file.</p>
+                    <p>
+                      <strong>Replace Match Schedule</strong>: Overwrites all existing local match
+                      schedule data with the uploaded file.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     <Button
-                      onClick={() => handleUpload("smart-merge")}
+                      onClick={() => handleUpload('smart-merge')}
                       disabled={isProcessing}
                       className="w-full h-16 text-xl bg-green-500 hover:bg-green-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isProcessing ? '⏳ Processing...' : '🧠 Smart Merge (Recommended)'}
                     </Button>
-                     <p><strong>Smart Merge</strong>: Intelligently detect conflicts. Auto-add new entries, auto-replace corrected entries, prompt for decisions on conflicting uncorrected entries.</p>
+                    <p>
+                      <strong>Smart Merge</strong>: Intelligently detect conflicts. Auto-add new
+                      entries, auto-replace corrected entries, prompt for decisions on conflicting
+                      uncorrected entries.
+                    </p>
                     <div className="flex items-center gap-4">
                       <Separator className="flex-1" />
                       <span className="text-sm text-muted-foreground">OR</span>
                       <Separator className="flex-1" />
                     </div>
-                    
+
                     <Button
-                      onClick={() => handleUpload("append")}
+                      onClick={() => handleUpload('append')}
                       disabled={isProcessing}
                       className="w-full h-16 text-xl bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       📤 Force Append
                     </Button>
-                     <p className="pb-4"><strong>Force Append</strong>: Upload all entries without conflict prompts. Matching entries (same match/team) will be replaced.</p>
+                    <p className="pb-4">
+                      <strong>Force Append</strong>: Upload all entries without conflict prompts.
+                      Matching entries (same match/team) will be replaced.
+                    </p>
                     <Button
-                      onClick={() => handleUpload("overwrite")}
+                      onClick={() => handleUpload('overwrite')}
                       disabled={isProcessing}
                       variant="destructive"
                       className="w-full h-16 text-xl text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🔄 Replace All Data
                     </Button>
-                    <p><strong>Replace All</strong>: Delete all existing data and replace with uploaded data</p>
+                    <p>
+                      <strong>Replace All</strong>: Delete all existing data and replace with
+                      uploaded data
+                    </p>
                   </div>
                 )}
               </>
@@ -309,13 +334,13 @@ const JSONUploader: React.FC<JSONUploaderProps> = ({ onBack }) => {
           </CardContent>
         </Card>
       </div>
-      
+
       <BatchConflictDialog
         isOpen={showBatchDialog}
         entries={batchReviewEntries}
         onResolve={handleBatchReviewDecision}
       />
-      
+
       <ConflictResolutionDialog
         open={showConflictDialog}
         onOpenChange={setShowConflictDialog}

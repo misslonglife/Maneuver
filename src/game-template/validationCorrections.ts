@@ -51,7 +51,11 @@ export interface ClimbCorrectionPreview {
   candidates: ClimbCorrectionCandidate[];
 }
 
-const ENDGAME_ROBOT_FIELDS = ['endGameTowerRobot1', 'endGameTowerRobot2', 'endGameTowerRobot3'] as const;
+const ENDGAME_ROBOT_FIELDS = [
+  'endGameTowerRobot1',
+  'endGameTowerRobot2',
+  'endGameTowerRobot3',
+] as const;
 const AUTO_ROBOT_FIELDS = ['autoTowerRobot1', 'autoTowerRobot2', 'autoTowerRobot3'] as const;
 
 function parseTBAClimbOutcome(rawStatus: unknown): ParsedClimbOutcome | null {
@@ -99,26 +103,28 @@ function extractCurrentPhaseClimbOutcome(
   const phaseData = (gameData[phase] ?? {}) as Record<string, unknown>;
 
   if (phase === 'auto') {
-    const level = phaseData.autoClimbL3 === true
-      ? 3
-      : phaseData.autoClimbL2 === true
-        ? 2
-        : phaseData.autoClimbL1 === true
-          ? 1
-          : null;
+    const level =
+      phaseData.autoClimbL3 === true
+        ? 3
+        : phaseData.autoClimbL2 === true
+          ? 2
+          : phaseData.autoClimbL1 === true
+            ? 1
+            : null;
 
     return { level, failed: false };
   }
 
   const endgame = (gameData.endgame ?? {}) as Record<string, unknown>;
 
-  const level = endgame.climbL3 === true
-    ? 3
-    : endgame.climbL2 === true
-      ? 2
-      : endgame.climbL1 === true
-        ? 1
-        : null;
+  const level =
+    endgame.climbL3 === true
+      ? 3
+      : endgame.climbL2 === true
+        ? 2
+        : endgame.climbL1 === true
+          ? 1
+          : null;
 
   const failed = endgame.climbFailed === true;
 
@@ -180,8 +186,8 @@ function areCombinedClimbStatesEquivalent(
   expected: CombinedClimbState
 ): boolean {
   return (
-    arePhaseOutcomesEquivalent(current.auto, expected.auto)
-    && arePhaseOutcomesEquivalent(current.endgame, expected.endgame)
+    arePhaseOutcomesEquivalent(current.auto, expected.auto) &&
+    arePhaseOutcomesEquivalent(current.endgame, expected.endgame)
   );
 }
 
@@ -307,14 +313,20 @@ function analyzeClimbCorrectionsFromEntries(
     }
 
     for (const alliance of ['red', 'blue'] as const) {
-      const allianceBreakdown = (match.score_breakdown as Record<string, unknown>)[alliance] as Record<string, unknown> | undefined;
+      const allianceBreakdown = (match.score_breakdown as Record<string, unknown>)[alliance] as
+        | Record<string, unknown>
+        | undefined;
       const allianceTeams = match.alliances[alliance].team_keys;
 
       if (!allianceBreakdown || allianceTeams.length === 0) {
         continue;
       }
 
-      for (let stationIndex = 0; stationIndex < allianceTeams.length && stationIndex < ENDGAME_ROBOT_FIELDS.length; stationIndex += 1) {
+      for (
+        let stationIndex = 0;
+        stationIndex < allianceTeams.length && stationIndex < ENDGAME_ROBOT_FIELDS.length;
+        stationIndex += 1
+      ) {
         const teamKey = allianceTeams[stationIndex];
         if (!teamKey) {
           continue;
@@ -341,7 +353,13 @@ function analyzeClimbCorrectionsFromEntries(
           continue;
         }
 
-        const entry = findScoutingEntry(entriesByKey, match.key, match.match_number, teamNumber, alliance);
+        const entry = findScoutingEntry(
+          entriesByKey,
+          match.key,
+          match.match_number,
+          teamNumber,
+          alliance
+        );
         if (!entry) {
           summary.skippedMissingEntries += 1;
           continue;
@@ -360,7 +378,10 @@ function analyzeClimbCorrectionsFromEntries(
 
         const updatedGameData = applyCombinedClimbStateToGameData(gameData, expectedCombined);
 
-        if (parsedAutoOutcome && !arePhaseOutcomesEquivalent(currentCombined.auto, expectedCombined.auto)) {
+        if (
+          parsedAutoOutcome &&
+          !arePhaseOutcomesEquivalent(currentCombined.auto, expectedCombined.auto)
+        ) {
           internalCandidates.push({
             entry,
             updatedGameData,
@@ -386,7 +407,10 @@ function analyzeClimbCorrectionsFromEntries(
           });
         }
 
-        if (parsedEndgameOutcome && !arePhaseOutcomesEquivalent(currentCombined.endgame, expectedCombined.endgame)) {
+        if (
+          parsedEndgameOutcome &&
+          !arePhaseOutcomesEquivalent(currentCombined.endgame, expectedCombined.endgame)
+        ) {
           internalCandidates.push({
             entry,
             updatedGameData,

@@ -29,17 +29,17 @@ export const ScoutLegendSection: React.FC<ScoutLegendSectionProps> = ({
   onConfirmAssignments,
   hasAssignments,
   showMobileActions = false,
-  helpText
+  helpText,
 }) => {
   return (
     <div className="mb-4 p-4 rounded-lg border">
       <div className="flex items-center justify-between mb-3">
         <div className="text-sm font-medium">
-          {assignmentMode === 'manual' && !assignmentsConfirmed ? 'Scouts (Click to Select):' : 'Assignment Legend:'}
+          {assignmentMode === 'manual' && !assignmentsConfirmed
+            ? 'Scouts (Click to Select):'
+            : 'Assignment Legend:'}
         </div>
-        <div className="text-xs text-muted-foreground">
-          {scoutsList.length} scouts
-        </div>
+        <div className="text-xs text-muted-foreground">{scoutsList.length} scouts</div>
       </div>
 
       <div className="mb-3">
@@ -58,7 +58,7 @@ export const ScoutLegendSection: React.FC<ScoutLegendSectionProps> = ({
       {hasAssignments && (
         <div className="mt-3 p-3">
           <AssignmentProgressBar assignments={assignments} />
-          
+
           {/* Mobile Actions */}
           {showMobileActions && (
             <div className="md:hidden mt-3">
@@ -74,12 +74,8 @@ export const ScoutLegendSection: React.FC<ScoutLegendSectionProps> = ({
           )}
         </div>
       )}
-      
-      {helpText && (
-        <div className="text-xs text-muted-foreground pt-4">
-          {helpText}
-        </div>
-      )}
+
+      {helpText && <div className="text-xs text-muted-foreground pt-4">{helpText}</div>}
     </div>
   );
 };

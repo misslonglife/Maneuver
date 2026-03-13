@@ -14,7 +14,11 @@ import { AlertTriangle, RotateCcw, Save } from 'lucide-react';
 import { ThresholdInputs } from './ThresholdInputs';
 import { CategoryThresholdsTab } from './CategoryThresholdsTab';
 import { getCategories } from './validationCategories';
-import type { ValidationConfig, ValidationThresholds, DataCategory } from '@/core/lib/matchValidationTypes';
+import type {
+  ValidationConfig,
+  ValidationThresholds,
+  DataCategory,
+} from '@/core/lib/matchValidationTypes';
 import { DEFAULT_VALIDATION_CONFIG } from '@/core/lib/matchValidationTypes';
 
 interface ValidationSettingsSheetProps {
@@ -48,13 +52,16 @@ export const ValidationSettingsSheet: React.FC<ValidationSettingsSheetProps> = (
     setHasChanges(true);
   };
 
-  const updateCategoryThresholds = (category: DataCategory, thresholds: ValidationThresholds | undefined) => {
+  const updateCategoryThresholds = (
+    category: DataCategory,
+    thresholds: ValidationThresholds | undefined
+  ) => {
     setConfig(prev => ({
       ...prev,
       categoryThresholds: {
         ...prev.categoryThresholds,
-        [category]: thresholds
-      }
+        [category]: thresholds,
+      },
     }));
     setHasChanges(true);
   };
@@ -95,22 +102,23 @@ export const ValidationSettingsSheet: React.FC<ValidationSettingsSheetProps> = (
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        handleCancel();
-      }
-    }}>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-2xl overflow-y-auto p-4 flex flex-col"
-      >
+    <Sheet
+      open={isOpen}
+      onOpenChange={open => {
+        if (!open) {
+          handleCancel();
+        }
+      }}
+    >
+      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto p-4 flex flex-col">
         <SheetHeader className="pt-4 px-0 pb-0">
           <SheetTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
             Validation Settings
           </SheetTitle>
           <SheetDescription>
-            Customize thresholds globally or per-category. Category overrides take precedence over defaults.
+            Customize thresholds globally or per-category. Category overrides take precedence over
+            defaults.
           </SheetDescription>
         </SheetHeader>
 
@@ -141,14 +149,20 @@ export const ValidationSettingsSheet: React.FC<ValidationSettingsSheetProps> = (
                 <CardTitle className="text-sm">How It Works</CardTitle>
               </CardHeader>
               <CardContent className="text-xs text-muted-foreground space-y-2">
-                <p><strong>Absolute thresholds checked first:</strong></p>
+                <p>
+                  <strong>Absolute thresholds checked first:</strong>
+                </p>
                 <ul className="list-disc list-inside ml-2 space-y-1">
                   <li>If difference ≥ critical absolute → Critical</li>
                   <li>If difference ≥ warning absolute → Warning</li>
                   <li>If difference &lt; warning absolute → Check percentage</li>
                 </ul>
-                <p className="mt-2"><strong>Prevents false positives:</strong></p>
-                <p className="ml-2">Small counts like "0 vs 1" won't be critical despite 100% difference</p>
+                <p className="mt-2">
+                  <strong>Prevents false positives:</strong>
+                </p>
+                <p className="ml-2">
+                  Small counts like "0 vs 1" won't be critical despite 100% difference
+                </p>
               </CardContent>
             </Card>
           </TabsContent>

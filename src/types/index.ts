@@ -1,7 +1,7 @@
 /**
  * Core type exports
  * All year-agnostic types that define the framework's data structures.
- * 
+ *
  * SINGLE SOURCE OF TRUTH: All types are defined in src/core/types/
  * This barrel file provides convenient imports via @/types
  */
@@ -95,10 +95,7 @@ export type {
 } from './validation';
 
 // TeamStats types (from core/types/team-stats.ts - SINGLE SOURCE)
-export type {
-  TeamStats,
-  TeamStatsWithId,
-} from '../core/types/team-stats';
+export type { TeamStats, TeamStatsWithId } from '../core/types/team-stats';
 
 // Team stats display configuration types (from team-stats-display.ts)
 export type {

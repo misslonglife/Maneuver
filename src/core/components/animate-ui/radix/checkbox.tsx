@@ -11,7 +11,7 @@ type CheckboxProps = React.ComponentProps<typeof CheckboxPrimitive.Root> &
 
 function Checkbox({ className, onCheckedChange, ...props }: CheckboxProps) {
   const [isChecked, setIsChecked] = React.useState(
-    props?.checked ?? props?.defaultChecked ?? false,
+    props?.checked ?? props?.defaultChecked ?? false
   );
 
   React.useEffect(() => {
@@ -23,20 +23,16 @@ function Checkbox({ className, onCheckedChange, ...props }: CheckboxProps) {
       setIsChecked(checked);
       onCheckedChange?.(checked);
     },
-    [onCheckedChange],
+    [onCheckedChange]
   );
 
   return (
-    <CheckboxPrimitive.Root
-      {...props}
-      onCheckedChange={handleCheckedChange}
-      asChild
-    >
+    <CheckboxPrimitive.Root {...props} onCheckedChange={handleCheckedChange} asChild>
       <motion.button
         data-slot="checkbox"
         className={cn(
           'peer size-5 flex items-center justify-center shrink-0 rounded-sm bg-input transition-colors duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
-          className,
+          className
         )}
         whileTap={{ scale: 0.95 }}
         whileHover={{ scale: 1.05 }}

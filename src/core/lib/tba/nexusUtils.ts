@@ -90,7 +90,10 @@ const makeNexusRequest = async (endpoint: string, apiKey: string): Promise<unkno
  * Get complete pit data for an event (addresses + map)
  * Returns both pit addresses and map data together
  */
-export const getNexusPitData = async (eventKey: string, apiKey: string): Promise<{
+export const getNexusPitData = async (
+  eventKey: string,
+  apiKey: string
+): Promise<{
   addresses: NexusPitAddresses | null;
   map: NexusPitMap | null;
 }> => {
@@ -98,7 +101,7 @@ export const getNexusPitData = async (eventKey: string, apiKey: string): Promise
     // Fetch both pit addresses and map data in parallel
     const [addresses, map] = await Promise.allSettled([
       makeNexusRequest(`/event/${eventKey}/pits`, apiKey) as Promise<NexusPitAddresses>,
-      makeNexusRequest(`/event/${eventKey}/map`, apiKey) as Promise<NexusPitMap>
+      makeNexusRequest(`/event/${eventKey}/map`, apiKey) as Promise<NexusPitMap>,
     ]);
 
     // Debug logging
@@ -106,13 +109,13 @@ export const getNexusPitData = async (eventKey: string, apiKey: string): Promise
       addresses: {
         status: addresses.status,
         value: addresses.status === 'fulfilled' ? addresses.value : null,
-        reason: addresses.status === 'rejected' ? addresses.reason : null
+        reason: addresses.status === 'rejected' ? addresses.reason : null,
       },
       map: {
         status: map.status,
         value: map.status === 'fulfilled' ? map.value : null,
-        reason: map.status === 'rejected' ? map.reason : null
-      }
+        reason: map.status === 'rejected' ? map.reason : null,
+      },
     });
 
     return {
@@ -130,7 +133,10 @@ export const getNexusPitData = async (eventKey: string, apiKey: string): Promise
  * Get pit addresses for an event
  * Returns mapping of team number to pit address (e.g., "A1", "B12")
  */
-export const getNexusPitAddresses = async (eventKey: string, apiKey: string): Promise<NexusPitAddresses> => {
+export const getNexusPitAddresses = async (
+  eventKey: string,
+  apiKey: string
+): Promise<NexusPitAddresses> => {
   return makeNexusRequest(`/event/${eventKey}/pits`, apiKey) as Promise<NexusPitAddresses>;
 };
 
@@ -146,7 +152,10 @@ export const getNexusPitMap = async (eventKey: string, apiKey: string): Promise<
  * Get live event status
  * Returns current event status including match timing and queuing info
  */
-export const getNexusEventStatus = async (eventKey: string, apiKey: string): Promise<NexusEventStatus> => {
+export const getNexusEventStatus = async (
+  eventKey: string,
+  apiKey: string
+): Promise<NexusEventStatus> => {
   return makeNexusRequest(`/event/${eventKey}`, apiKey) as Promise<NexusEventStatus>;
 };
 
@@ -161,29 +170,33 @@ export const getNexusEvents = async (apiKey: string): Promise<Record<string, unk
 // Local storage utilities for Nexus data
 const NEXUS_STORAGE_PREFIX = 'nexus_';
 
-export const storePitData = (eventKey: string, addresses: NexusPitAddresses | null, pitMap: NexusPitMap | null): void => {
+export const storePitData = (
+  eventKey: string,
+  addresses: NexusPitAddresses | null,
+  pitMap: NexusPitMap | null
+): void => {
   const addressesKey = `${NEXUS_STORAGE_PREFIX}pit_addresses_${eventKey}`;
   const mapKey = `${NEXUS_STORAGE_PREFIX}pit_map_${eventKey}`;
-  
+
   try {
     if (addresses) {
       const addressData = {
         addresses,
         timestamp: Date.now(),
-        eventKey
+        eventKey,
       };
       localStorage.setItem(addressesKey, JSON.stringify(addressData));
     }
-    
+
     if (pitMap) {
       const mapData = {
         pitMap,
         timestamp: Date.now(),
-        eventKey
+        eventKey,
       };
       localStorage.setItem(mapKey, JSON.stringify(mapData));
     }
-    
+
     console.log(`Stored pit data for event ${eventKey}`);
   } catch (error) {
     console.error('Failed to store pit data in localStorage:', error);
@@ -191,13 +204,15 @@ export const storePitData = (eventKey: string, addresses: NexusPitAddresses | nu
   }
 };
 
-export const getStoredPitData = (eventKey: string): {
+export const getStoredPitData = (
+  eventKey: string
+): {
   addresses: NexusPitAddresses | null;
   map: NexusPitMap | null;
 } => {
   return {
     addresses: getStoredPitAddresses(eventKey),
-    map: getStoredPitMap(eventKey)
+    map: getStoredPitMap(eventKey),
   };
 };
 
@@ -206,9 +221,9 @@ export const storePitAddresses = (eventKey: string, addresses: NexusPitAddresses
   const data = {
     addresses,
     timestamp: Date.now(),
-    eventKey
+    eventKey,
   };
-  
+
   try {
     localStorage.setItem(storageKey, JSON.stringify(data));
     console.log(`Stored pit addresses for event ${eventKey}`);
@@ -220,11 +235,11 @@ export const storePitAddresses = (eventKey: string, addresses: NexusPitAddresses
 
 export const getStoredPitAddresses = (eventKey: string): NexusPitAddresses | null => {
   const storageKey = `${NEXUS_STORAGE_PREFIX}pit_addresses_${eventKey}`;
-  
+
   try {
     const stored = localStorage.getItem(storageKey);
     if (!stored) return null;
-    
+
     const data = JSON.parse(stored);
     return data.addresses;
   } catch (error) {
@@ -238,9 +253,9 @@ export const storePitMap = (eventKey: string, pitMap: NexusPitMap): void => {
   const data = {
     pitMap,
     timestamp: Date.now(),
-    eventKey
+    eventKey,
   };
-  
+
   try {
     localStorage.setItem(storageKey, JSON.stringify(data));
     console.log(`Stored pit map for event ${eventKey}`);
@@ -252,11 +267,11 @@ export const storePitMap = (eventKey: string, pitMap: NexusPitMap): void => {
 
 export const getStoredPitMap = (eventKey: string): NexusPitMap | null => {
   const storageKey = `${NEXUS_STORAGE_PREFIX}pit_map_${eventKey}`;
-  
+
   try {
     const stored = localStorage.getItem(storageKey);
     if (!stored) return null;
-    
+
     const data = JSON.parse(stored);
     return data.pitMap;
   } catch (error) {
@@ -269,11 +284,11 @@ export const clearStoredNexusData = (eventKey: string): void => {
   const addressesKey = `${NEXUS_STORAGE_PREFIX}pit_addresses_${eventKey}`;
   const mapKey = `${NEXUS_STORAGE_PREFIX}pit_map_${eventKey}`;
   const teamsKey = `nexus_event_teams_${eventKey}`;
-  
+
   localStorage.removeItem(addressesKey);
   localStorage.removeItem(mapKey);
   localStorage.removeItem(teamsKey);
-  
+
   console.log(`Cleared Nexus data for event ${eventKey}`);
 };
 
@@ -281,22 +296,27 @@ export const clearStoredNexusData = (eventKey: string): void => {
  * Extract team numbers from Nexus pit addresses and store them in the same format as TBA teams
  * This allows using Nexus data for pit assignments without needing a separate TBA API call
  */
-export const extractAndStoreTeamsFromPitAddresses = (eventKey: string, addresses: NexusPitAddresses): string[] => {
+export const extractAndStoreTeamsFromPitAddresses = (
+  eventKey: string,
+  addresses: NexusPitAddresses
+): string[] => {
   // Extract team numbers from pit addresses keys
   const teamNumbers = Object.keys(addresses).map(teamNum => `frc${teamNum}`);
-  
+
   // Store in the same format as TBA teams for compatibility with existing pit assignment system
   const storageKey = `nexus_event_teams_${eventKey}`;
   const teamData = {
     teams: teamNumbers,
     timestamp: Date.now(),
     eventKey,
-    source: 'nexus_pit_addresses'
+    source: 'nexus_pit_addresses',
   };
-  
+
   try {
     localStorage.setItem(storageKey, JSON.stringify(teamData));
-    console.log(`Stored ${teamNumbers.length} teams from Nexus pit addresses for event ${eventKey}`);
+    console.log(
+      `Stored ${teamNumbers.length} teams from Nexus pit addresses for event ${eventKey}`
+    );
     return teamNumbers;
   } catch (error) {
     console.error('Failed to store Nexus teams in localStorage:', error);
@@ -309,11 +329,11 @@ export const extractAndStoreTeamsFromPitAddresses = (eventKey: string, addresses
  */
 export const getStoredNexusTeams = (eventKey: string): string[] | null => {
   const storageKey = `nexus_event_teams_${eventKey}`;
-  
+
   try {
     const stored = localStorage.getItem(storageKey);
     if (!stored) return null;
-    
+
     const data = JSON.parse(stored);
     return data.teams || null;
   } catch (error) {

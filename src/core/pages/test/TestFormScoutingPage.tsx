@@ -1,15 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/core/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
 import { Button } from '@/core/components/ui/button';
 import { createEmptyMetrics } from '@/core/lib/experiment/metrics';
 import { ExperimentMetricsEditor } from './components/ExperimentMetricsEditor';
 import { getExperimentSession, saveExperimentResponse } from '@/core/db/experimentDatabase';
 import type { ExperimentSession } from '@/core/lib/experiment/types';
 
-const generateId = () => (typeof crypto !== 'undefined' && 'randomUUID' in crypto
-  ? crypto.randomUUID()
-  : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+const generateId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const TestFormScoutingPage = () => {
   const navigate = useNavigate();
@@ -28,7 +35,7 @@ const TestFormScoutingPage = () => {
       return;
     }
 
-    getExperimentSession(sessionId).then((result) => {
+    getExperimentSession(sessionId).then(result => {
       if (!result) {
         navigate('/test');
         return;
@@ -76,7 +83,8 @@ const TestFormScoutingPage = () => {
         <CardHeader>
           <CardTitle>Form Interface (Block {block})</CardTitle>
           <CardDescription>
-            Participant {session.participantCode} • Clip {clipId}. Paths and advanced timers are intentionally disabled.
+            Participant {session.participantCode} • Clip {clipId}. Paths and advanced timers are
+            intentionally disabled.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -84,7 +92,9 @@ const TestFormScoutingPage = () => {
             Back
           </Button>
           <ExperimentMetricsEditor metrics={metrics} onChange={setMetrics} />
-          <Button className="p-2" onClick={handleSubmit}>Submit Form Block</Button>
+          <Button className="p-2" onClick={handleSubmit}>
+            Submit Form Block
+          </Button>
         </CardContent>
       </Card>
     </div>

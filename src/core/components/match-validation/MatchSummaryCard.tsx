@@ -34,15 +34,21 @@ export const MatchSummaryCard: React.FC<MatchSummaryCardProps> = ({ match }) => 
           </div>
           <div>
             <div className="text-sm text-muted-foreground">Confidence</div>
-            <Badge variant={
-              match.confidence === 'high' ? 'default' :
-              match.confidence === 'medium' ? 'secondary' : 'destructive'
-            } className="text-lg">
+            <Badge
+              variant={
+                match.confidence === 'high'
+                  ? 'default'
+                  : match.confidence === 'medium'
+                    ? 'secondary'
+                    : 'destructive'
+              }
+              className="text-lg"
+            >
               {match.confidence.toUpperCase()}
             </Badge>
           </div>
         </div>
-        
+
         {match.flaggedForReview && (
           <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900 rounded-lg">
             <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-300">
@@ -51,7 +57,7 @@ export const MatchSummaryCard: React.FC<MatchSummaryCardProps> = ({ match }) => 
             </div>
           </div>
         )}
-        
+
         {match.requiresReScout && (
           <div className="mt-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg">
             <div className="flex items-center gap-2 text-red-800 dark:text-red-300">

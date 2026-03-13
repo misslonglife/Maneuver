@@ -12,19 +12,21 @@ export function ScrollToTop() {
   useEffect(() => {
     // Scroll the main window to top
     window.scrollTo(0, 0);
-    
+
     // Also scroll any potential scrollable containers to top
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-    
+
     // Find any elements with scroll and reset them
-    const scrollableElements = document.querySelectorAll('[data-scrollable], .overflow-auto, .overflow-y-auto, .overflow-scroll, .overflow-y-scroll');
+    const scrollableElements = document.querySelectorAll(
+      '[data-scrollable], .overflow-auto, .overflow-y-auto, .overflow-scroll, .overflow-y-scroll'
+    );
     scrollableElements.forEach(element => {
       if (element instanceof HTMLElement) {
         element.scrollTop = 0;
       }
     });
-    
+
     // Try to scroll the main content area
     const mainContent = document.querySelector('main, [role="main"], .main-content');
     if (mainContent instanceof HTMLElement) {

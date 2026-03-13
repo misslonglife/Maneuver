@@ -1,11 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 // import type { PitScoutingEntryBase, DrivetrainType, ProgrammingLanguage } from "@/types/database";
-import type { PitScoutingEntryBase} from "@/types/database";
-import {
-  savePitScoutingEntry,
-  loadPitScoutingByTeamAndEvent,
-} from "@/core/db/database";
-import { toast } from "sonner";
+import type { PitScoutingEntryBase } from '@/types/database';
+import { savePitScoutingEntry, loadPitScoutingByTeamAndEvent } from '@/core/db/database';
+import { toast } from 'sonner';
 
 interface NotesObject {
   general?: string;
@@ -16,7 +13,7 @@ interface NotesObject {
 }
 
 interface PitScoutingFormState {
-  teamNumber: number | "";
+  teamNumber: number | '';
   eventKey: string;
   scoutName: string;
   robotPhoto?: string;
@@ -32,7 +29,7 @@ interface UsePitScoutingFormReturn {
   formState: PitScoutingFormState;
 
   // Universal field setters
-  setTeamNumber: (value: number | "") => void;
+  setTeamNumber: (value: number | '') => void;
   setEventKey: (value: string) => void;
   setScoutName: (value: string) => void;
   setRobotPhoto: (value: string | undefined) => void;
@@ -57,9 +54,9 @@ interface UsePitScoutingFormReturn {
 
 export function usePitScoutingForm(): UsePitScoutingFormReturn {
   const [formState, setFormState] = useState<PitScoutingFormState>({
-    teamNumber: "",
-    eventKey: localStorage.getItem("eventKey") || "",
-    scoutName: localStorage.getItem("currentScout") || "",
+    teamNumber: '',
+    eventKey: localStorage.getItem('eventKey') || '',
+    scoutName: localStorage.getItem('currentScout') || '',
     robotPhoto: undefined,
     // weight: undefined,
     // drivetrain: undefined,
@@ -73,8 +70,8 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
 
   // Manual load function (opt-in instead of automatic)
   const loadExistingEntry = useCallback(async () => {
-    if (!formState.teamNumber || typeof formState.teamNumber !== "number" || !formState.eventKey) {
-      toast.error("Please enter a team number and event first");
+    if (!formState.teamNumber || typeof formState.teamNumber !== 'number' || !formState.eventKey) {
+      toast.error('Please enter a team number and event first');
       return;
     }
 
@@ -87,7 +84,7 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
 
       if (existing) {
         // Pre-fill form with existing data
-        setFormState((prev) => ({
+        setFormState(prev => ({
           ...prev,
           scoutName: existing.scoutName,
           robotPhoto: existing.robotPhoto,
@@ -98,33 +95,33 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
           gameData: existing.gameData,
         }));
         setExistingEntryId(existing.id);
-        toast.success("Loaded existing pit scouting data for this team");
+        toast.success('Loaded existing pit scouting data for this team');
       } else {
-        toast.info("No existing data found for this team at this event");
+        toast.info('No existing data found for this team at this event');
       }
     } catch (error) {
-      console.error("Error loading existing pit scouting entry:", error);
-      toast.error("Failed to load existing data");
+      console.error('Error loading existing pit scouting entry:', error);
+      toast.error('Failed to load existing data');
     } finally {
       setIsLoading(false);
     }
   }, [formState.teamNumber, formState.eventKey]);
 
   // Universal field setters
-  const setTeamNumber = useCallback((value: number | "") => {
-    setFormState((prev) => ({ ...prev, teamNumber: value }));
+  const setTeamNumber = useCallback((value: number | '') => {
+    setFormState(prev => ({ ...prev, teamNumber: value }));
   }, []);
 
   const setEventKey = useCallback((value: string) => {
-    setFormState((prev) => ({ ...prev, eventKey: value }));
+    setFormState(prev => ({ ...prev, eventKey: value }));
   }, []);
 
   const setScoutName = useCallback((value: string) => {
-    setFormState((prev) => ({ ...prev, scoutName: value }));
+    setFormState(prev => ({ ...prev, scoutName: value }));
   }, []);
 
   const setRobotPhoto = useCallback((value: string | undefined) => {
-    setFormState((prev) => ({ ...prev, robotPhoto: value }));
+    setFormState(prev => ({ ...prev, robotPhoto: value }));
   }, []);
 
   // const setWeight = useCallback((value: number | undefined) => {
@@ -143,27 +140,27 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
   // );
 
   const setNotes = useCallback((value: NotesObject | undefined) => {
-    setFormState((prev) => ({ ...prev, notes: value }));
+    setFormState(prev => ({ ...prev, notes: value }));
   }, []);
 
   const setGameData = useCallback((data: Record<string, unknown> | undefined) => {
-    setFormState((prev) => ({ ...prev, gameData: data }));
+    setFormState(prev => ({ ...prev, gameData: data }));
   }, []);
 
   // Validation
   const validateForm = useCallback((): boolean => {
-    if (formState.teamNumber === "" || typeof formState.teamNumber !== "number") {
-      toast.error("Team number is required");
+    if (formState.teamNumber === '' || typeof formState.teamNumber !== 'number') {
+      toast.error('Team number is required');
       return false;
     }
 
     if (!formState.eventKey.trim()) {
-      toast.error("Event is required");
+      toast.error('Event is required');
       return false;
     }
 
     if (!formState.scoutName.trim()) {
-      toast.error("Scout name is required");
+      toast.error('Scout name is required');
       return false;
     }
 
@@ -179,7 +176,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
     setIsLoading(true);
     try {
       // Generate ID if new entry, otherwise use existing ID
-      const id = existingEntryId || `pit-${formState.teamNumber}-${formState.eventKey}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const id =
+        existingEntryId ||
+        `pit-${formState.teamNumber}-${formState.eventKey}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const entry: PitScoutingEntryBase = {
         id,
@@ -199,14 +198,14 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
 
       toast.success(
         existingEntryId
-          ? "Pit scouting data updated successfully!"
-          : "Pit scouting data saved successfully!"
+          ? 'Pit scouting data updated successfully!'
+          : 'Pit scouting data saved successfully!'
       );
 
       return true;
     } catch (error) {
-      console.error("Error saving pit scouting entry:", error);
-      toast.error("Failed to save pit scouting data");
+      console.error('Error saving pit scouting entry:', error);
+      toast.error('Failed to save pit scouting data');
       return false;
     } finally {
       setIsLoading(false);
@@ -216,9 +215,9 @@ export function usePitScoutingForm(): UsePitScoutingFormReturn {
   // Reset form
   const resetForm = useCallback(() => {
     setFormState({
-      teamNumber: "",
-      eventKey: localStorage.getItem("eventKey") || "",
-      scoutName: localStorage.getItem("currentScout") || "",
+      teamNumber: '',
+      eventKey: localStorage.getItem('eventKey') || '',
+      scoutName: localStorage.getItem('currentScout') || '',
       robotPhoto: undefined,
       // weight: undefined,
       // drivetrain: undefined,

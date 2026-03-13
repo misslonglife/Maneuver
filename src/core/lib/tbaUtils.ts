@@ -104,7 +104,7 @@ const makeTBARequest = async (endpoint: string): Promise<unknown> => {
   const response = await fetch(`${TBA_BASE_URL}${endpoint}`, {
     headers: {
       'X-TBA-Auth-Key': TBA_AUTH_KEY,
-      'Accept': 'application/json',
+      Accept: 'application/json',
     },
   });
 
@@ -124,11 +124,12 @@ export const getEventsForYear = async (year: number): Promise<TBAEvent[]> => {
 export const searchEvents = async (year: number, query: string): Promise<TBAEvent[]> => {
   const events = await getEventsForYear(year);
   const searchTerm = query.toLowerCase();
-  
-  return events.filter(event => 
-    event.name.toLowerCase().includes(searchTerm) ||
-    event.event_code.toLowerCase().includes(searchTerm) ||
-    event.short_name.toLowerCase().includes(searchTerm)
+
+  return events.filter(
+    event =>
+      event.name.toLowerCase().includes(searchTerm) ||
+      event.event_code.toLowerCase().includes(searchTerm) ||
+      event.short_name.toLowerCase().includes(searchTerm)
   );
 };
 
@@ -157,7 +158,9 @@ export const getPlayoffMatches = async (eventKey: string): Promise<TBAMatch[]> =
 };
 
 // Get match results with winner determination
-export const getMatchResult = (match: TBAMatch): {
+export const getMatchResult = (
+  match: TBAMatch
+): {
   redScore: number;
   blueScore: number;
   winner: 'red' | 'blue' | 'tie';
@@ -165,7 +168,7 @@ export const getMatchResult = (match: TBAMatch): {
 } => {
   const redScore = match.alliances.red.score;
   const blueScore = match.alliances.blue.score;
-  
+
   let winner: 'red' | 'blue' | 'tie';
   if (redScore > blueScore) {
     winner = 'red';
@@ -179,17 +182,23 @@ export const getMatchResult = (match: TBAMatch): {
     redScore,
     blueScore,
     winner,
-    winningAlliance: match.winning_alliance || (winner === 'tie' ? '' : winner)
+    winningAlliance: match.winning_alliance || (winner === 'tie' ? '' : winner),
   };
 };
 
 // Build match key from event key and match number
-export const buildMatchKey = (eventKey: string, matchNumber: number, compLevel: string = 'qm'): string => {
+export const buildMatchKey = (
+  eventKey: string,
+  matchNumber: number,
+  compLevel: string = 'qm'
+): string => {
   return `${eventKey}_${compLevel}${matchNumber}`;
 };
 
 // Parse match number from match key
-export const parseMatchKey = (matchKey: string): {
+export const parseMatchKey = (
+  matchKey: string
+): {
   eventKey: string;
   compLevel: string;
   matchNumber: number;
@@ -201,7 +210,7 @@ export const parseMatchKey = (matchKey: string): {
 
   const eventKey = parts[0];
   const matchPart = parts[1];
-  
+
   // Extract comp level (qm, sf, f, etc.) and match number
   const compLevelMatch = matchPart.match(/^([a-z]+)(\d+)$/);
   if (!compLevelMatch) {
@@ -253,13 +262,13 @@ export const getEvent = async (eventKey: string): Promise<TBAEvent> => {
 // Get teams for an event
 export const getEventTeams = async (eventKey: string, apiKey?: string): Promise<TBATeam[]> => {
   const endpoint = `/event/${eventKey}/teams/keys`;
-  
+
   if (apiKey) {
     // Use provided API key for this request
     const response = await fetch(`${TBA_BASE_URL}${endpoint}`, {
       headers: {
         'X-TBA-Auth-Key': apiKey,
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
     });
 
@@ -267,29 +276,33 @@ export const getEventTeams = async (eventKey: string, apiKey?: string): Promise<
       throw new Error(`TBA API Error: ${response.status} ${response.statusText}`);
     }
 
-    const teamKeys = await response.json() as string[];
+    const teamKeys = (await response.json()) as string[];
     // Convert team keys (e.g., "frc1234") to team objects
-    return teamKeys.map(key => {
-      const teamNumber = parseInt(key.replace('frc', ''));
-      return {
-        key,
-        team_number: teamNumber,
-        nickname: `Team ${teamNumber}`,
-        name: `Team ${teamNumber}`,
-      };
-    }).sort((a, b) => a.team_number - b.team_number);
+    return teamKeys
+      .map(key => {
+        const teamNumber = parseInt(key.replace('frc', ''));
+        return {
+          key,
+          team_number: teamNumber,
+          nickname: `Team ${teamNumber}`,
+          name: `Team ${teamNumber}`,
+        };
+      })
+      .sort((a, b) => a.team_number - b.team_number);
   } else {
-    const teamKeys = await makeTBARequest(endpoint) as string[];
+    const teamKeys = (await makeTBARequest(endpoint)) as string[];
     // Convert team keys (e.g., "frc1234") to team objects
-    return teamKeys.map(key => {
-      const teamNumber = parseInt(key.replace('frc', ''));
-      return {
-        key,
-        team_number: teamNumber,
-        nickname: `Team ${teamNumber}`,
-        name: `Team ${teamNumber}`,
-      };
-    }).sort((a, b) => a.team_number - b.team_number);
+    return teamKeys
+      .map(key => {
+        const teamNumber = parseInt(key.replace('frc', ''));
+        return {
+          key,
+          team_number: teamNumber,
+          nickname: `Team ${teamNumber}`,
+          name: `Team ${teamNumber}`,
+        };
+      })
+      .sort((a, b) => a.team_number - b.team_number);
   }
 };
 
@@ -303,9 +316,9 @@ export const storeEventTeams = (eventKey: string, teams: TBATeam[]): void => {
   const data = {
     teamNumbers,
     timestamp: Date.now(),
-    eventKey
+    eventKey,
   };
-  
+
   try {
     localStorage.setItem(storageKey, JSON.stringify(data));
     console.log(`Stored ${teamNumbers.length} team numbers for event ${eventKey}`);
@@ -317,18 +330,20 @@ export const storeEventTeams = (eventKey: string, teams: TBATeam[]): void => {
 
 export const getStoredEventTeams = (eventKey: string): number[] | null => {
   const storageKey = `${TEAMS_STORAGE_PREFIX}${eventKey}`;
-  
+
   try {
     const stored = localStorage.getItem(storageKey);
     if (!stored) return null;
-    
+
     const data = JSON.parse(stored);
     // Check for both old format (teams) and new format (teamNumbers) for backward compatibility
     if (data.teamNumbers) {
       return data.teamNumbers;
     } else if (data.teams) {
       // Legacy format - extract team numbers from full team objects
-      return data.teams.map((team: TBATeam) => team.team_number).sort((a: number, b: number) => a - b);
+      return data.teams
+        .map((team: TBATeam) => team.team_number)
+        .sort((a: number, b: number) => a - b);
     }
     return null;
   } catch (error) {
@@ -344,7 +359,7 @@ export const clearStoredEventTeams = (eventKey: string): void => {
 
 export const getAllStoredEventTeams = (): { [eventKey: string]: number[] } => {
   const result: { [eventKey: string]: number[] } = {};
-  
+
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key && key.startsWith(TEAMS_STORAGE_PREFIX)) {
@@ -353,13 +368,15 @@ export const getAllStoredEventTeams = (): { [eventKey: string]: number[] } => {
         if (stored) {
           const data = JSON.parse(stored);
           const eventKey = key.replace(TEAMS_STORAGE_PREFIX, '');
-          
+
           // Handle both new format (teamNumbers) and legacy format (teams)
           if (data.teamNumbers) {
             result[eventKey] = data.teamNumbers;
           } else if (data.teams) {
             // Legacy format - extract team numbers
-            result[eventKey] = data.teams.map((team: TBATeam) => team.team_number).sort((a: number, b: number) => a - b);
+            result[eventKey] = data.teams
+              .map((team: TBATeam) => team.team_number)
+              .sort((a: number, b: number) => a - b);
           }
         }
       } catch (error) {
@@ -367,6 +384,6 @@ export const getAllStoredEventTeams = (): { [eventKey: string]: number[] } => {
       }
     }
   }
-  
+
   return result;
 };

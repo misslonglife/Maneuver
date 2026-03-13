@@ -10,10 +10,7 @@ interface TeamBreakdownProps {
   onRescoutTeam: (teamNumber: string, alliance: 'red' | 'blue') => void;
 }
 
-export const TeamBreakdown: React.FC<TeamBreakdownProps> = ({
-  teams,
-  onRescoutTeam,
-}) => {
+export const TeamBreakdown: React.FC<TeamBreakdownProps> = ({ teams, onRescoutTeam }) => {
   if (!teams || teams.length === 0) {
     return null;
   }
@@ -25,11 +22,8 @@ export const TeamBreakdown: React.FC<TeamBreakdownProps> = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {teams.map((team) => (
-            <div
-              key={team.teamNumber}
-              className="border rounded-lg p-4 space-y-3"
-            >
+          {teams.map(team => (
+            <div key={team.teamNumber} className="border rounded-lg p-4 space-y-3">
               {/* Team Header - wraps to 2 lines on mobile */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 {/* Team info */}
@@ -42,23 +36,28 @@ export const TeamBreakdown: React.FC<TeamBreakdownProps> = ({
                   </Badge>
                   <div className="min-w-0">
                     <div className="text-sm font-medium flex items-center gap-2 flex-wrap">
-                      <span className="truncate">{team.hasScoutedData ? team.scoutName : 'No Data'}</span>
+                      <span className="truncate">
+                        {team.hasScoutedData ? team.scoutName : 'No Data'}
+                      </span>
                       {team.isCorrected && (
-                        <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 shrink-0">
+                        <Badge
+                          variant="secondary"
+                          className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 shrink-0"
+                        >
                           Corrected
                         </Badge>
                       )}
                     </div>
                     {team.notes.length > 0 && (
-                      <div className="text-xs text-muted-foreground">
-                        {team.notes.join(', ')}
-                      </div>
+                      <div className="text-xs text-muted-foreground">{team.notes.join(', ')}</div>
                     )}
                     {team.isCorrected && team.correctionCount && team.correctionCount > 0 && (
                       <div className="text-xs text-muted-foreground">
-                        {team.correctionCount} {team.correctionCount === 1 ? 'correction' : 'corrections'}
+                        {team.correctionCount}{' '}
+                        {team.correctionCount === 1 ? 'correction' : 'corrections'}
                         {team.lastCorrectedBy && ` by ${team.lastCorrectedBy}`}
-                        {team.lastCorrectedAt && ` • ${new Date(team.lastCorrectedAt).toLocaleString()}`}
+                        {team.lastCorrectedAt &&
+                          ` • ${new Date(team.lastCorrectedAt).toLocaleString()}`}
                       </div>
                     )}
                     {team.correctionNotes && (
@@ -75,10 +74,16 @@ export const TeamBreakdown: React.FC<TeamBreakdownProps> = ({
                       Review
                     </Badge>
                   )}
-                  <Badge variant={
-                    team.confidence === 'high' ? 'default' :
-                      team.confidence === 'medium' ? 'secondary' : 'destructive'
-                  } className="text-xs">
+                  <Badge
+                    variant={
+                      team.confidence === 'high'
+                        ? 'default'
+                        : team.confidence === 'medium'
+                          ? 'secondary'
+                          : 'destructive'
+                    }
+                    className="text-xs"
+                  >
                     {team.confidence}
                   </Badge>
                   <Button

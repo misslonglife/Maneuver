@@ -1,6 +1,6 @@
 /**
  * 2026 REBUILT Pit Scouting Questions
- * 
+ *
  * Game-specific questions focused on robot capabilities that cannot be determined
  * from watching matches:
  * - Physical specifications (height, trench capability)
@@ -9,29 +9,32 @@
  * - Autonomous and endgame capabilities
  */
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Label } from "@/core/components/ui/label";
-import { Input } from "@/core/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Label } from '@/core/components/ui/label';
+import { Input } from '@/core/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/core/components/ui/select';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/core/components/ui/dialog";
-import { ScoutOptionsSheet } from "@/core/components/GameStartComponents/ScoutOptionsSheet";
-import { AutoFieldMap } from "@/game-template/components/auto-path/AutoFieldMap";
-import type { PathWaypoint } from "@/game-template/components/field-map";
-import { GameSpecificScoutOptions } from "@/game-template/components/game-start/ScoutOptions";
-import {
-  SCOUT_OPTIONS_STORAGE_KEY,
-  getEffectiveScoutOptions,
-} from "@/game-template/scout-options";
-import { Eraser, Save, Settings2, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
-import type { ScoutOptionsState } from "@/types";
+} from '@/core/components/ui/dialog';
+import { ScoutOptionsSheet } from '@/core/components/GameStartComponents/ScoutOptionsSheet';
+import { AutoFieldMap } from '@/game-template/components/auto-path/AutoFieldMap';
+import type { PathWaypoint } from '@/game-template/components/field-map';
+import { GameSpecificScoutOptions } from '@/game-template/components/game-start/ScoutOptions';
+import { SCOUT_OPTIONS_STORAGE_KEY, getEffectiveScoutOptions } from '@/game-template/scout-options';
+import { Eraser, Save, Settings2, Trash2, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import type { ScoutOptionsState } from '@/types';
 
 interface GameSpecificQuestionsProps {
   gameData?: Record<string, unknown>;
@@ -41,7 +44,7 @@ interface GameSpecificQuestionsProps {
 const START_POSITIONS = ['Left Trench', 'Left Bump', 'Hub', 'Right Bump', 'Right Trench'];
 const ROLES = ['Cycler', 'Clean Up', 'Passer', 'Thief', 'Defense'];
 
-type PitAutoStartPosition = typeof START_POSITIONS[number];
+type PitAutoStartPosition = (typeof START_POSITIONS)[number];
 
 interface PitReportedAuto {
   id: string;
@@ -53,10 +56,13 @@ interface PitReportedAuto {
 
 type PitReportedAutosByStart = Record<PitAutoStartPosition, PitReportedAuto[]>;
 
-const PIT_START_TO_FIELD_KEY: Record<PitAutoStartPosition, 'trench1' | 'bump1' | 'hub' | 'bump2' | 'trench2'> = {
+const PIT_START_TO_FIELD_KEY: Record<
+  PitAutoStartPosition,
+  'trench1' | 'bump1' | 'hub' | 'bump2' | 'trench2'
+> = {
   'Left Trench': 'trench1',
   'Left Bump': 'bump1',
-  'Hub': 'hub',
+  Hub: 'hub',
   'Right Bump': 'bump2',
   'Right Trench': 'trench2',
 };
@@ -65,7 +71,7 @@ function createEmptyReportedAutos(): PitReportedAutosByStart {
   return {
     'Left Trench': [],
     'Left Bump': [],
-    'Hub': [],
+    Hub: [],
     'Right Bump': [],
     'Right Trench': [],
   };
@@ -84,7 +90,10 @@ function coerceReportedAutos(value: unknown): PitReportedAutosByStart {
       .filter((auto): auto is Record<string, unknown> => !!auto && typeof auto === 'object')
       .map((auto, index) => ({
         id: typeof auto.id === 'string' ? auto.id : `${start}-${index}-${Date.now()}`,
-        name: typeof auto.name === 'string' && auto.name.trim() ? auto.name.trim() : `${start} Auto ${index + 1}`,
+        name:
+          typeof auto.name === 'string' && auto.name.trim()
+            ? auto.name.trim()
+            : `${start} Auto ${index + 1}`,
         actions: Array.isArray(auto.actions) ? (auto.actions as PathWaypoint[]) : [],
         createdAt: typeof auto.createdAt === 'number' ? auto.createdAt : Date.now(),
         updatedAt: typeof auto.updatedAt === 'number' ? auto.updatedAt : Date.now(),
@@ -94,7 +103,10 @@ function coerceReportedAutos(value: unknown): PitReportedAutosByStart {
   return empty;
 }
 
-export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameSpecificQuestionsProps) {
+export function GameSpecificQuestions({
+  gameData = {},
+  onGameDataChange,
+}: GameSpecificQuestionsProps) {
   const [recordingStart, setRecordingStart] = useState<PitAutoStartPosition | null>(null);
   const [recordingActions, setRecordingActions] = useState<PathWaypoint[]>([]);
   const [recordingName, setRecordingName] = useState('');
@@ -154,7 +166,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
     const currentAutos = reportedAutosByStart[start] ?? [];
     const next = {
       ...reportedAutosByStart,
-      [start]: currentAutos.map((auto) =>
+      [start]: currentAutos.map(auto =>
         auto.id === autoId
           ? {
               ...auto,
@@ -171,15 +183,13 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
     const currentAutos = reportedAutosByStart[start] ?? [];
     persistReportedAutos({
       ...reportedAutosByStart,
-      [start]: currentAutos.filter((auto) => auto.id !== autoId),
+      [start]: currentAutos.filter(auto => auto.id !== autoId),
     });
   };
 
   const handleMultiSelectChange = (key: string, value: string, checked: boolean) => {
     const current = (gameData[key] as string[]) || [];
-    const updated = checked
-      ? [...current, value]
-      : current.filter(v => v !== value);
+    const updated = checked ? [...current, value] : current.filter(v => v !== value);
     handleChange(key, updated);
   };
 
@@ -206,7 +216,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
   };
 
   const handleRecordingScoutOptionChange = (key: string, value: boolean) => {
-    setRecordingScoutOptions((prev) => {
+    setRecordingScoutOptions(prev => {
       const next = {
         ...prev,
         [key]: value,
@@ -231,7 +241,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
               type="number"
               placeholder="e.g., 30"
               value={(gameData.maxLength as number) || ''}
-              onChange={(e) => handleChange('maxLength', parseFloat(e.target.value) || 0)}
+              onChange={e => handleChange('maxLength', parseFloat(e.target.value) || 0)}
             />
           </div>
 
@@ -242,7 +252,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
               type="number"
               placeholder="e.g., 28"
               value={(gameData.maxWidth as number) || ''}
-              onChange={(e) => handleChange('maxWidth', parseFloat(e.target.value) || 0)}
+              onChange={e => handleChange('maxWidth', parseFloat(e.target.value) || 0)}
             />
           </div>
 
@@ -253,14 +263,14 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
               type="number"
               placeholder="e.g., 22"
               value={(gameData.maxHeight as number) || ''}
-              onChange={(e) => handleChange('maxHeight', parseFloat(e.target.value) || 0)}
+              onChange={e => handleChange('maxHeight', parseFloat(e.target.value) || 0)}
             />
           </div>
 
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant={gameData.canGoUnderTrench ? "default" : "outline"}
+              variant={gameData.canGoUnderTrench ? 'default' : 'outline'}
               onClick={() => handleChange('canGoUnderTrench', !gameData.canGoUnderTrench)}
               className="flex-1"
             >
@@ -283,14 +293,14 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
               type="number"
               placeholder="e.g., 8"
               value={(gameData.fuelCapacity as number) || ''}
-              onChange={(e) => handleChange('fuelCapacity', parseInt(e.target.value) || 0)}
+              onChange={e => handleChange('fuelCapacity', parseInt(e.target.value) || 0)}
             />
           </div>
 
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant={gameData.canOutpostPickup ? "default" : "outline"}
+              variant={gameData.canOutpostPickup ? 'default' : 'outline'}
               onClick={() => handleChange('canOutpostPickup', !gameData.canOutpostPickup)}
               className="flex-1"
             >
@@ -301,7 +311,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant={gameData.canPassToCorral ? "default" : "outline"}
+              variant={gameData.canPassToCorral ? 'default' : 'outline'}
               onClick={() => handleChange('canPassToCorral', !gameData.canPassToCorral)}
               className="flex-1"
             >
@@ -317,82 +327,81 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
           <CardTitle>Strategic Preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">Click options in priority order. Click a selected option again to unrank it.</p>
+          <p className="text-sm text-muted-foreground">
+            Click options in priority order. Click a selected option again to unrank it.
+          </p>
           <div className="space-y-2">
             <Label>Preferred Starting Positions (ranked by click order)</Label>
             <div className="grid grid-cols-2 gap-2">
-              {START_POSITIONS.map((position) => (
+              {START_POSITIONS.map(position =>
                 (() => {
                   const rank = getRank('preferredStartPositions', position);
                   const isSelected = rank !== null;
                   return (
-                <Button
-                  key={position}
-                  type="button"
-                  variant={isSelected ? "default" : "outline"}
-                  onClick={() => 
-                    handleMultiSelectChange('preferredStartPositions', position, 
-                      !isSelected)
-                  }
-                  className="h-auto py-3"
-                >
-                  {isSelected ? `${rank}. ${position}` : position}
-                </Button>
+                    <Button
+                      key={position}
+                      type="button"
+                      variant={isSelected ? 'default' : 'outline'}
+                      onClick={() =>
+                        handleMultiSelectChange('preferredStartPositions', position, !isSelected)
+                      }
+                      className="h-auto py-3"
+                    >
+                      {isSelected ? `${rank}. ${position}` : position}
+                    </Button>
                   );
                 })()
-              ))}
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
             <Label>Preferred Role - Active Shift (ranked by click order)</Label>
             <div className="grid grid-cols-2 gap-2">
-              {ROLES.map((role) => (
+              {ROLES.map(role =>
                 (() => {
                   const rank = getRank('preferredActiveRoles', role);
                   const isSelected = rank !== null;
                   return (
-                <Button
-                  key={`active-${role}`}
-                  type="button"
-                  variant={isSelected ? "default" : "outline"}
-                  onClick={() => 
-                    handleMultiSelectChange('preferredActiveRoles', role, 
-                      !isSelected)
-                  }
-                  className="h-auto py-3"
-                >
-                  {isSelected ? `${rank}. ${role}` : role}
-                </Button>
+                    <Button
+                      key={`active-${role}`}
+                      type="button"
+                      variant={isSelected ? 'default' : 'outline'}
+                      onClick={() =>
+                        handleMultiSelectChange('preferredActiveRoles', role, !isSelected)
+                      }
+                      className="h-auto py-3"
+                    >
+                      {isSelected ? `${rank}. ${role}` : role}
+                    </Button>
                   );
                 })()
-              ))}
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
             <Label>Preferred Role - Inactive Shift (ranked by click order)</Label>
             <div className="grid grid-cols-2 gap-2">
-              {ROLES.map((role) => (
+              {ROLES.map(role =>
                 (() => {
                   const rank = getRank('preferredInactiveRoles', role);
                   const isSelected = rank !== null;
                   return (
-                <Button
-                  key={`inactive-${role}`}
-                  type="button"
-                  variant={isSelected ? "default" : "outline"}
-                  onClick={() => 
-                    handleMultiSelectChange('preferredInactiveRoles', role, 
-                      !isSelected)
-                  }
-                  className="h-auto py-3"
-                >
-                  {isSelected ? `${rank}. ${role}` : role}
-                </Button>
+                    <Button
+                      key={`inactive-${role}`}
+                      type="button"
+                      variant={isSelected ? 'default' : 'outline'}
+                      onClick={() =>
+                        handleMultiSelectChange('preferredInactiveRoles', role, !isSelected)
+                      }
+                      className="h-auto py-3"
+                    >
+                      {isSelected ? `${rank}. ${role}` : role}
+                    </Button>
                   );
                 })()
-              ))}
+              )}
             </div>
           </div>
         </CardContent>
@@ -407,7 +416,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant={gameData.canAutoClimbL1 ? "default" : "outline"}
+              variant={gameData.canAutoClimbL1 ? 'default' : 'outline'}
               onClick={() => handleChange('canAutoClimbL1', !gameData.canAutoClimbL1)}
               className="flex-1"
             >
@@ -417,10 +426,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
 
           <div className="space-y-2">
             <Label htmlFor="targetClimbLevel">Target Endgame Climb Level</Label>
-            <Select
-              value={targetClimbLevel}
-              onValueChange={handleTargetClimbLevelChange}
-            >
+            <Select value={targetClimbLevel} onValueChange={handleTargetClimbLevelChange}>
               <SelectTrigger id="targetClimbLevel">
                 <SelectValue placeholder="Select climb level" />
               </SelectTrigger>
@@ -437,7 +443,7 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
             <Label htmlFor="targetClimbLocation"> Climb Location?</Label>
             <Select
               value={(gameData.targetClimbLocation as string) || 'none'}
-              onValueChange={(value) => handleChange('targetClimbLocation', value)}
+              onValueChange={value => handleChange('targetClimbLocation', value)}
               disabled={isTargetClimbLevelNone}
             >
               <SelectTrigger id="targetClimbLocation" disabled={isTargetClimbLevelNone}>
@@ -459,27 +465,34 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
           <CardTitle>Reported Autos by Starting Location</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {START_POSITIONS.map((start) => {
+          {START_POSITIONS.map(start => {
             const autos = reportedAutosByStart[start] || [];
             return (
               <div key={start} className="rounded-md border p-3 space-y-3">
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <p className="font-medium">{start}</p>
-                    <p className="text-xs text-muted-foreground">{autos.length} saved auto{autos.length === 1 ? '' : 's'}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {autos.length} saved auto{autos.length === 1 ? '' : 's'}
+                    </p>
                   </div>
-                  <Button type="button" variant="outline" size="sm" onClick={() => openRecorder(start)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openRecorder(start)}
+                  >
                     Add Auto
                   </Button>
                 </div>
 
                 {autos.length > 0 ? (
                   <div className="space-y-2">
-                    {autos.map((auto) => (
+                    {autos.map(auto => (
                       <div key={auto.id} className="flex items-center gap-2 rounded-md border p-2">
                         <Input
                           value={auto.name}
-                          onChange={(e) => renameReportedAuto(start, auto.id, e.target.value)}
+                          onChange={e => renameReportedAuto(start, auto.id, e.target.value)}
                           placeholder="Auto name"
                         />
                         <div className="text-xs text-muted-foreground whitespace-nowrap">
@@ -498,7 +511,9 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No autos recorded yet for this location.</p>
+                  <p className="text-sm text-muted-foreground">
+                    No autos recorded yet for this location.
+                  </p>
                 )}
               </div>
             );
@@ -506,12 +521,18 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
         </CardContent>
       </Card>
 
-      <Dialog open={recordingStart !== null} onOpenChange={(open) => { if (!open) closeRecorder(); }}>
+      <Dialog
+        open={recordingStart !== null}
+        onOpenChange={open => {
+          if (!open) closeRecorder();
+        }}
+      >
         <DialogContent className="w-screen h-screen max-w-none max-h-none rounded-none border-0 p-4 sm:p-6 flex flex-col overflow-hidden">
           <DialogHeader>
             <DialogTitle>Record Reported Auto</DialogTitle>
             <DialogDescription>
-              Use the field map to capture one reported auto path for {recordingStart}. Then save it with a name.
+              Use the field map to capture one reported auto path for {recordingStart}. Then save it
+              with a name.
             </DialogDescription>
           </DialogHeader>
 
@@ -519,20 +540,22 @@ export function GameSpecificQuestions({ gameData = {}, onGameDataChange }: GameS
             <div className="w-full">
               <AutoFieldMap
                 actions={recordingActions}
-                onAddAction={(action) => setRecordingActions((prev) => [...prev, action])}
-                onUndo={() => setRecordingActions((prev) => prev.slice(0, -1))}
+                onAddAction={action => setRecordingActions(prev => [...prev, action])}
+                onUndo={() => setRecordingActions(prev => prev.slice(0, -1))}
                 canUndo={recordingActions.length > 0}
                 teamNumber="pit"
                 matchNumber="pit"
                 enableNoShow={false}
                 recordingMode={true}
-                preferredStartKey={recordingStart ? PIT_START_TO_FIELD_KEY[recordingStart] : undefined}
+                preferredStartKey={
+                  recordingStart ? PIT_START_TO_FIELD_KEY[recordingStart] : undefined
+                }
                 headerInputSlot={
                   <div className="flex items-center gap-2">
                     <Input
                       id="pit-reported-auto-name"
                       value={recordingName}
-                      onChange={(e) => setRecordingName(e.target.value)}
+                      onChange={e => setRecordingName(e.target.value)}
                       placeholder={recordingStart ? `${recordingStart} Auto` : 'Reported Auto'}
                       className="h-8 w-48 sm:w-72"
                       aria-label="Auto name"

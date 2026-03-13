@@ -1,9 +1,9 @@
 /**
  * Scout Gamification Wrapper
- * 
+ *
  * Re-exports gamification functionality from game-template for convenience.
  * This is a thin wrapper that adds achievement checking on top of core gamification.
- * 
+ *
  * NOTE: Gamification is OPTIONAL. If teams don't want to use it, they should
  * not import from this module or the game-template/gamification module.
  */
@@ -80,7 +80,13 @@ export const updateScoutWithPredictionAndAchievements = async (
   matchNumber: number
 ): Promise<{ newAchievements: Achievement[] }> => {
   const normalizedScoutName = normalizeScoutName(name);
-  await updateScoutWithPredictionResult(normalizedScoutName, isCorrect, basePoints, eventKey, matchNumber);
+  await updateScoutWithPredictionResult(
+    normalizedScoutName,
+    isCorrect,
+    basePoints,
+    eventKey,
+    matchNumber
+  );
   const newAchievements = await checkForNewAchievements(normalizedScoutName);
   return { newAchievements };
 };

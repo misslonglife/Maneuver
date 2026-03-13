@@ -1,17 +1,14 @@
-import { Checkbox } from "@/core/components/ui/checkbox";
-import type { ScoutOptionsContentProps } from "@/types";
-import { GAME_SCOUT_OPTION_KEYS } from "@/game-template/scout-options";
+import { Checkbox } from '@/core/components/ui/checkbox';
+import type { ScoutOptionsContentProps } from '@/types';
+import { GAME_SCOUT_OPTION_KEYS } from '@/game-template/scout-options';
 
-export function GameSpecificScoutOptions({
-  options,
-  onOptionChange,
-}: ScoutOptionsContentProps) {
+export function GameSpecificScoutOptions({ options, onOptionChange }: ScoutOptionsContentProps) {
   return (
     <div className="space-y-3">
       <label className="flex items-start gap-3 rounded-lg border p-3 cursor-pointer">
         <Checkbox
           checked={options[GAME_SCOUT_OPTION_KEYS.disableHubFuelScoringPopup] ?? false}
-          onCheckedChange={(checked) =>
+          onCheckedChange={checked =>
             onOptionChange(GAME_SCOUT_OPTION_KEYS.disableHubFuelScoringPopup, checked === true)
           }
           className="mt-0.5"
@@ -19,7 +16,8 @@ export function GameSpecificScoutOptions({
         <div>
           <p className="text-sm font-medium">Disable hub fuel scoring popup</p>
           <p className="text-xs text-muted-foreground">
-            Makes hub scoring one-tap by auto-recording +0 fuel instead of opening the amount popup. This can be used by teams that will only be using OPR, cOPRs, and EPA.
+            Makes hub scoring one-tap by auto-recording +0 fuel instead of opening the amount popup.
+            This can be used by teams that will only be using OPR, cOPRs, and EPA.
           </p>
         </div>
       </label>
@@ -27,7 +25,7 @@ export function GameSpecificScoutOptions({
       <label className="flex items-start gap-3 rounded-lg border p-3 cursor-pointer">
         <Checkbox
           checked={options[GAME_SCOUT_OPTION_KEYS.disablePassingPopup] ?? false}
-          onCheckedChange={(checked) =>
+          onCheckedChange={checked =>
             onOptionChange(GAME_SCOUT_OPTION_KEYS.disablePassingPopup, checked === true)
           }
           className="mt-0.5"
@@ -43,7 +41,7 @@ export function GameSpecificScoutOptions({
       <label className="flex items-start gap-3 rounded-lg border p-3 cursor-pointer">
         <Checkbox
           checked={options[GAME_SCOUT_OPTION_KEYS.disableDefensePopup] ?? false}
-          onCheckedChange={(checked) =>
+          onCheckedChange={checked =>
             onOptionChange(GAME_SCOUT_OPTION_KEYS.disableDefensePopup, checked === true)
           }
           className="mt-0.5"
@@ -51,7 +49,8 @@ export function GameSpecificScoutOptions({
         <div>
           <p className="text-sm font-medium">Disable defense popup</p>
           <p className="text-xs text-muted-foreground">
-            Makes defense one-tap by recording a defense action without target/effectiveness details.
+            Makes defense one-tap by recording a defense action without target/effectiveness
+            details.
           </p>
         </div>
       </label>
@@ -59,7 +58,7 @@ export function GameSpecificScoutOptions({
       <label className="flex items-start gap-3 rounded-lg border p-3 cursor-pointer">
         <Checkbox
           checked={options[GAME_SCOUT_OPTION_KEYS.disableAutoPathDrawingTapOnly] ?? false}
-          onCheckedChange={(checked) =>
+          onCheckedChange={checked =>
             onOptionChange(GAME_SCOUT_OPTION_KEYS.disableAutoPathDrawingTapOnly, checked === true)
           }
           className="mt-0.5"
@@ -75,7 +74,7 @@ export function GameSpecificScoutOptions({
       <label className="flex items-start gap-3 rounded-lg border p-3 cursor-pointer">
         <Checkbox
           checked={options[GAME_SCOUT_OPTION_KEYS.disableTeleopPathDrawingTapOnly] ?? false}
-          onCheckedChange={(checked) =>
+          onCheckedChange={checked =>
             onOptionChange(GAME_SCOUT_OPTION_KEYS.disableTeleopPathDrawingTapOnly, checked === true)
           }
           className="mt-0.5"

@@ -1,13 +1,13 @@
-import type { Scout } from "@/core/types/gamification";
+import type { Scout } from '@/core/types/gamification';
 
 const asNumber = (value: unknown, fallback: number): number => {
-  if (typeof value === "number" && Number.isFinite(value)) {
+  if (typeof value === 'number' && Number.isFinite(value)) {
     return value;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     const trimmed = value.trim();
-    if (trimmed !== "") {
+    if (trimmed !== '') {
       const parsed = Number(trimmed);
       if (Number.isFinite(parsed)) {
         return parsed;
@@ -23,12 +23,12 @@ const asNumber = (value: unknown, fallback: number): number => {
  * Returns null if required identity fields are missing.
  */
 export const normalizeTransferredScoutProfile = (value: unknown): Scout | null => {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return null;
   }
 
   const candidate = value as Record<string, unknown>;
-  const name = typeof candidate.name === "string" ? candidate.name.trim() : "";
+  const name = typeof candidate.name === 'string' ? candidate.name.trim() : '';
   if (!name) {
     return null;
   }

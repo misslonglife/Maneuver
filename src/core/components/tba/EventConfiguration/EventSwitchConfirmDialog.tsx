@@ -6,9 +6,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/core/components/ui/dialog";
-import { Button } from "@/core/components/ui/button";
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
+} from '@/core/components/ui/dialog';
+import { Button } from '@/core/components/ui/button';
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
 import { AlertTriangle, Calendar, Database } from 'lucide-react';
 
 interface EventSwitchConfirmDialogProps {
@@ -41,7 +41,7 @@ export const EventSwitchConfirmDialog: React.FC<EventSwitchConfirmDialogProps> =
           <DialogDescription className="space-y-4">
             <div className="space-y-2">
               <p>You're about to switch from one event to another:</p>
-              
+
               <div className="grid grid-cols-1 gap-3">
                 <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -50,7 +50,7 @@ export const EventSwitchConfirmDialog: React.FC<EventSwitchConfirmDialogProps> =
                     <div className="text-sm text-muted-foreground">{currentEvent}</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg">
                   <Calendar className="h-4 w-4 text-primary" />
                   <div>
@@ -65,22 +65,24 @@ export const EventSwitchConfirmDialog: React.FC<EventSwitchConfirmDialogProps> =
               <Alert variant="destructive">
                 <Database className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Warning:</strong> You have stored data for event "{currentEvent}". 
-                  Switching to "{newEvent}" may cause confusion if you're working with different event data.
+                  <strong>Warning:</strong> You have stored data for event "{currentEvent}".
+                  Switching to "{newEvent}" may cause confusion if you're working with different
+                  event data.
                 </AlertDescription>
               </Alert>
             )}
 
             <div className="text-sm text-muted-foreground">
-              <strong>Recommendation:</strong> Consider clearing stored data for "{currentEvent}" before switching to avoid data mixing.
+              <strong>Recommendation:</strong> Consider clearing stored data for "{currentEvent}"
+              before switching to avoid data mixing.
             </div>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel} className='px-2'>
+          <Button variant="outline" onClick={onCancel} className="px-2">
             Cancel
           </Button>
-          <Button onClick={onConfirm} className='px-2'>
+          <Button onClick={onConfirm} className="px-2">
             Switch to {newEvent}
           </Button>
         </DialogFooter>

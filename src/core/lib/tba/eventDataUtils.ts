@@ -34,16 +34,16 @@ export const getEventHistory = (): EventHistoryItem[] => {
 export const addToEventHistory = (eventKey: string, eventName: string): void => {
   try {
     const history = getEventHistory();
-    
+
     // Check if event already exists in history
     const existingIndex = history.findIndex(item => item.eventKey === eventKey);
-    
+
     const newItem: EventHistoryItem = {
       eventKey,
       eventName,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     if (existingIndex >= 0) {
       // Update existing entry with new timestamp
       history[existingIndex] = newItem;
@@ -51,13 +51,13 @@ export const addToEventHistory = (eventKey: string, eventName: string): void => 
       // Add new entry
       history.push(newItem);
     }
-    
+
     // Sort by most recent first
     history.sort((a, b) => b.timestamp - a.timestamp);
-    
+
     // Keep only the last 10 events
     const trimmedHistory = history.slice(0, 10);
-    
+
     localStorage.setItem(EVENT_HISTORY_KEY, JSON.stringify(trimmedHistory));
     console.log(`Updated event history for ${eventKey}`);
   } catch (error) {
@@ -83,7 +83,7 @@ export const getCurrentEvent = (): string => {
  */
 export const setCurrentEvent = (eventKey: string): void => {
   if (!eventKey.trim()) return;
-  
+
   try {
     localStorage.setItem(CURRENT_EVENT_KEY, eventKey);
     addToEventHistory(eventKey, eventKey); // Use eventKey as name fallback
@@ -110,7 +110,7 @@ export const hasStoredEventData = (eventKey: string): boolean => {
     `nexus_pit_map_${eventKey}`,
     `nexus_event_teams_${eventKey}`,
   ];
-  
+
   for (const key of nexusKeys) {
     if (localStorage.getItem(key)) return true;
   }
@@ -124,7 +124,7 @@ export const hasStoredEventData = (eventKey: string): boolean => {
     `tba_event_coprs_${eventKey}`,
     `statbotics_event_epa_${eventKey}`,
   ];
-  
+
   for (const key of eventSpecificKeys) {
     if (localStorage.getItem(key)) return true;
   }
@@ -152,29 +152,29 @@ export const clearEventData = (eventKey: string): void => {
 
   try {
     console.log(`Clearing all event data for ${eventKey}...`);
-    
+
     // Clear TBA teams data
     clearStoredEventTeams(eventKey);
-    
+
     // Clear Nexus data (pit addresses, pit map, extracted teams)
     clearStoredNexusData(eventKey);
-    
+
     // Clear match schedule
     const scheduleKey = `tba_match_schedule_${eventKey}`;
     localStorage.removeItem(scheduleKey);
-    
+
     // Clear match data
     const matchDataKey = `tba_match_data_${eventKey}`;
     localStorage.removeItem(matchDataKey);
-    
+
     // Clear match results
     const matchResultsKey = `match_results_${eventKey}`;
     localStorage.removeItem(matchResultsKey);
-    
+
     // Clear event info
     const eventInfoKey = `event_info_${eventKey}`;
     localStorage.removeItem(eventInfoKey);
-    
+
     // Clear pit assignments
     const pitAssignmentsKey = `pit_assignments_${eventKey}`;
     localStorage.removeItem(pitAssignmentsKey);
@@ -182,7 +182,7 @@ export const clearEventData = (eventKey: string): void => {
     // Clear TBA COPRs and Statbotics EPA caches
     localStorage.removeItem(`tba_event_coprs_${eventKey}`);
     localStorage.removeItem(`statbotics_event_epa_${eventKey}`);
-    
+
     console.log(`Successfully cleared all event data for ${eventKey}`);
     toast.success(`Cleared all stored data for event ${eventKey}`);
   } catch (error) {
@@ -220,7 +220,7 @@ export const clearEventHistory = (): void => {
  */
 export const getMostRecentEvent = (): EventHistoryItem | null => {
   const history = getEventHistory();
-  return history.length > 0 ? history[0] ?? null : null;
+  return history.length > 0 ? (history[0] ?? null) : null;
 };
 
 /**

@@ -1,17 +1,17 @@
-import type { ScoutOptionsState } from "@/types";
+import type { ScoutOptionsState } from '@/types';
 
-export const SCOUT_OPTIONS_STORAGE_KEY = "scoutOptions";
+export const SCOUT_OPTIONS_STORAGE_KEY = 'scoutOptions';
 
 export const GAME_SCOUT_OPTION_KEYS = {
-  disableHubFuelScoringPopup: "disableHubFuelScoringPopup",
-  disablePassingPopup: "disablePassingPopup",
-  disableDefensePopup: "disableDefensePopup",
-  disableAutoPathDrawingTapOnly: "disableAutoPathDrawingTapOnly",
-  disableTeleopPathDrawingTapOnly: "disableTeleopPathDrawingTapOnly",
+  disableHubFuelScoringPopup: 'disableHubFuelScoringPopup',
+  disablePassingPopup: 'disablePassingPopup',
+  disableDefensePopup: 'disableDefensePopup',
+  disableAutoPathDrawingTapOnly: 'disableAutoPathDrawingTapOnly',
+  disableTeleopPathDrawingTapOnly: 'disableTeleopPathDrawingTapOnly',
 } as const;
 
 const LEGACY_SCOUT_OPTION_KEYS = {
-  disablePathDrawingTapOnly: "disablePathDrawingTapOnly",
+  disablePathDrawingTapOnly: 'disablePathDrawingTapOnly',
 } as const;
 
 export const GAME_SCOUT_OPTION_DEFAULTS: ScoutOptionsState = {
@@ -23,11 +23,11 @@ export const GAME_SCOUT_OPTION_DEFAULTS: ScoutOptionsState = {
 };
 
 function coerceScoutOptions(value: unknown): ScoutOptionsState {
-  if (!value || typeof value !== "object") return {};
+  if (!value || typeof value !== 'object') return {};
 
   const result: ScoutOptionsState = {};
   for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
-    if (typeof raw === "boolean") {
+    if (typeof raw === 'boolean') {
       result[key] = raw;
     }
   }

@@ -21,9 +21,10 @@ export const ValidationSummaryCard: React.FC<ValidationSummaryCardProps> = ({ re
   const totalCritical = validatedResults.reduce((sum, r) => sum + r.criticalDiscrepancies, 0);
   const totalWarnings = validatedResults.reduce((sum, r) => sum + r.warningDiscrepancies, 0);
 
-  const avgConfidence = validatedResults.length > 0
-    ? validatedResults.filter(r => r.confidence === 'high').length / validatedResults.length
-    : 0;
+  const avgConfidence =
+    validatedResults.length > 0
+      ? validatedResults.filter(r => r.confidence === 'high').length / validatedResults.length
+      : 0;
 
   const confidenceLabel = avgConfidence >= 0.8 ? 'High' : avgConfidence >= 0.5 ? 'Medium' : 'Low';
 
@@ -67,7 +68,7 @@ export const ValidationSummaryCard: React.FC<ValidationSummaryCardProps> = ({ re
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {stats.map((stat) => {
+          {stats.map(stat => {
             const Icon = stat.icon;
             return (
               <div key={stat.label} className="space-y-1">
@@ -76,13 +77,9 @@ export const ValidationSummaryCard: React.FC<ValidationSummaryCardProps> = ({ re
                   <span>{stat.label}</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <div className={`text-3xl font-bold ${stat.className}`}>
-                    {stat.value}
-                  </div>
+                  <div className={`text-3xl font-bold ${stat.className}`}>{stat.value}</div>
                   {stat.percentage !== undefined && (
-                    <div className="text-sm text-muted-foreground">
-                      ({stat.percentage}%)
-                    </div>
+                    <div className="text-sm text-muted-foreground">({stat.percentage}%)</div>
                   )}
                 </div>
               </div>
@@ -103,10 +100,15 @@ export const ValidationSummaryCard: React.FC<ValidationSummaryCardProps> = ({ re
           </div>
           <div className="space-y-1">
             <div className="text-sm text-muted-foreground">Avg Confidence</div>
-            <div className={`text-2xl font-semibold ${confidenceLabel === 'High' ? 'text-green-600 dark:text-green-400' :
-              confidenceLabel === 'Medium' ? 'text-yellow-600 dark:text-yellow-400' :
-                'text-red-600 dark:text-red-400'
-              }`}>
+            <div
+              className={`text-2xl font-semibold ${
+                confidenceLabel === 'High'
+                  ? 'text-green-600 dark:text-green-400'
+                  : confidenceLabel === 'Medium'
+                    ? 'text-yellow-600 dark:text-yellow-400'
+                    : 'text-red-600 dark:text-red-400'
+              }`}
+            >
               {confidenceLabel}
             </div>
           </div>

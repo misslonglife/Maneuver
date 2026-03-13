@@ -2,7 +2,7 @@
  * useDebounce Hook
  * Debounce a value to prevent excessive updates
  * Framework hook - game-agnostic
- * 
+ *
  * Useful for:
  * - Search inputs
  * - Form validation
@@ -33,7 +33,7 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
 /**
  * useDebouncedCallback Hook
  * Debounce a callback function
- * 
+ *
  * @param callback - Function to debounce
  * @param delay - Delay in milliseconds
  * @returns Debounced callback

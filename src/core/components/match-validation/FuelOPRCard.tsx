@@ -80,7 +80,7 @@ export const FuelOPRCard: React.FC<FuelOPRCardProps> = ({
       'Total Contribution Index',
     ];
 
-    const csvRows = rows.map((row) => [
+    const csvRows = rows.map(row => [
       row.teamNumber,
       row.matchesPlayed,
       formatValue(row.autoFuelOPR),
@@ -100,7 +100,7 @@ export const FuelOPRCard: React.FC<FuelOPRCardProps> = ({
 
     const csv = [
       headers.map(toCsvValue).join(','),
-      ...csvRows.map((csvRow) => csvRow.map(toCsvValue).join(',')),
+      ...csvRows.map(csvRow => csvRow.map(toCsvValue).join(',')),
     ].join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Badge } from "@/core/components/ui/badge";
-import { Checkbox } from "@/core/components/ui/checkbox";
-import { 
-  CheckCircle, 
-  Clock, 
-  Download,
-  Search,
-  SortAsc,
-  SortDesc,
-  UserPlus,
-  X
-} from 'lucide-react';
-import { Input } from "@/core/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
+import { Button } from '@/core/components/ui/button';
+import { Badge } from '@/core/components/ui/badge';
+import { Checkbox } from '@/core/components/ui/checkbox';
+import { CheckCircle, Clock, Download, Search, SortAsc, SortDesc, UserPlus, X } from 'lucide-react';
+import { Input } from '@/core/components/ui/input';
 import type { PitAssignment } from '@/core/lib/pitAssignmentTypes';
 import { getScoutColor } from './shared/scoutUtils';
 import { PitScoutLegend } from './shared/PitScoutLegend';
@@ -53,7 +44,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
   assignmentsConfirmed = false,
   allTeams = [],
   onConfirmAssignments,
-  pitAddresses = null
+  pitAddresses = null,
 }) => {
   const [searchFilter, setSearchFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterOption>('all');
@@ -64,7 +55,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
   const getDisplayData = () => {
     const assignmentMap = new Map(assignments.map(a => [a.teamNumber, a]));
     const allTeamsSet = new Set([...allTeams, ...assignments.map(a => a.teamNumber)]);
-    
+
     return Array.from(allTeamsSet).map(teamNumber => {
       const assignment = assignmentMap.get(teamNumber);
       return {
@@ -72,26 +63,28 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
         assignment,
         scoutName: assignment?.scoutName || null,
         completed: assignment?.completed || false,
-        assigned: !!assignment
+        assigned: !!assignment,
       };
     });
   };
 
   const displayData = getDisplayData();
-  
+
   // Filter and sort display data
   const filteredAndSortedData = displayData
     .filter(item => {
       // Search filter
-      const searchMatch = searchFilter === '' || 
+      const searchMatch =
+        searchFilter === '' ||
         item.teamNumber.toString().includes(searchFilter) ||
         (item.scoutName && item.scoutName.toLowerCase().includes(searchFilter.toLowerCase()));
-      
+
       // Status filter
-      const statusMatch = statusFilter === 'all' ||
+      const statusMatch =
+        statusFilter === 'all' ||
         (statusFilter === 'completed' && item.completed) ||
         (statusFilter === 'pending' && !item.completed);
-      
+
       return searchMatch && statusMatch;
     })
     .sort((a, b) => {
@@ -147,8 +140,8 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
         assignment.teamNumber.toString(),
         assignment.scoutName,
         assignment.completed ? 'Completed' : 'Pending',
-        new Date(assignment.assignedAt).toLocaleDateString()
-      ])
+        new Date(assignment.assignedAt).toLocaleDateString(),
+      ]),
     ];
 
     const csvString = csvContent.map(row => row.join(',')).join('\n');
@@ -165,14 +158,18 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
 
   const getSortIcon = (option: SortOption) => {
     if (sortBy !== option) return null;
-    return sortDirection === 'asc' ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />;
+    return sortDirection === 'asc' ? (
+      <SortAsc className="h-3 w-3" />
+    ) : (
+      <SortDesc className="h-3 w-3" />
+    );
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex w-full items-center gap-2 justify-between">
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5" />
             Assignment Results ({displayData.length} teams)
           </div>
@@ -186,10 +183,10 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
               onConfirmAssignments={onConfirmAssignments}
               isMobile={false}
             />
-            <Button 
+            <Button
               onClick={exportAssignments}
-              variant="outline" 
-              size="sm" 
+              variant="outline"
+              size="sm"
               className="flex items-center gap-2"
               disabled={assignments.length === 0}
             >
@@ -198,7 +195,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
             </Button>
           </div>
         </CardTitle>
-        
+
         <div className="flex gap-4 mt-2 text-sm">
           <div className="flex items-center gap-1">
             <Badge variant="secondary">{completedCount}</Badge>
@@ -229,13 +226,11 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
             hasAssignments={assignments.length > 0}
             showMobileActions={true}
             helpText={
-              !assignmentsConfirmed ? (
-                selectedScoutForAssignment
+              !assignmentsConfirmed
+                ? selectedScoutForAssignment
                   ? `💡 Selected: ${selectedScoutForAssignment} - Click team rows below to assign`
                   : 'Select a scout above, then click team rows to assign them to that scout'
-              ) : (
-                '💡 Click team rows to mark as completed • Auto-marked when pit data exists'
-              )
+                : '💡 Click team rows to mark as completed • Auto-marked when pit data exists'
             }
           />
         )}
@@ -254,7 +249,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
             <Input
               placeholder="Search teams or scouts..."
               value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
+              onChange={e => setSearchFilter(e.target.value)}
               className="pl-10 w-full"
             />
           </div>
@@ -323,7 +318,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
               <span>Action</span>
             </div>
           </div>
-          
+
           {/* Mobile Header */}
           <div className="md:hidden bg-muted/50 px-3 py-2 font-medium text-sm border-b">
             <div className="flex justify-between items-center">
@@ -345,17 +340,23 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
               </Button>
             </div>
           </div>
-          
+
           <div className="divide-y">
-            {filteredAndSortedData.map((item) => {
+            {filteredAndSortedData.map(item => {
               const scoutIndex = item.scoutName ? scoutsList.indexOf(item.scoutName) : -1;
-              const canAssign = assignmentMode === 'manual' && selectedScoutForAssignment && !item.assigned && !assignmentsConfirmed;
-              const canRemove = assignmentMode === 'manual' && item.assigned && !assignmentsConfirmed;
-              const canToggleComplete = item.assigned && (assignmentsConfirmed || assignmentMode === 'sequential');
-              
+              const canAssign =
+                assignmentMode === 'manual' &&
+                selectedScoutForAssignment &&
+                !item.assigned &&
+                !assignmentsConfirmed;
+              const canRemove =
+                assignmentMode === 'manual' && item.assigned && !assignmentsConfirmed;
+              const canToggleComplete =
+                item.assigned && (assignmentsConfirmed || assignmentMode === 'sequential');
+
               return (
-                <div 
-                  key={item.teamNumber} 
+                <div
+                  key={item.teamNumber}
                   className={`px-3 md:px-4 py-4 md:py-3 ${canAssign ? 'hover:bg-muted/50 cursor-pointer' : ''}`}
                   onClick={() => canAssign && handleTeamAssign(item.teamNumber)}
                 >
@@ -374,8 +375,8 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                     </div>
                     <div className="text-sm flex items-center gap-2">
                       {item.scoutName ? (
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={scoutIndex >= 0 ? getScoutColor(scoutIndex) : ''}
                         >
                           {item.scoutName}
@@ -388,7 +389,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                           variant="ghost"
                           size="sm"
                           className="h-4 w-4 p-0 bg-red-100 hover:bg-red-200 text-red-600 rounded-full"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             handleRemoveTeamAssignment(item.teamNumber);
                           }}
@@ -400,7 +401,10 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                     <div>
                       {item.assigned ? (
                         item.completed ? (
-                          <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                          <Badge
+                            variant="default"
+                            className="bg-green-100 text-green-800 border-green-200"
+                          >
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Completed
                           </Badge>
@@ -418,22 +422,26 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {item.assigned ? (
-                        assignmentsConfirmed ? 'Confirmed' : 'Draft'
-                      ) : (
-                        canAssign ? 'Click to assign' : '-'
-                      )}
+                      {item.assigned
+                        ? assignmentsConfirmed
+                          ? 'Confirmed'
+                          : 'Draft'
+                        : canAssign
+                          ? 'Click to assign'
+                          : '-'}
                     </div>
                     <div>
                       {canToggleComplete && (
                         <Checkbox
                           checked={item.completed}
-                          onCheckedChange={() => item.assignment && onToggleCompleted(item.assignment.id)}
+                          onCheckedChange={() =>
+                            item.assignment && onToggleCompleted(item.assignment.id)
+                          }
                         />
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Mobile Layout */}
                   <div className="md:hidden space-y-3">
                     <div className="flex justify-between items-start">
@@ -451,7 +459,10 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                       <div className="flex items-center gap-2">
                         {item.assigned ? (
                           item.completed ? (
-                            <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                            <Badge
+                              variant="default"
+                              className="bg-green-100 text-green-800 border-green-200"
+                            >
                               <CheckCircle className="h-3 w-3 mr-1" />
                               Completed
                             </Badge>
@@ -470,18 +481,20 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                         {canToggleComplete && (
                           <Checkbox
                             checked={item.completed}
-                            onCheckedChange={() => item.assignment && onToggleCompleted(item.assignment.id)}
+                            onCheckedChange={() =>
+                              item.assignment && onToggleCompleted(item.assignment.id)
+                            }
                           />
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-muted-foreground">Scout:</span>
                         {item.scoutName ? (
-                          <Badge 
-                            variant="outline" 
+                          <Badge
+                            variant="outline"
                             className={`text-xs ${scoutIndex >= 0 ? getScoutColor(scoutIndex) : ''}`}
                           >
                             {item.scoutName}
@@ -494,7 +507,7 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                             variant="ghost"
                             size="sm"
                             className="h-5 w-5 p-0 bg-red-100 hover:bg-red-200 text-red-600 rounded-full"
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               handleRemoveTeamAssignment(item.teamNumber);
                             }}
@@ -503,13 +516,15 @@ export const AssignmentResults: React.FC<AssignmentResultsProps> = ({
                           </Button>
                         )}
                       </div>
-                      
+
                       <div className="text-xs text-muted-foreground">
-                        {item.assigned ? (
-                          assignmentsConfirmed ? 'Confirmed' : 'Draft'
-                        ) : (
-                          canAssign ? 'Click to assign' : '-'
-                        )}
+                        {item.assigned
+                          ? assignmentsConfirmed
+                            ? 'Confirmed'
+                            : 'Draft'
+                          : canAssign
+                            ? 'Click to assign'
+                            : '-'}
                       </div>
                     </div>
                   </div>

@@ -31,16 +31,18 @@ export const normalizeTransferredScoutAchievement = (value: unknown): ScoutAchie
 
   const candidate = value as Record<string, unknown>;
   const scoutName = typeof candidate.scoutName === 'string' ? candidate.scoutName.trim() : '';
-  const achievementId = typeof candidate.achievementId === 'string' ? candidate.achievementId.trim() : '';
+  const achievementId =
+    typeof candidate.achievementId === 'string' ? candidate.achievementId.trim() : '';
   const unlockedAt = asFiniteNumber(candidate.unlockedAt);
 
   if (!scoutName || !achievementId || unlockedAt === null) {
     return null;
   }
 
-  const id = typeof candidate.id === 'string' && candidate.id.trim().length > 0
-    ? candidate.id.trim()
-    : `${scoutName}_${achievementId}_${unlockedAt}`;
+  const id =
+    typeof candidate.id === 'string' && candidate.id.trim().length > 0
+      ? candidate.id.trim()
+      : `${scoutName}_${achievementId}_${unlockedAt}`;
 
   return {
     id,

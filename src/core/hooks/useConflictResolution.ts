@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { toast } from "sonner";
-import type { ConflictInfo } from "@/core/lib/scoutingDataUtils";
-import type { ScoutingEntryBase } from "@/types/scouting-entry";
-import { computeChangedFields } from "@/core/lib/scoutingDataUtils";
-import { db } from "@/core/db/database";
+import { useState } from 'react';
+import { toast } from 'sonner';
+import type { ConflictInfo } from '@/core/lib/scoutingDataUtils';
+import type { ScoutingEntryBase } from '@/types/scouting-entry';
+import { computeChangedFields } from '@/core/lib/scoutingDataUtils';
+import { db } from '@/core/db/database';
 
 // Debug logging helper - only logs in development
 const DEBUG = import.meta.env.DEV;
@@ -16,8 +16,12 @@ export const useConflictResolution = () => {
   const [showConflictDialog, setShowConflictDialog] = useState(false);
   const [currentConflicts, setCurrentConflicts] = useState<ConflictInfo[]>([]);
   const [currentConflictIndex, setCurrentConflictIndex] = useState(0);
-  const [conflictResolutions, setConflictResolutions] = useState<Map<string, 'replace' | 'skip'>>(new Map());
-  const [resolutionHistory, setResolutionHistory] = useState<Array<{ index: number; action: 'replace' | 'skip' }>>([]);
+  const [conflictResolutions, setConflictResolutions] = useState<Map<string, 'replace' | 'skip'>>(
+    new Map()
+  );
+  const [resolutionHistory, setResolutionHistory] = useState<
+    Array<{ index: number; action: 'replace' | 'skip' }>
+  >([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Generate conflict key from conflict info
@@ -64,7 +68,7 @@ export const useConflictResolution = () => {
           incomingStructure: conflict.incoming,
           hasGameData: 'gameData' in conflict.incoming,
           hasData: 'data' in conflict.incoming,
-          localId: conflict.local.id
+          localId: conflict.local.id,
         });
         await db.scoutingData.delete(conflict.local.id);
         await db.scoutingData.put(conflict.incoming as never);
@@ -90,7 +94,7 @@ export const useConflictResolution = () => {
   // Batch resolve all remaining conflicts
   const handleBatchResolve = async (action: 'replace' | 'skip') => {
     setIsProcessing(true);
-    
+
     try {
       // Apply action to all remaining conflicts
       const newResolutions = new Map(conflictResolutions);
@@ -122,10 +126,12 @@ export const useConflictResolution = () => {
         } else {
           skipped++;
         }
-        
+
         // Log progress for large batches
         if (i % 50 === 0 && i > currentConflictIndex) {
-          debugLog(`📊 Progress: ${i - currentConflictIndex}/${remainingCount} conflicts processed`);
+          debugLog(
+            `📊 Progress: ${i - currentConflictIndex}/${remainingCount} conflicts processed`
+          );
         }
       }
 
@@ -175,109 +181,113 @@ export const useConflictResolution = () => {
     decision: 'replace-all' | 'skip-all' | 'review-each'
   ) => {
     setIsProcessing(true);
-    
+
     try {
       if (decision === 'replace-all') {
         debugLog(`🔄 Batch replacing ${batchReviewEntries.length} duplicate entries...`);
         let replaced = 0;
         for (let i = 0; i < batchReviewEntries.length; i++) {
-        const entry = batchReviewEntries[i];
-        if (!entry) continue; // Skip if undefined
-        const matchNumber = entry.matchNumber;
-        const teamNumber = entry.teamNumber;
-        const alliance = entry.allianceColor;
-        const eventKey = entry.eventKey;
-        
-        const existing = await db.scoutingData
-          .toArray()
-          .then(entries => entries.find((e: any) => 
-            e.matchNumber === matchNumber &&
-            e.teamNumber === teamNumber &&
-            e.allianceColor === alliance &&
-            e.eventKey === eventKey
-          ));
-        
-        if (existing) {
-          await db.scoutingData.delete(existing.id);
-        }
-        await db.scoutingData.put(entry as never);
-        replaced++;
-        
-        // Log progress for large batches
-        if (i % 50 === 0 && i > 0) {
-          debugLog(`📊 Progress: ${i}/${batchReviewEntries.length} entries replaced`);
-        }
-      }
-      debugLog(`✅ Batch replace complete: ${replaced} entries replaced`);
-      toast.success(`Replaced ${replaced} entries with incoming data`);
-      
-      // Check if there are pending conflicts after batch
-      if (pendingConflicts.length > 0) {
-        setCurrentConflicts(pendingConflicts);
-        setCurrentConflictIndex(0);
-        setConflictResolutions(new Map());
-        setShowConflictDialog(true);
-        return { hasMoreConflicts: true };
-      }
-      
-      return { hasMoreConflicts: false };
-      
-    } else if (decision === 'skip-all') {
-      toast.success(`Kept ${batchReviewEntries.length} local entries unchanged`);
-      
-      // Check if there are pending conflicts after batch
-      if (pendingConflicts.length > 0) {
-        setCurrentConflicts(pendingConflicts);
-        setCurrentConflictIndex(0);
-        setConflictResolutions(new Map());
-        setShowConflictDialog(true);
-        return { hasMoreConflicts: true };
-      }
-      
-      return { hasMoreConflicts: false };
-      
-    } else if (decision === 'review-each') {
-      // Convert batch entries to conflicts for individual review
-      const batchConflicts: ConflictInfo[] = await Promise.all(
-        batchReviewEntries.map(async (entry) => {
+          const entry = batchReviewEntries[i];
+          if (!entry) continue; // Skip if undefined
           const matchNumber = entry.matchNumber;
           const teamNumber = entry.teamNumber;
+          const alliance = entry.allianceColor;
           const eventKey = entry.eventKey;
-          
-          // Find existing local entry
-          const local = await db.scoutingData
+
+          const existing = await db.scoutingData
             .toArray()
-            .then((entries: any[]) => entries.find((e: any) => 
-              e.matchNumber === matchNumber &&
-              e.teamNumber === teamNumber &&
-              e.eventKey === eventKey
-            ));
-          
-          const changedFields = local
-            ? computeChangedFields(local as ScoutingEntryBase, entry)
-            : [];
-          
-          return {
-            incoming: entry,
-            local: local as ScoutingEntryBase,
-            conflictType: 'corrected-vs-uncorrected' as const,
-            isNewerIncoming: false,
-            changedFields
-          };
-        })
-      );
-      
-      // Add pending conflicts after batch conflicts
-      const allConflicts = [...batchConflicts, ...pendingConflicts];
-      setCurrentConflicts(allConflicts);
-      setCurrentConflictIndex(0);
-      setConflictResolutions(new Map());
-      setShowConflictDialog(true);
-      
-      return { hasMoreConflicts: true };
-    }
-    
-    return { hasMoreConflicts: false };
+            .then(entries =>
+              entries.find(
+                (e: any) =>
+                  e.matchNumber === matchNumber &&
+                  e.teamNumber === teamNumber &&
+                  e.allianceColor === alliance &&
+                  e.eventKey === eventKey
+              )
+            );
+
+          if (existing) {
+            await db.scoutingData.delete(existing.id);
+          }
+          await db.scoutingData.put(entry as never);
+          replaced++;
+
+          // Log progress for large batches
+          if (i % 50 === 0 && i > 0) {
+            debugLog(`📊 Progress: ${i}/${batchReviewEntries.length} entries replaced`);
+          }
+        }
+        debugLog(`✅ Batch replace complete: ${replaced} entries replaced`);
+        toast.success(`Replaced ${replaced} entries with incoming data`);
+
+        // Check if there are pending conflicts after batch
+        if (pendingConflicts.length > 0) {
+          setCurrentConflicts(pendingConflicts);
+          setCurrentConflictIndex(0);
+          setConflictResolutions(new Map());
+          setShowConflictDialog(true);
+          return { hasMoreConflicts: true };
+        }
+
+        return { hasMoreConflicts: false };
+      } else if (decision === 'skip-all') {
+        toast.success(`Kept ${batchReviewEntries.length} local entries unchanged`);
+
+        // Check if there are pending conflicts after batch
+        if (pendingConflicts.length > 0) {
+          setCurrentConflicts(pendingConflicts);
+          setCurrentConflictIndex(0);
+          setConflictResolutions(new Map());
+          setShowConflictDialog(true);
+          return { hasMoreConflicts: true };
+        }
+
+        return { hasMoreConflicts: false };
+      } else if (decision === 'review-each') {
+        // Convert batch entries to conflicts for individual review
+        const batchConflicts: ConflictInfo[] = await Promise.all(
+          batchReviewEntries.map(async entry => {
+            const matchNumber = entry.matchNumber;
+            const teamNumber = entry.teamNumber;
+            const eventKey = entry.eventKey;
+
+            // Find existing local entry
+            const local = await db.scoutingData
+              .toArray()
+              .then((entries: any[]) =>
+                entries.find(
+                  (e: any) =>
+                    e.matchNumber === matchNumber &&
+                    e.teamNumber === teamNumber &&
+                    e.eventKey === eventKey
+                )
+              );
+
+            const changedFields = local
+              ? computeChangedFields(local as ScoutingEntryBase, entry)
+              : [];
+
+            return {
+              incoming: entry,
+              local: local as ScoutingEntryBase,
+              conflictType: 'corrected-vs-uncorrected' as const,
+              isNewerIncoming: false,
+              changedFields,
+            };
+          })
+        );
+
+        // Add pending conflicts after batch conflicts
+        const allConflicts = [...batchConflicts, ...pendingConflicts];
+        setCurrentConflicts(allConflicts);
+        setCurrentConflictIndex(0);
+        setConflictResolutions(new Map());
+        setShowConflictDialog(true);
+
+        return { hasMoreConflicts: true };
+      }
+
+      return { hasMoreConflicts: false };
     } finally {
       setIsProcessing(false);
     }
@@ -296,14 +306,14 @@ export const useConflictResolution = () => {
     resolutionHistory,
     setResolutionHistory,
     isProcessing,
-    
+
     // Actions
     handleConflictResolution,
     handleBatchResolve,
     handleUndo,
     applyConflictResolutions,
     handleBatchReviewDecision,
-    
+
     // Computed
     canUndo: resolutionHistory.length > 0,
     currentConflict: currentConflicts[currentConflictIndex],

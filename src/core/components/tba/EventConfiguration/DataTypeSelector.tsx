@@ -1,17 +1,28 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/components/ui/select";
-import { 
-  Database, 
-  Trophy, 
-  Users,
-  MapPin,
-  Bug,
-  CheckCircle,
-  BarChart3,
-} from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/core/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/core/components/ui/select';
+import { Database, Trophy, Users, MapPin, Bug, CheckCircle, BarChart3 } from 'lucide-react';
 
-export type TBADataType = 'match-data' | 'match-results' | 'match-validation-data' | 'statbotics-epa' | 'event-teams' | 'pit-data' | 'debug-nexus';
+export type TBADataType =
+  | 'match-data'
+  | 'match-results'
+  | 'match-validation-data'
+  | 'statbotics-epa'
+  | 'event-teams'
+  | 'pit-data'
+  | 'debug-nexus';
 
 interface DataTypeSelectorProps {
   dataType: TBADataType;
@@ -23,50 +34,47 @@ const dataTypeOptions = [
     value: 'match-data' as const,
     label: 'Match Schedules',
     icon: Database,
-    description: 'Download match schedules for scouting'
+    description: 'Download match schedules for scouting',
   },
   {
     value: 'match-results' as const,
     label: 'Match Results',
     icon: Trophy,
-    description: 'Download actual match scores and winners'
+    description: 'Download actual match scores and winners',
   },
   {
     value: 'match-validation-data' as const,
     label: 'Match Validation Data',
     icon: CheckCircle,
-    description: 'Load TBA breakdowns and refresh TBA COPR + Statbotics EPA metrics'
+    description: 'Load TBA breakdowns and refresh TBA COPR + Statbotics EPA metrics',
   },
   {
     value: 'statbotics-epa' as const,
     label: 'Statbotics EPA',
     icon: BarChart3,
-    description: 'Load Statbotics team-event EPA breakdown data'
+    description: 'Load Statbotics team-event EPA breakdown data',
   },
   {
     value: 'event-teams' as const,
     label: 'Event Teams',
     icon: Users,
-    description: 'Download team list participating in the event'
+    description: 'Download team list participating in the event',
   },
   {
     value: 'pit-data' as const,
     label: 'Pit Data',
     icon: MapPin,
-    description: 'Download pit assignments and map from Nexus'
+    description: 'Download pit assignments and map from Nexus',
   },
   {
     value: 'debug-nexus' as const,
     label: 'Debug Nexus',
     icon: Bug,
-    description: 'Debug Nexus API connectivity and events'
+    description: 'Debug Nexus API connectivity and events',
   },
 ];
 
-export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({
-  dataType,
-  setDataType,
-}) => {
+export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({ dataType, setDataType }) => {
   const selectedOption = dataTypeOptions.find(option => option.value === dataType);
 
   return (
@@ -97,9 +105,7 @@ export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({
             </SelectContent>
           </Select>
           {selectedOption && (
-            <p className="text-xs text-muted-foreground">
-              {selectedOption.description}
-            </p>
+            <p className="text-xs text-muted-foreground">{selectedOption.description}</p>
           )}
         </div>
       </CardContent>

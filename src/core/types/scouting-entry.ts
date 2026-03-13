@@ -6,7 +6,7 @@
 /**
  * Base scouting entry structure
  * TGameData is the game-specific data (e.g., 2025 game piece tracking)
- * 
+ *
  * @example
  * // In your game implementation:
  * interface MyGameData {
@@ -14,7 +14,7 @@
  *   teleopAlgaeCount: number;
  *   // ... other game-specific fields
  * }
- * 
+ *
  * type MyScoutingEntry = ScoutingEntryBase<MyGameData>;
  */
 export interface ScoutingEntryBase<TGameData = Record<string, unknown>> {
@@ -140,6 +140,6 @@ export interface QueryFilters {
 // SINGLE SOURCE OF TRUTH: src/types/database.ts
 // - PitScoutingEntryBase (with robotPhoto, weight, drivetrain, etc.)
 // - PitScoutingDatabaseSchema
-// 
+//
 // Do NOT add pit scouting types here - import from @/types/database instead.
 // =============================================================================

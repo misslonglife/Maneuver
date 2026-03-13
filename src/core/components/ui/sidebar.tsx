@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
 // Export main components
-export { Sidebar, SidebarInset } from "./sidebar/core"
-export { SidebarProvider } from "./sidebar/provider"
+export { Sidebar, SidebarInset } from './sidebar/core';
+export { SidebarProvider } from './sidebar/provider';
 
 // Export layout components
 export {
@@ -17,7 +17,7 @@ export {
   SidebarGroupLabel,
   SidebarGroupAction,
   SidebarGroupContent,
-} from "./sidebar/layout"
+} from './sidebar/layout';
 
 // Export menu components
 export {
@@ -30,8 +30,8 @@ export {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
-} from "./sidebar/menu"
+} from './sidebar/menu';
 
 // Export context and hook
-export { useSidebar } from "./sidebar/context"
-export type { SidebarContextProps } from "./sidebar/context"
+export { useSidebar } from './sidebar/context';
+export type { SidebarContextProps } from './sidebar/context';

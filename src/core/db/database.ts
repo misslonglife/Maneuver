@@ -1,16 +1,16 @@
 /**
  * Generic Dexie database layer for maneuver-core
- * 
+ *
  * This is the year-agnostic database infrastructure.
  * Game-specific data goes in the `gameData` field as JSON.
- * 
+ *
  * DATABASES in this framework:
  * 1. MatchScoutingDB - Match scouting entries
  * 2. PitScoutingDB - Pit scouting/robot capabilities
  * 3. TeamDB - SINGLE SOURCE OF TRUTH for team metadata (see src/core/db/TeamDB.ts)
  *    - Consolidates TBA team info + Statbotics rankings + competition history
  *    - Managed via teamUtils.ts (CRUD) and teamDataManager.ts (orchestration)
- * 
+ *
  * See src/types/database.ts for complete schema documentation.
  */
 
@@ -40,7 +40,8 @@ export class MatchScoutingDB extends Dexie {
     super('MatchScoutingDB');
 
     this.version(1).stores({
-      scoutingData: 'id, teamNumber, matchNumber, allianceColor, scoutName, eventKey, matchKey, timestamp, isCorrected, [teamNumber+eventKey], [scoutName+eventKey+matchNumber]'
+      scoutingData:
+        'id, teamNumber, matchNumber, allianceColor, scoutName, eventKey, matchKey, timestamp, isCorrected, [teamNumber+eventKey], [scoutName+eventKey+matchNumber]',
     });
   }
 }
@@ -55,7 +56,7 @@ export class PitScoutingDB extends Dexie {
     super('PitScoutingDB');
 
     this.version(1).stores({
-      pitScoutingData: 'id, teamNumber, eventKey, scoutName, timestamp, [teamNumber+eventKey]'
+      pitScoutingData: 'id, teamNumber, eventKey, scoutName, timestamp, [teamNumber+eventKey]',
     });
   }
 }
@@ -187,7 +188,7 @@ export const updateScoutingEntryWithCorrection = async <TGameData = Record<strin
   }
 
   const updatedEntry: Partial<ScoutingEntryBase<Record<string, unknown>>> = {
-    ...newData as ScoutingEntryBase<Record<string, unknown>>,
+    ...(newData as ScoutingEntryBase<Record<string, unknown>>),
     timestamp: Date.now(),
     isCorrected: true,
     correctionCount: (existing.correctionCount || 0) + 1,
@@ -271,7 +272,9 @@ export const getFilterOptions = async (): Promise<FilterOptions> => {
   const stats = await getDBStats();
   const entries = await db.scoutingData.toArray();
 
-  const alliances = [...new Set(entries.map(e => e.allianceColor).filter(Boolean))].sort() as string[];
+  const alliances = [
+    ...new Set(entries.map(e => e.allianceColor).filter(Boolean)),
+  ].sort() as string[];
 
   return {
     teams: stats.teams,
@@ -300,11 +303,24 @@ export const queryScoutingEntries = async <TGameData = Record<string, unknown>>(
   const results = await collection.toArray();
 
   return results.filter(entry => {
-    if (filters.teamNumbers && entry.teamNumber && !filters.teamNumbers.includes(entry.teamNumber)) return false;
-    if (filters.matchNumbers && entry.matchNumber && !filters.matchNumbers.includes(entry.matchNumber)) return false;
-    if (filters.eventKeys && entry.eventKey && !filters.eventKeys.includes(entry.eventKey)) return false;
-    if (filters.alliances && entry.allianceColor && !filters.alliances.includes(entry.allianceColor)) return false;
-    if (filters.scoutNames && entry.scoutName && !filters.scoutNames.includes(entry.scoutName)) return false;
+    if (filters.teamNumbers && entry.teamNumber && !filters.teamNumbers.includes(entry.teamNumber))
+      return false;
+    if (
+      filters.matchNumbers &&
+      entry.matchNumber &&
+      !filters.matchNumbers.includes(entry.matchNumber)
+    )
+      return false;
+    if (filters.eventKeys && entry.eventKey && !filters.eventKeys.includes(entry.eventKey))
+      return false;
+    if (
+      filters.alliances &&
+      entry.allianceColor &&
+      !filters.alliances.includes(entry.allianceColor)
+    )
+      return false;
+    if (filters.scoutNames && entry.scoutName && !filters.scoutNames.includes(entry.scoutName))
+      return false;
     return true;
   }) as ScoutingEntryBase<TGameData>[];
 };
@@ -331,7 +347,9 @@ export const importScoutingData = async <TGameData = Record<string, unknown>>(
   try {
     if (mode === 'overwrite') {
       await clearAllScoutingData();
-      await db.scoutingData.bulkPut(importData.entries as ScoutingEntryBase<Record<string, unknown>>[]);
+      await db.scoutingData.bulkPut(
+        importData.entries as ScoutingEntryBase<Record<string, unknown>>[]
+      );
       return { success: true, importedCount: importData.entries.length };
     } else {
       const existingIds = await db.scoutingData.orderBy('id').keys();
@@ -358,25 +376,18 @@ export const importScoutingData = async <TGameData = Record<string, unknown>>(
 // PIT SCOUTING OPERATIONS
 // ============================================================================
 
-export const savePitScoutingEntry = async (
-  entry: PitScoutingEntryBase
-): Promise<void> => {
+export const savePitScoutingEntry = async (entry: PitScoutingEntryBase): Promise<void> => {
   await pitDB.pitScoutingData.put(entry);
 };
 
-export const loadAllPitScoutingEntries = async (): Promise<
-  PitScoutingEntryBase[]
-> => {
-  return (await pitDB.pitScoutingData.toArray());
+export const loadAllPitScoutingEntries = async (): Promise<PitScoutingEntryBase[]> => {
+  return await pitDB.pitScoutingData.toArray();
 };
 
 export const loadPitScoutingByTeam = async (
   teamNumber: number
 ): Promise<PitScoutingEntryBase[]> => {
-  return (await pitDB.pitScoutingData
-    .where('teamNumber')
-    .equals(teamNumber)
-    .toArray());
+  return await pitDB.pitScoutingData.where('teamNumber').equals(teamNumber).toArray();
 };
 
 export const loadPitScoutingByTeamAndEvent = async (
@@ -387,20 +398,15 @@ export const loadPitScoutingByTeamAndEvent = async (
     return undefined;
   }
 
-  const results = (await pitDB.pitScoutingData
+  const results = await pitDB.pitScoutingData
     .where('[teamNumber+eventKey]')
     .equals([teamNumber, eventKey])
-    .toArray());
+    .toArray();
   return results.sort((a, b) => b.timestamp - a.timestamp)[0];
 };
 
-export const loadPitScoutingByEvent = async (
-  eventKey: string
-): Promise<PitScoutingEntryBase[]> => {
-  return (await pitDB.pitScoutingData
-    .where('eventKey')
-    .equals(eventKey)
-    .toArray());
+export const loadPitScoutingByEvent = async (eventKey: string): Promise<PitScoutingEntryBase[]> => {
+  return await pitDB.pitScoutingData.where('eventKey').equals(eventKey).toArray();
 };
 
 export const deletePitScoutingEntry = async (id: string): Promise<void> => {

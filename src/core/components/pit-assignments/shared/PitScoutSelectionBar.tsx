@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from "@/core/components/ui/button";
+import { Button } from '@/core/components/ui/button';
 import { Plus } from 'lucide-react';
 import type { PitAssignment } from '@/core/lib/pitAssignmentTypes';
 import { getScoutColor } from './scoutUtils';
@@ -21,7 +21,7 @@ export const PitScoutSelectionBar: React.FC<PitScoutSelectionBarProps> = ({
   assignmentsConfirmed,
   selectedScoutForAssignment,
   onScoutSelectionChange,
-  hasAssignments
+  hasAssignments,
 }) => {
   const handleScoutSelect = (scoutName: string) => {
     if (selectedScoutForAssignment === scoutName) {
@@ -40,17 +40,17 @@ export const PitScoutSelectionBar: React.FC<PitScoutSelectionBarProps> = ({
         const completedCount = scoutAssignments.filter(a => a.completed).length;
         const totalCount = scoutAssignments.length;
         const isSelected = isInteractive && selectedScoutForAssignment === scout;
-        
+
         return (
           <Button
             key={scout}
-            variant={isSelected ? "default" : "outline"}
+            variant={isSelected ? 'default' : 'outline'}
             size="default"
             className={`${getScoutColor(index)} px-2 ${
               isInteractive
                 ? `transition-all hover:scale-105 active:scale-95 ${
                     isSelected ? 'ring-2 ring-blue-500 shadow-md' : 'hover:shadow-sm'
-                  }` 
+                  }`
                 : 'cursor-default'
             }`}
             title={
@@ -62,10 +62,10 @@ export const PitScoutSelectionBar: React.FC<PitScoutSelectionBarProps> = ({
             disabled={false}
           >
             <div className="flex items-center gap-1">
-              {isInteractive && (
-                <Plus className="h-3 w-3" />
-              )}
-              <span>{scout} ({hasAssignments ? totalCount : 0})</span>
+              {isInteractive && <Plus className="h-3 w-3" />}
+              <span>
+                {scout} ({hasAssignments ? totalCount : 0})
+              </span>
             </div>
           </Button>
         );

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/core/components/ui/card';
 import { AlertCircle, ClipboardList } from 'lucide-react';
-import { Alert, AlertDescription } from "@/core/components/ui/alert";
+import { Alert, AlertDescription } from '@/core/components/ui/alert';
 
 interface EventInformationCardProps {
   selectedEvent: string;
@@ -31,7 +31,8 @@ const EventInformationCard: React.FC<EventInformationCardProps> = ({
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              No team data found. Please import team lists from the TBA Data page or load demo data from the home page.
+              No team data found. Please import team lists from the TBA Data page or load demo data
+              from the home page.
             </AlertDescription>
           </Alert>
         ) : (
@@ -67,10 +68,9 @@ const EventInformationCard: React.FC<EventInformationCardProps> = ({
                 </span>
               </div>
               <div className="text-xs text-muted-foreground pt-2 border-t">
-                {teamDataSource === 'nexus' 
+                {teamDataSource === 'nexus'
                   ? 'Teams extracted from Nexus pit addresses. Pit locations available for enhanced assignments.'
-                  : 'Teams imported from The Blue Alliance. Import new data on the TBA Data page to change events.'
-                }
+                  : 'Teams imported from The Blue Alliance. Import new data on the TBA Data page to change events.'}
               </div>
             </div>
           </div>
